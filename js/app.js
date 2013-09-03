@@ -5,7 +5,10 @@ $(function() {
    **/
   var user = new User();
 
-  var bigBrother = new BigBrother(user);
+  var bigBrother;
+  user.on('id-assigned', function() {
+    bigBrother = new BigBrother(user);
+  });
 
   /**
    ** VIEWS

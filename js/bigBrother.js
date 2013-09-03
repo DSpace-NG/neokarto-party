@@ -1,4 +1,6 @@
-var FAYE_URL = 'http://192.168.11.104:5000/faye';
+var BASE_URL = 'http://192.168.11.104:5000';
+var FAYE_URL = BASE_URL + '/faye';
+var AUTH_URL = BASE_URL + '/auth';
 var FAYE_CHANNEL_PREFIX = '/bolzano/'
 
 var BigBrother = function(citizen) {
@@ -6,24 +8,48 @@ var BigBrother = function(citizen) {
   this.faye = new Faye.Client(FAYE_URL);
   this.citizen = citizen;
 
-  // hey you little fella!
-  citizen.on('location-changed', this.trackPoint);
-  citizen.notes.on('add', this._trackNote);
-
   this.channels = {
     track: FAYE_CHANNEL_PREFIX + 'track/' + citizen.id,
     notes: FAYE_CHANNEL_PREFIX + 'notes/' + citizen.id,
   };
+
+  // hey you little fella!
+  citizen.on('location-changed', this.trackPoint);
+  citizen.notes.on('add', this._trackNote);
 };
+
+BigBrother.auth = function(credentials, callback) {
+  console.log('auth', credentials);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AUTH_URL, true);
+  xhr.onload = function() {
+    if(xhr.status == 200) {
+      callback(null, JSON.parse(xhr.responseText));
+    } else {
+      callback(xhr.responseText);
+    }
+  };
+  xhr.onerror = function(event) {
+    console.log('req failed', event);
+  };
+  xhr.send();
+}
+
+BigBrother.acquireId = function(callback) {
+  this.auth({}, function(error, result) {
+    callback(error, result && result.id);
+  });
+}
 
 BigBrother.prototype = {
 
   trackPoint: function(location) {
-    console.log('publishing to ', this.channel);
+    console.log('TRACK POINT', [location.lat, location.lng]);
     this.faye.publish(this.channels.track, location);
   },
 
   trackNote: function(note) {
+    console.log('TRACK NOTE', [note.location.lat, note.location.lng], ':', note.text);
     this.faye.publish(this.channels.notes, note);
   },
 

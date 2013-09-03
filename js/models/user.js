@@ -2,12 +2,12 @@
 var User = Backbone.Model.extend({
 
   initialize: function() {
-    _.bindAll(this, 'setLocation');
+    _.bindAll(this, 'setLocation', '_acquiredId');
     if(localStorage['neokarto:user:id']) {
       this.id = localStorage['neokarto:user:id'];
+      setTimeout(this.trigger.bind(this), 0, 'id-assigned');
     } else {
-      this.id = Math.uuid();
-      localStorage['neokarto:user:id'] = this.id;
+      BigBrother.acquireId(this._acquiredId);
     }
     this.notes = new NotesCollection();
   },
@@ -21,5 +21,22 @@ var User = Backbone.Model.extend({
     this.location.accuracy = location.accuracy;
     this.trigger('location-changed', this.location);
   },
+
+  _acquiredId: function(error, id) {
+    if(error) {
+      console.error("Failed to acquire ID: ", error);
+    } else {
+      this.id = id;
+      localStorage['neokarto:user:id'] = id;
+      this.trigger('id-assigned');
+    }
+  },
+
+  on: function(eventName, handler) {
+    if(eventName == 'location-changed' && this.location) {
+      handler(this.location);
+    }
+    return Backbone.Model.prototype.on.call(this, eventName, handler);
+  }
 
 });
