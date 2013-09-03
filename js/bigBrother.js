@@ -10,18 +10,21 @@ var BigBrother = function(citizen) {
   citizen.on('location-changed', this.trackPoint);
   citizen.notes.on('add', this._trackNote);
 
-  this.channel = FAYE_CHANNEL_PREFIX + citizen.id;
+  this.channels = {
+    track: FAYE_CHANNEL_PREFIX + 'track/' + citizen.id,
+    notes: FAYE_CHANNEL_PREFIX + 'notes/' + citizen.id,
+  };
 };
 
 BigBrother.prototype = {
 
   trackPoint: function(location) {
     console.log('publishing to ', this.channel);
-    this.faye.publish(this.channel + '/track', location);
+    this.faye.publish(this.channels.track, location);
   },
 
   trackNote: function(note) {
-    this.faye.publish(this.channel + '/notes', note);
+    this.faye.publish(this.channels.notes, note);
   },
 
   _trackNote: function(note) {
