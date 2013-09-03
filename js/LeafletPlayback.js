@@ -83,7 +83,7 @@ L.Playback = L.Playback || {};
 L.Playback.TickPoint = L.Class.extend({
 
   initialize: function (geoJSON, tickLen) {
-    tickLen = tickLen || 1000000;
+    tickLen = tickLen || 100;
     this._geoJSON = geoJSON;
     this._tickLen = tickLen;
     this._ticks = [];
@@ -292,8 +292,8 @@ L.Playback.Clock = L.Class.extend({
   },
 
   options: {
-    tickLen:    10000,
-    speed:      6000
+    tickLen:    100,
+    speed:      10
   },
 
   _tick: function (self) {
@@ -524,8 +524,8 @@ L.Playback.Control = L.Control.extend({
 
     $('#speed-slider').slider({
       min: 1,
-      max: 6000,
-      step: 10,
+      max: 10,
+      step: 0.1,
       value: self._speedToSliderVal(this.playback.getSpeed()),
       orientation: 'vertical',
       slide: function( event, ui ) {

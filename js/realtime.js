@@ -49,9 +49,15 @@ $(function() {
   var avatarIcon = new PixelIcon({iconUrl: avatarURL});
 
   for(i=0; i<poiRealtime.length; i++){
+    // show username as popup if available, else the stored user id
+    if(poiRealtime[i].properties.nickname != undefined) {
+      var showName = poiRealtime[i].properties.nickname;
+    } else {
+      var showName = "id: "+poiRealtime[i].properties.userID;
+    }
     L.marker([ poiRealtime[i].geometry.coordinates[0][1], poiRealtime[i].geometry.coordinates[0][0] ], {
       icon : avatarIcon
-    }).addTo(map);
+    }).addTo(map).bindPopup(showName).addTo(map).openPopup();
   }
 
   /*var geojsonMarkerOptions = {
