@@ -8,20 +8,36 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	
 	<link rel="stylesheet" href="lib/leaflet/leaflet.css" />
-	<link rel="stylesheet" href="lib/jquery-ui/jquery-ui.css" />
 	<link rel="stylesheet" href="css/app.css" />
 	
 	<script src="lib/jquery/jquery-1.10.2.min.js"></script>
-	<script src="lib/jquery-ui/jquery-ui.js"></script>
 	<script src="lib/leaflet/leaflet.js"></script>
+	<script src="lib/underscore-min.js"></script>
+	<script src="lib/backbone-min.js"></script>
+
+	<script src="js/models/user.js"></script>
+	<script src="js/views/controls.js"></script>
+	<script src="js/views/noteInput.js"></script>
 	<script src="js/app.js"></script>
-	<script src="js/AgsDynamicLayer.js"></script>
 
 </head>
 
 <body>
 
 	<div id="map"></div>
+  <div id="controls">
+    <label><input class="follow-me" type="checkbox">Follow Me</label>
+    <button class="add">Add Note</button>
+  </div>
+
+  <div id="note-input" style="display:none">
+    <form>
+      <textarea name="text" placeholder="whatz upppp?>???|"></textarea>
+      <br/>
+      <button class="close">Close</button>
+      <input type="submit" value="go, go go!">
+    </form>
+  </div>
 
 </body>
 </html>

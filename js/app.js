@@ -1,25 +1,31 @@
 $(function() {
 
-  //creates a new map
-  var map = new L.Map('map', { center: [51.505, -0.09], zoom:1 });
+  /**
+   ** MODELS
+   **/
+  var user = new User();
+
+  /**
+   ** VIEWS
+   **/
+
+  // button(s) in top-right corner
+  var controls = new ControlsView({ user: user });
+  // form to add text note (and in the future add media)
+  var noteInput = new NoteInputView();
+  // leaflet map
+  var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14 });
 
   var basemapCloudmade = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>',
     maxZoom : 19
   });
   map.addLayer(basemapCloudmade);
-  
-/*  var basemapGraz = L.tileLayer.wms("http://geodaten1.graz.at/ArcGIS_Graz/services/Extern/LUFTBILD_WMS/MapServer/WMSServer?request=GetCapabilities&service=WMS", {
-    layers: 'Orthophoto 2011',
-    //format: 'image/png',
-    //transparent: true,
-    attribution: "OGD Stadt Graz"
-  });
-*/
 
+  // avatar (used for user marker)
+  // FIXME: acquire email address and display avatar instead?
   var avatar = 'scientist';
   var avatarURL = 'assets/images/'+ avatar +'.png';
-
   var PixelIcon = L.Icon.extend({
     options: {
         iconSize:     [48, 48],
@@ -27,54 +33,51 @@ $(function() {
         popupAnchor:  [-3, -76]
     }
   });
-
   var avatarIcon = new PixelIcon({iconUrl: avatarURL});
+  // actual user marker. initialized once initial position has been acquired.
+  var userMarker;
 
-  map.locate({setView: true, maxZoom: 16});
+  /**
+   ** MAIN
+   **/
 
-  function onLocationFound(e) {
-    var radius = e.accuracy / 2;
-
-    L.marker(e.latlng, {icon:avatarIcon}).addTo(map)
-        .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-    L.circle(e.latlng, radius).addTo(map);
-  }
-
-  map.on('locationfound', onLocationFound);
-
-  function onLocationError(e) {
-    alert(e.message);
-  }
-
-  map.on('locationerror', onLocationError);
-
-  var OrthoGraz = new L.AgsDynamicLayer('http://geodaten1.graz.at/ArcGIS_Graz/rest/services/Extern/LUFTBILD_WMS/MapServer', { 
-    maxZoom: 19,
-    attribution: "OGD Stadt Graz",
-    opacity: 1,
-    layers: 'show:3' 
+  // when location changes, add / update user marker.
+  user.on('location-changed', function(location) {
+    if(userMarker) { // position changed.
+      userMarker.setLatLng(location.latlng);
+      if(user.get('followMe')) {
+        map.setView(location.latlng, 15);
+      }
+    } else { // acquired position for first time.
+      userMarker = L.marker(location.latlng, {
+        icon: avatarIcon
+      }).addTo(map);
+      map.setView(location.latlng, 15);
+    }
   });
 
-/*  var Geoimage = new L.TileLayer.WMS('http://gis.lebensministerium.at/wmsgw/?key=1fa938568d8081db965417cf95e16ea8&', { 
-    maxZoom: 19,
-    attribution: "Geoimage",
-    opacity: 1,
-    layers: 'show:' 
+  // hook up leaflet's locate() to user model
+  map.on('locationfound', user.setLocation);
+  map.on('locationerror', function(e) {
+    console.error("Failed to acquire position: " + e.message);
   });
-*/
+  map.locate({
+    setView: false,
+    watch: true,
+    maximumAge: 15000,
+    enableHighAccuracy: true
+  });
+
+
   var baseMaps = { 
     //"Geoimage": Geoimage
-    'OpenStreetMap':basemapCloudmade,
-    "Graz": OrthoGraz,
+    'OpenStreetMap':basemapCloudmade
   };
   
   var overlayMaps = { 
     //'OpenStreetMap':basemapCloudmade 
   };
 
-  L.control.layers(baseMaps, overlayMaps).addTo(map);
+  //L.control.layers(baseMaps, overlayMaps).addTo(map);
   L.control.scale({imperial:false}).addTo(map);
-
-
 });
