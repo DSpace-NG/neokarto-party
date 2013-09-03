@@ -9,7 +9,7 @@ var ControlsView = Backbone.View.extend({
   },
 
   addNote: function() {
-    $('#note-input')[0].style.display = 'block';
+    new NoteInputView(this.options);
   },
 
   updateFollowMe: function(event) {

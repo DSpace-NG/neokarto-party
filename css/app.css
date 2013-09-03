@@ -1,3 +1,7 @@
+body {
+    font-family: monospace;
+}
+
 #map {
   position: absolute;
   top: 0;
@@ -16,14 +20,19 @@
     font-size: 1.5em;
 }
 
-#controls button {
-    padding: 0.2em 0.5em;
-}
-
 #note-input {
     position: absolute;
     z-index: 100000;
     background: white;
     padding: 20px;
+    font-size: 1.5em;
 }
 
+#note-input form {
+    display: inline-block;
+}
+
+#controls button, #note-input button, #note-input input[type="submit"] {
+    padding: 0.2em 0.5em;
+    font-size: inherit;
+}

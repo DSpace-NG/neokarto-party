@@ -5,14 +5,14 @@ $(function() {
    **/
   var user = new User();
 
+  var bigBrother = new BigBrother(user);
+
   /**
    ** VIEWS
    **/
 
   // button(s) in top-right corner
   var controls = new ControlsView({ user: user });
-  // form to add text note (and in the future add media)
-  var noteInput = new NoteInputView();
   // leaflet map
   var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14 });
 
@@ -41,18 +41,19 @@ $(function() {
    ** MAIN
    **/
 
-  // when location changes, add / update user marker.
+  // when location changes, add / update user marker,
+  // and update location.
   user.on('location-changed', function(location) {
     if(userMarker) { // position changed.
-      userMarker.setLatLng(location.latlng);
+      userMarker.setLatLng(location);
       if(user.get('followMe')) {
-        map.setView(location.latlng, 15);
+        map.setView(location, 15);
       }
     } else { // acquired position for first time.
-      userMarker = L.marker(location.latlng, {
+      userMarker = L.marker(location, {
         icon: avatarIcon
       }).addTo(map);
-      map.setView(location.latlng, 15);
+      map.setView(location, 15);
     }
   });
 
@@ -68,7 +69,6 @@ $(function() {
     enableHighAccuracy: true
   });
 
-
   var baseMaps = { 
     //"Geoimage": Geoimage
     'OpenStreetMap':basemapCloudmade
@@ -80,4 +80,9 @@ $(function() {
 
   //L.control.layers(baseMaps, overlayMaps).addTo(map);
   L.control.scale({imperial:false}).addTo(map);
+
+  window.app = {
+    user: user,
+    map: map
+  };
 });
