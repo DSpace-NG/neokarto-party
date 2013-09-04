@@ -2,9 +2,10 @@ var NoteInputView = Backbone.View.extend({
   el: '#note-input',
 
   events: {
-    'submit form': 'save',
-    'click .close': 'close',
-    'touchstart .close': 'close'
+    'touchstart .submit': 'save',
+    'click .submit': 'save',
+    'touchstart .close': 'close',
+    'click .close': 'close'
   },
 
   initialize: function() {

@@ -17,10 +17,9 @@ $(function() {
   // button(s) in top-right corner
   var controls = new ControlsView({ user: user });
   // leaflet map
-  var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14 });
+  var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14, attributionControl: false });
 
   var basemapCloudmade = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>',
     maxZoom : 19
   });
   map.addLayer(basemapCloudmade);

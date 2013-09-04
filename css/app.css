@@ -1,5 +1,11 @@
-body {
-    font-family: monospace;
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+button {
+  font-size: 20px;
+  padding: 0.25em;
 }
 
 #map {
@@ -10,29 +16,60 @@ body {
   bottom: 0;
 }
 
+.leaflet-control-scale-line {
+  display: none;
+}
+
 #controls {
     position: absolute;
-    top: 0;
-    right: 0;
+    bottom: 20px;
+    left: 50%;
+    margin-left: -40px;
+    width: 80px;
     z-index: 10000;
-    text-align: right;
-    background: white;
-    font-size: 1.5em;
+}
+
+#controls button {
+  width: 80px;
 }
 
 #note-input {
     position: absolute;
     z-index: 100000;
     background: white;
-    padding: 20px;
-    font-size: 1.5em;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 #note-input form {
-    display: inline-block;
+    margin: 20px;
 }
 
-#controls button, #note-input button, #note-input input[type="submit"] {
-    padding: 0.2em 0.5em;
-    font-size: inherit;
+button.close {
+  float: right;
+  font-size: 12px;
+  margin: 20px;
+}
+
+#note-input form textarea {
+  width: 100%;
+  font-size: 18px;
+  margin-top: 15px;
+  height: 4em;
+}
+
+label.photo {
+  font-size: 30px;
+}
+
+label.photo input {
+  width: 50px;
+  height: 30px;
+}
+
+button.submit {
+  float: right;
+  margin-top: 20px;
 }
