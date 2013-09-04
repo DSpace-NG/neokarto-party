@@ -20,12 +20,23 @@ body {
     font-size: 1.5em;
 }
 
+#note-background {
+    background: #333;
+    opacity: 0.5;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 #note-input {
     position: absolute;
     z-index: 100000;
     background: white;
     padding: 20px;
     font-size: 1.5em;
+    border-radius: 0.5em;
 }
 
 #note-input form {

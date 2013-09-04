@@ -8,7 +8,11 @@ var NoteInputView = Backbone.View.extend({
   },
 
   initialize: function() {
-    this.el.style.display = 'block';
+    _.bindAll(this, 'close');
+    this.bg = $('#note-background');
+    this.bg.css({ display: 'block' });
+    this.bg.on('click', this.close);
+    this.$el.fadeIn();
     this.pictureInput = this.$('input[name="picture"]');
     this.textInput = this.$('textarea[name="text"]');
     this.collection = this.options.user.notes;
@@ -43,7 +47,9 @@ var NoteInputView = Backbone.View.extend({
   },
 
   close: function() {
-    this.el.style.display = 'none';
+    this.$el.fadeOut();
+    this.bg.css({ display: 'none' });
+    this.bg.off('click', this.close);
   },
 
   _reset: function() {
