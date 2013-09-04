@@ -19,7 +19,7 @@ $(function() {
   // leaflet map
   var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14, attributionControl: false });
 
-  var basemapCloudmade = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var basemapCloudmade = new L.TileLayer('http://a.tile.cloudmade.com/e4e152a60cc5414eb81532de3d676261/997/256/{z}/{x}/{y}.png', {
     maxZoom : 19
   });
   map.addLayer(basemapCloudmade);
