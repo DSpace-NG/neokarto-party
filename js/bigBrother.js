@@ -58,6 +58,7 @@ BigBrother.prototype = {
   },
 
   trackNote: function(note) {
+    if(! note.text) return;
     console.log('TRACK NOTE', [note.location.lat, note.location.lng], ':', note.text);
     this.faye.publish(this.channels.notes, note);
   },
