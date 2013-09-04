@@ -1,0 +1,25 @@
+{
+  "name": "neokarto-party",
+  "version": "0.0.0",
+  "authors": [
+    "elf Pavlik <perpetual-tripper@wwelves.org>"
+  ],
+  "keywords": [
+    "map",
+    "dspace",
+    "geo"
+  ],
+  "license": "Unlicense",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "2.0.3",
+    "underscore": "1.5.1",
+    "backbone": "1.0.0"
+  }
+}
