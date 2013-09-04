@@ -27,7 +27,7 @@ $(function() {
   // avatar (used for user marker)
   // FIXME: acquire email address and display avatar instead?
   var avatar = 'scientist';
-  var avatarURL = 'assets/images/'+ avatar +'.png';
+  var avatarURL = 'assets/images/avatars/'+ avatar +'.png';
   var PixelIcon = L.Icon.extend({
     options: {
         iconSize:     [48, 48],
@@ -79,6 +79,8 @@ $(function() {
   var overlayMaps = { 
     //'OpenStreetMap':basemapCloudmade 
   };
+
+  user.notesOverlay = new Overlay({ collection: user.notes, map: map });
 
   //L.control.layers(baseMaps, overlayMaps).addTo(map);
   L.control.scale({imperial:false}).addTo(map);
