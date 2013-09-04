@@ -13,6 +13,14 @@ var BigBrother = function(citizen) {
     notes: FAYE_CHANNEL_PREFIX + 'notes/' + citizen.id,
   };
 
+  this.faye.addExtension({
+    outgoing: function(message, callback) {
+      if(! message.ext) message.ext = {};
+      message.ext.token = citizen.token;
+      callback(message);
+    }
+  });
+
   // hey you little fella!
   citizen.on('location-changed', this.trackPoint);
   citizen.notes.on('add', this._trackNote);
@@ -37,7 +45,8 @@ BigBrother.auth = function(credentials, callback) {
 
 BigBrother.acquireId = function(callback) {
   this.auth({}, function(error, result) {
-    callback(error, result && result.id);
+    if(error) callback(error);
+    else callback(null, result.id, result.token);
   });
 }
 

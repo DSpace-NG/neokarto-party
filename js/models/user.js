@@ -3,8 +3,9 @@ var User = Backbone.Model.extend({
 
   initialize: function() {
     _.bindAll(this, 'setLocation', '_acquiredId');
-    if(localStorage['neokarto:user:id']) {
+    if(localStorage['neokarto:user:id'] && localStorage['neokarto:user:token']) {
       this.id = localStorage['neokarto:user:id'];
+      this.token = localStorage['neokarto:user:token'];
       setTimeout(this.trigger.bind(this), 0, 'id-assigned');
     } else {
       BigBrother.acquireId(this._acquiredId);
@@ -22,12 +23,14 @@ var User = Backbone.Model.extend({
     this.trigger('location-changed', this.location);
   },
 
-  _acquiredId: function(error, id) {
+  _acquiredId: function(error, id, token) {
     if(error) {
       console.error("Failed to acquire ID: ", error);
     } else {
       this.id = id;
+      this.token = token;
       localStorage['neokarto:user:id'] = id;
+      localStorage['neokarto:user:token'] = token;
       this.trigger('id-assigned');
     }
   },
