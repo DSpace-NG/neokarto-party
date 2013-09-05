@@ -58,7 +58,6 @@ BigBrother.prototype = {
   },
 
   trackNote: function(note) {
-    if(! note.text) return;
     console.log('TRACK NOTE', [note.location.lat, note.location.lng], ':', note.text);
     this.faye.publish(this.channels.notes, note);
   },
@@ -66,8 +65,6 @@ BigBrother.prototype = {
   _trackNote: function(note) {
     // ('note' is a Backbone.Model here)
     this.trackNote(note.attributes);
-  },
-
-  ignoreMessage: function() { /* ignored. */ }
+  }
 
 };

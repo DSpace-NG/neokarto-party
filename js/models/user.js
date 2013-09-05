@@ -11,6 +11,7 @@ var User = Backbone.Model.extend({
       BigBrother.acquireId(this._acquiredId);
     }
     this.notes = new NotesCollection();
+    this.track = new TrackCollection();
   },
 
   setLocation: function(location) {
@@ -43,3 +44,14 @@ var User = Backbone.Model.extend({
   }
 
 });
+
+
+// a user from the HQ perspective.
+// FIXME: clean up the user above and make this the same.
+var WatchedUser = Backbone.Model.extend({
+  initialize: function() {
+    this.notes = new NotesCollection();
+    this.track = new TrackCollection();
+  }
+});
+

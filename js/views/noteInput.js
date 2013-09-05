@@ -31,7 +31,7 @@ var NoteInputView = Backbone.View.extend({
         this._save(note);
       }.bind(this);
       reader.readAsBinaryString(picture);
-    } else {
+    } else if(note.text) {
       this._save(note);
     }
     return false;

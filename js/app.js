@@ -80,7 +80,7 @@ $(function() {
     //'OpenStreetMap':basemapCloudmade 
   };
 
-  user.notesOverlay = new Overlay({ collection: user.notes, map: map });
+  user.notesOverlay = new NotesOverlay({ collection: user.notes, map: map });
 
   //L.control.layers(baseMaps, overlayMaps).addTo(map);
   L.control.scale({imperial:false}).addTo(map);
