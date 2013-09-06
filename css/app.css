@@ -16,10 +16,6 @@ button {
   bottom: 0;
 }
 
-.leaflet-control-scale-line {
-  display: none;
-}
-
 #controls {
     position: absolute;
     bottom: 20px;

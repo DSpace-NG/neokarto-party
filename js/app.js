@@ -82,9 +82,6 @@ $(function() {
 
   user.notesOverlay = new NotesOverlay({ collection: user.notes, map: map });
 
-  //L.control.layers(baseMaps, overlayMaps).addTo(map);
-  L.control.scale({imperial:false}).addTo(map);
-
   window.app = {
     user: user,
     map: map
