@@ -1,7 +1,7 @@
-var BASE_URL = 'http://192.168.11.104:5000';
+var BASE_URL = 'http://194.150.168.83:5000';
 var FAYE_URL = BASE_URL + '/faye';
 var AUTH_URL = BASE_URL + '/auth';
-var FAYE_CHANNEL_PREFIX = '/bolzano/'
+var FAYE_CHANNEL_PREFIX = '/bolzano/';
 
 var BigBrother = function(citizen) {
   _.bindAll(this, 'trackPoint', '_trackNote');
@@ -41,14 +41,14 @@ BigBrother.auth = function(credentials, callback) {
     console.log('req failed', event);
   };
   xhr.send();
-}
+};
 
 BigBrother.acquireId = function(callback) {
   this.auth({}, function(error, result) {
     if(error) callback(error);
     else callback(null, result.id, result.token);
   });
-}
+};
 
 BigBrother.prototype = {
 

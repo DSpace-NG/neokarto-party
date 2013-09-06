@@ -1,4 +1,3 @@
-
 function PersonaAuth(server, callback){
   function verifyAssertion(assertion) {
     var xhr = new XMLHttpRequest();
@@ -18,12 +17,12 @@ function PersonaAuth(server, callback){
       } else {
         navigator.id.logout();
         console.error("persona error : ", xhr.status, xhr.responseText);
-        alert("try{ UNDEFINED.toLowerCase()} cattch(e) {console.error(e)}")
+        alert("try{ UNDEFINED.toLowerCase()} cattch(e) {console.error(e)}");
       }
-    }
+    };
     xhr.send(param); 
   }
-  
+
   function signoutUser() {
     console.log('sing out!', arguments);
   }
@@ -41,4 +40,4 @@ PersonaAuth.prototype = {
   logout : function(){
     navigator.id.signout();
   }
-}
+};
