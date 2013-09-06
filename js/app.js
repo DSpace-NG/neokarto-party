@@ -75,7 +75,7 @@ $(function() {
     //"Geoimage": Geoimage
     'OpenStreetMap':basemapCloudmade
   };
-  
+
   var overlayMaps = { 
     //'OpenStreetMap':basemapCloudmade 
   };

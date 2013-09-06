@@ -3,6 +3,18 @@ var User = Backbone.Model.extend({
 
   initialize: function() {
     _.bindAll(this, 'setLocation', '_acquiredId');
+
+    // deal with nickname
+    if(localStorage['neokarto:user:nickname']){
+      this.attributes.nickname = localStorage['neokarto:user:nickname'];
+    } else {
+      this.promptNickname();
+    }
+    this.on('change:nickname', function(){
+      localStorage['neokarto:user:nickname'] = this.get('nickname');
+    });
+
+    // deal with id and token
     if(localStorage['neokarto:user:id'] && localStorage['neokarto:user:token']) {
       this.id = localStorage['neokarto:user:id'];
       this.token = localStorage['neokarto:user:token'];
@@ -10,8 +22,15 @@ var User = Backbone.Model.extend({
     } else {
       BigBrother.acquireId(this._acquiredId);
     }
+
+    // initiate track and notes
     this.notes = new NotesCollection();
     this.track = new TrackCollection();
+  },
+
+  // creates modal asking for nickname and setting it on this model
+  promptNickname: function() {
+    new Profile( {user: this} );
   },
 
   setLocation: function(location) {

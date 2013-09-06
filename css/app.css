@@ -33,7 +33,7 @@ button {
   width: 80px;
 }
 
-#note-input {
+.modal {
     position: absolute;
     z-index: 100000;
     background: white;
@@ -43,7 +43,7 @@ button {
     height: 100%;
 }
 
-#note-input form {
+.modal form {
     margin: 20px;
 }
 
@@ -53,7 +53,7 @@ button.close {
   margin: 20px;
 }
 
-#note-input form textarea {
+.modal form textarea {
   width: 100%;
   font-size: 18px;
   margin-top: 15px;
