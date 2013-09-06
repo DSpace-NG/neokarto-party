@@ -10,6 +10,9 @@ var NoteInputView = Backbone.View.extend({
 
   initialize: function() {
     this.el.style.display = 'block';
+    if(this.$el.find('form').length === 0){
+      this.$el.append(JST.noteInput());
+    }
     this.pictureInput = this.$('input[name="picture"]');
     this.textInput = this.$('textarea[name="text"]');
     this.collection = this.options.user.notes;

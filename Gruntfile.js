@@ -18,6 +18,10 @@ module.exports = function(grunt) {
       scripts: {
         files: "js/**",
         tasks: ["jshint"]
+      },
+      templates: {
+        files: "templates/*.hbs",
+        tasks: ["handlebars"]
       }
     },
     jshint: {
@@ -25,14 +29,26 @@ module.exports = function(grunt) {
       options: {
         ignores: "js/LeafletPlayback.js"
       }
+    },
+    handlebars: {
+      compile: {
+        options: {
+          namespace: "JST",
+          processName: function(filePath){ return filePath.split('/')[1].replace('.hbs', ''); }
+        },
+        files: {
+          "templates.js": ["templates/*.hbs"],
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'connect', 'watch']);
+  grunt.registerTask('default', ['jshint', 'handlebars', 'connect', 'watch']);
 
 };
