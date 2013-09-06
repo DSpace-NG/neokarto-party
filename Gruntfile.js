@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          hostname: '*',
+          hostname: "*",
           livereload: true
         }
       }
@@ -16,15 +16,23 @@ module.exports = function(grunt) {
         livereload: true
       },
       scripts: {
-        files: 'js/**'
+        files: "js/**",
+        tasks: ["jshint"]
+      }
+    },
+    jshint: {
+      all: ["Gruntfile.js", "js/**"],
+      options: {
+        ignores: "js/LeafletPlayback.js"
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
 
   // Default task(s).
-  grunt.registerTask('default', ['connect', 'watch']);
+  grunt.registerTask('default', ['jshint', 'connect', 'watch']);
 
 };
