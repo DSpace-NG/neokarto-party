@@ -21,6 +21,7 @@
     "jquery": "2.0.3",
     "underscore": "1.5.1",
     "backbone": "1.0.0",
-    "handlebars.js": "1.0.12"
+    "handlebars.js": "1.0.12",
+    "faye": "0.8.9"
   }
 }
