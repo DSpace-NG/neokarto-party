@@ -25,6 +25,7 @@
 	<script src="js/collections/track.js"></script>
 	<script src="js/views/controls.js"></script>
 	<script src="js/views/noteInput.js"></script>
+	<script src="js/views/about.js"></script>
 	<script src="js/views/profile.js"></script>
 	<script src="js/bigBrother.js"></script>
 	<script src="js/views/overlay.js"></script>
@@ -35,17 +36,22 @@
 <body>
 
 	<div id="map"></div>
-  <div id="controls">
-    <!-- FIXME <label><input class="follow-me" type="checkbox">Follow Me</label> -->
-    <button class="add icon-comment-alt"></button>
-  </div>
+	<div id="controls">
+		<!-- FIXME <label><input class="follow-me" type="checkbox">Follow Me</label> -->
+		<button class="add send icon-comment-alt"></button>
+		<button class="about icon-info"></button>
+	</div>
 
-  <div id="profile" class="modal" style="display:none">
-  </div>
+	<div id="profile" class="modal" style="display:none">
+	</div>
 
-  <div id="note-input" class="modal" style="display:none">
-    <button class="close icon-cancel"></button>
-  </div>
+	<div id="note-input" class="modal" style="display:none">
+		<button class="close icon-cancel"></button>
+	</div>
 
+	<div id ="about" class="modal" style="display:none">
+		<button class="close icon-cancel"></button>
+
+	</div>
 </body>
 </html>

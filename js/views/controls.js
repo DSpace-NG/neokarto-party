@@ -5,6 +5,8 @@ var ControlsView = Backbone.View.extend({
   events: {
     'click .add': 'addNote',
     'touchstart .add': 'addNote',
+    'click .about': 'showAbout',
+    'touchstart .about': 'showAbout',
     'change .follow-me': 'updateFollowMe'
   },
 
@@ -14,6 +16,10 @@ var ControlsView = Backbone.View.extend({
 
   updateFollowMe: function(event) {
     this.options.user.set('followMe', event.target.checked);
+  },
+
+  showAbout: function() {
+    new About();
   }
 
 });
