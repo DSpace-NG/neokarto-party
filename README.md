@@ -3,8 +3,7 @@ neokarto-party
 
 The HTML5 Web App was created for the Neokarto Mapping Party during the Transart Festival in Bozen on September the 14th. It collects notes, imates and geolocations from users mobile devices. The data is stored inside CouchDB and can be presented in realtime and as timeframe playback afterwards.
 
-The software is licensed under the Public Domain.
-
+The software is licensed under the [Public Domain](http://unlicense.org/)
 
 
 ## DEPENDENCIES
@@ -21,9 +20,8 @@ The software is licensed under the Public Domain.
 - faye-client
 
 ### Server
-- [Node.js](http://nodejs.org/)
-- [CouchDB](https://couchdb.apache.org/)
-- [bayeux-server](https://github.com/apollo-ng/dspace-bayeux-server)
+it expects this server running on localhost:
+https://github.com/elevate-festival/dspace-bayeux-server
 
 ## INSTALL INSTRUCTIONS
 
