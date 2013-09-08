@@ -21,7 +21,6 @@ var NotesOverlay = Overlay.extend({
     var marker = new L.Marker([location.lat, location.lng], {
       icon: this.icon
     });
-    console.log('popup text', note.attributes.text);
     marker.bindPopup(new L.Popup().setContent('<em>'+note.attributes.text+'</em>'));
     this.layer.addLayer(marker);
   }

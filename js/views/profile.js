@@ -14,7 +14,6 @@ var Profile = Backbone.View.extend({
     if(this.$el.find('form').length === 0){
       var templateData = this.user.toJSON();
       templateData.avatars = this.user.avatars;
-      console.log(templateData);
       this.$el.append(JST.profile(templateData));
     }
     this.input = this.$('input');

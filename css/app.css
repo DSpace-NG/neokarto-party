@@ -19,14 +19,21 @@ button {
 #controls {
     position: absolute;
     bottom: 20px;
-    left: 50%;
-    margin-left: -40px;
-    width: 80px;
+    width: 80%;
+    left: 10%;
     z-index: 10000;
 }
 
 #controls button {
-  width: 80px;
+  position: relative;
+  padding: 0.25em 0;
+}
+#controls button.add {
+  width: 50%;
+  margin: 0 1%;
+}
+#controls button.about, #controls button.settings {
+  width: 22%;
 }
 
 .modal {
