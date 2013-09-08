@@ -27,7 +27,7 @@ $(function() {
   var layerGroups = {};
 
   function subscribe(channel, token) {
-    var faye = new Faye.Client('http://192.168.11.104:5000/faye');
+    var faye = new Faye.Client(config.pubsub.url+ '/faye');
 
     faye.addExtension({
       outgoing: function(message, callback) {
@@ -144,7 +144,7 @@ $(function() {
     subscribe(channel, localStorage.hq_token);
     $('#login-link').remove();
   } else {
-    var auth = new PersonaAuth('http://192.168.11.104:5000/auth', function(response) {
+    var auth = new PersonaAuth(config.pubsub.url + '/auth', function(response) {
       localStorage.hq_token = response.token;
       subscribe(channel, response.token);
     });
