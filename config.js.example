@@ -1,0 +1,5 @@
+var config = {
+  pubsub: {
+    url: "http://localhost:5000"
+  }
+};

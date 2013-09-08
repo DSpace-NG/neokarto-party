@@ -23,6 +23,10 @@ The software is licensed under the [Public Domain](http://unlicense.org/)
 it expects this server running on localhost:
 https://github.com/elevate-festival/dspace-bayeux-server
 
+### Config
+
+    $ cp config.js.example config.js
+
 ## INSTALL INSTRUCTIONS
 
 ### Development

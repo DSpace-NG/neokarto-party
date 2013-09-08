@@ -1,4 +1,4 @@
-var BASE_URL = 'http://localhost:5001';
+var BASE_URL = config.pubsub.url;
 var FAYE_URL = BASE_URL + '/faye';
 var AUTH_URL = BASE_URL + '/auth';
 var FAYE_CHANNEL_PREFIX = '/bolzano/';
