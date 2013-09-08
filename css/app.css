@@ -74,3 +74,9 @@ button.submit {
   padding: 20px;
 }
 
+img.avatar {
+  margin:5px;
+  background-color: #d5d5d5;
+  border: 2px solid black;
+}
+
