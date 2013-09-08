@@ -24,21 +24,6 @@ $(function() {
   });
   map.addLayer(basemapCloudmade);
 
-  // avatar (used for user marker)
-  // FIXME: acquire email address and display avatar instead?
-  var avatar = 'scientist';
-  var avatarURL = 'assets/images/avatars/'+ avatar +'.png';
-  var PixelIcon = L.Icon.extend({
-    options: {
-        iconSize:     [48, 48],
-        iconAnchor:   [24, 48],
-        popupAnchor:  [-3, -76]
-    }
-  });
-  var avatarIcon = new PixelIcon({iconUrl: avatarURL});
-  // actual user marker. initialized once initial position has been acquired.
-  var userMarker;
-
   /**
    ** MAIN
    **/
@@ -46,14 +31,14 @@ $(function() {
   // when location changes, add / update user marker,
   // and update location.
   user.on('location-changed', function(location) {
-    if(userMarker) { // position changed.
-      userMarker.setLatLng(location);
+    if(user.marker) { // position changed.
+      user.marker.setLatLng(location);
       if(user.get('followMe')) {
         map.setView(location, 15);
       }
     } else { // acquired position for first time.
-      userMarker = L.marker(location, {
-        icon: avatarIcon
+      user.marker = L.marker(location, {
+        icon: user.getAvatarIcon()
       }).addTo(map);
       map.setView(location, 15);
     }
@@ -72,7 +57,6 @@ $(function() {
   });
 
   var baseMaps = { 
-    //"Geoimage": Geoimage
     'OpenStreetMap':basemapCloudmade
   };
 
