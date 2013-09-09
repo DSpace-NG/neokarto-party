@@ -1,4 +1,4 @@
-var About = Backbone.View.extend({
+var AboutModal = Backbone.View.extend({
   el: '#about',
 
   events: {

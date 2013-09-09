@@ -1,5 +1,5 @@
-var NoteInputView = Backbone.View.extend({
-  el: '#note-input',
+var NoteModal = Backbone.View.extend({
+  el: '#note',
 
   events: {
     'touchstart .submit': 'save',
@@ -11,7 +11,7 @@ var NoteInputView = Backbone.View.extend({
   initialize: function() {
     this.el.style.display = 'block';
     if(this.$el.find('form').length === 0){
-      this.$el.append(JST.noteInput());
+      this.$el.append(JST.note());
     }
     this.pictureInput = this.$('input[name="picture"]');
     this.textInput = this.$('textarea[name="text"]');

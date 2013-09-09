@@ -1,4 +1,4 @@
-var Profile = Backbone.View.extend({
+var ProfileModal = Backbone.View.extend({
   el: '#profile',
 
   events: {
