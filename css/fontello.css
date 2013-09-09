@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'neokarto';
-  src: url('../font/neokarto.eot?86764263');
-  src: url('../font/neokarto.eot?86764263#iefix') format('embedded-opentype'),
-       url('../font/neokarto.woff?86764263') format('woff'),
-       url('../font/neokarto.ttf?86764263') format('truetype'),
-       url('../font/neokarto.svg?86764263#neokarto') format('svg');
+  src: url('../assets/font/neokarto.eot?86764263');
+  src: url('../assets/font/neokarto.eot?86764263#iefix') format('embedded-opentype'),
+       url('../assets/assets/font/neokarto.woff?86764263') format('woff'),
+       url('../assets/font/neokarto.ttf?86764263') format('truetype'),
+       url('../assets/font/neokarto.svg?86764263#neokarto') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'neokarto';
-    src: url('../font/neokarto.svg?86764263#neokarto') format('svg');
+    src: url('../assets/font/neokarto.svg?86764263#neokarto') format('svg');
   }
 }
 */
