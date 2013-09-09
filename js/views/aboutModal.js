@@ -1,5 +1,6 @@
 var AboutModal = Backbone.View.extend({
-  el: '#about',
+  id: 'about',
+  className: 'modal',
 
   events: {
     'touchstart .close': 'close',
@@ -7,15 +8,16 @@ var AboutModal = Backbone.View.extend({
   },
 
   initialize: function() {
-    if(this.$el.find('h2').length === 0){
-      this.$el.append(JST.about());
-    }
-    $('#about').show();
+    this.render();
+  },
+
+  render: function() {
+    this.$el.append(JST.about());
+    $('body').append(this.el);
   },
 
   close: function() {
-    this.el.style.display = 'none';
+    this.remove();
   },
-
 
 });
