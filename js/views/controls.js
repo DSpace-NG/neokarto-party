@@ -13,7 +13,7 @@ var ControlsView = Backbone.View.extend({
   },
 
   addNote: function() {
-    new NoteModal(this.options);
+    new NoteModal({ user: this.options.user });
   },
 
   updateFollowMe: function(event) {
@@ -21,7 +21,7 @@ var ControlsView = Backbone.View.extend({
   },
 
   setProfile: function() {
-    new ProfileModal({user: this.options.user});
+    new ProfileModal({ user: this.options.user });
   },
 
   showAbout: function() {

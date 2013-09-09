@@ -1,23 +1,23 @@
-var ProfileModal = Backbone.View.extend({
-  el: '#profile',
+var ProfileModal = Modal.extend({
+  id: 'profile',
+  ui: { close: true, submit: true },
 
-  events: {
-    'touchstart .submit': 'save',
-    'click .submit': 'save',
+  subEvents: {
     'touchstart .avatar': 'selectAvatar',
     'click .avatar': 'selectAvatar',
   },
 
   initialize: function() {
-    this.el.style.display = 'block';
+    _.extend(this.events, this.subEvents);
+
     this.user = this.options.user;
-    if(this.$el.find('form').length === 0){
-      var templateData = this.user.toJSON();
-      templateData.avatars = this.user.avatars;
-      this.$el.append(JST.profile(templateData));
+    this.templateData = this.user.toJSON();
+    this.templateData.avatars = this.user.avatars;
+    var avatar = this.user.get('avatar');
+    if(avatar) {
+      this.selectedAvatar = avatar;
     }
-    this.input = this.$('input');
-    this.input.focus();
+    this.render();
   },
 
   selectAvatar: function(event) {
@@ -26,19 +26,17 @@ var ProfileModal = Backbone.View.extend({
     this.selectedAvatar = event.target.attributes.data.value;
   },
 
-  save: function(event) {
-    event.preventDefault();
-
-    var nickname = this.input.val();
+  submit: function(event) {
+    var nickname = this.$('input').val();
     var avatar = this.selectedAvatar;
 
     // if empty don't accept it
     if(nickname === "") return false;
-    if(avatar === "") return false;
 
     this.user.set('nickname', nickname);
     this.user.set('avatar', avatar);
-    this.el.style.display = 'none';
+
+    this.close();
   }
 
 });
