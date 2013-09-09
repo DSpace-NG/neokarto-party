@@ -1,6 +1,6 @@
 var ControlsView = Backbone.View.extend({
 
-  el: '#controls',
+  id: 'controls',
 
   events: {
     'click .note': 'addNote',
@@ -10,6 +10,15 @@ var ControlsView = Backbone.View.extend({
     'click .settings': 'setProfile',
     'touchstart .settings': 'setProfile',
     'change .follow-me': 'updateFollowMe'
+  },
+
+  initialize: function() {
+    this.render();
+  },
+
+  render: function() {
+    this.$el.append(JST.controls());
+    $('body').append(this.el);
   },
 
   addNote: function() {

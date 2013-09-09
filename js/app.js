@@ -16,7 +16,9 @@ $(function() {
 
   // button(s) in top-right corner
   var controls = new ControlsView({ user: user });
+
   // leaflet map
+  $('body').append('<div id="map"></div>');
   var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14, attributionControl: false });
 
   var basemapCloudmade = new L.TileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
