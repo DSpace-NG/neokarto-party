@@ -1,11 +1,19 @@
+// FIXME
+var PixelIcon = L.Icon.extend({
+  options: {
+    iconSize:     [48, 48],
+    iconAnchor:   [24, 48],
+    popupAnchor:  [-3, -76]
+  }
+});
 
 $(function() {
   var map = new L.Map('map', {
-    center: [46.493872168136285, 11.3588547706604],
-    zoom: 16,
+    center: config.map.center, 
+    zoom: config.map.zoom, 
     attributionControl: false
   });
-  var basemapCloudmade = new L.TileLayer('http://a.tile.cloudmade.com/e4e152a60cc5414eb81532de3d676261/997/256/{z}/{x}/{y}.png', {
+  var basemapCloudmade = new L.TileLayer(config.map.basemap, {
     maxZoom : 19
   });
   map.addLayer(basemapCloudmade);

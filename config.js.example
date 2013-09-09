@@ -1,5 +1,14 @@
 var config = {
   pubsub: {
     url: "http://localhost:5000"
+  },
+  map: {
+ 	//  bozen
+    // center: [46.493872168136285, 11.3588547706604],
+    // zoom: 16, 
+    // graz
+    center: [47.05549032107255, 15.4522705078125], 
+    zoom: 14, // graz
+  	basemap: 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png'
   }
 };

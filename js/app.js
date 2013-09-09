@@ -19,9 +19,14 @@ $(function() {
 
   // leaflet map
   $('body').append('<div id="map"></div>');
-  var map = new L.Map('map', { center: [46.5, 11.35], zoom: 14, attributionControl: false });
+  var map = new L.Map('map', { 
+    center: config.map.center, 
+    zoom: config.map.zoom, 
+    attributionControl: false 
+  });
 
-  var basemapCloudmade = new L.TileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+  // add openstreetmap layer
+  var basemapCloudmade = new L.TileLayer(config.map.basemap, {
     maxZoom : 19
   });
   map.addLayer(basemapCloudmade);
