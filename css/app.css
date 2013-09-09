@@ -28,7 +28,7 @@ button {
   position: relative;
   padding: 0.25em 0;
 }
-#controls button.add {
+#controls button.note {
   width: 50%;
   margin: 0 1%;
 }

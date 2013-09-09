@@ -3,8 +3,8 @@ var ControlsView = Backbone.View.extend({
   el: '#controls',
 
   events: {
-    'click .add': 'addNote',
-    'touchstart .add': 'addNote',
+    'click .note': 'addNote',
+    'touchstart .note': 'addNote',
     'click .about': 'showAbout',
     'touchstart .about': 'showAbout',
     'click .settings': 'setProfile',

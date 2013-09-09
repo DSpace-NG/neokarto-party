@@ -1,31 +1,22 @@
-var NoteModal = Backbone.View.extend({
-  el: '#note',
-
-  events: {
-    'touchstart .submit': 'save',
-    'click .submit': 'save',
-    'touchstart .close': 'close',
-    'click .close': 'close'
-  },
+var NoteModal = Modal.extend({
+  id: 'note',
+  ui: { close: true, submit: true, focus: 'textarea' },
 
   initialize: function() {
-    this.el.style.display = 'block';
-    if(this.$el.find('form').length === 0){
-      this.$el.append(JST.note());
-    }
-    this.pictureInput = this.$('input[name="picture"]');
-    this.textInput = this.$('textarea[name="text"]');
     this.collection = this.options.user.notes;
-    this.textInput.focus();
+    this.render();
   },
 
-  save: function(event) {
-    event.preventDefault();
+  submit: function(event) {
+    this.pictureInput = this.$('input[name="picture"]');
+    this.textInput = this.$('textarea[name="text"]');
+
     var note = {
       text: this.textInput.val(),
       time: new Date().getTime(),
       location: this.options.user.location
     };
+
     var picture = this.pictureInput[0].files[0];
     if(picture) {
       var reader = new FileReader();
@@ -37,21 +28,12 @@ var NoteModal = Backbone.View.extend({
     } else if(note.text) {
       this._save(note);
     }
-    return false;
-  },
 
-  _save: function(note) {
-    this.collection.add(note);
-    this._reset();
     this.close();
   },
 
-  close: function() {
-    this.el.style.display = 'none';
-  },
-
-  _reset: function() {
-    this.textInput.val('');
+  _save: function(note){
+    this.collection.add(note);
   }
 
 });
