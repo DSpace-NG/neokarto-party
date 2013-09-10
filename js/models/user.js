@@ -16,6 +16,7 @@ var User = Backbone.Model.extend({
       this.id = localStorage['neokarto:user:id'];
     } else {
       this.id = Math.random() * 10000000000000000; //FIXME use UUID
+      localStorage['neokarto:user:id'] = this.id;
     }
 
 
@@ -49,8 +50,9 @@ var User = Backbone.Model.extend({
     this.track = new TrackCollection();
 
 
-    // setup tracker
+    // setup tracker and send initial profile
     this.tracker = new Tracker({ user: this });
+    this.tracker.profile(this);
 
     this.on('change', this.tracker.profile);
     this.track.on('add', this.tracker.location);
