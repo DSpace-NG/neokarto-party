@@ -9,7 +9,15 @@ var PixelIcon = L.Icon.extend({
 var User = Backbone.Model.extend({
 
   initialize: function() {
-    _.bindAll(this, 'setLocation');
+    _.bindAll(this, 'updateLocation');
+
+    // deal with id
+    if(localStorage['neokarto:user:id']) {
+      this.id = localStorage['neokarto:user:id'];
+    } else {
+      this.id = Math.random() * 10000000000000000; //FIXME use UUID
+    }
+
 
     // deal with nickname
     if(localStorage['neokarto:user:nickname']){
@@ -18,28 +26,23 @@ var User = Backbone.Model.extend({
       this.promptProfile();
     }
 
+    this.on('change:nickname', function(){
+      localStorage['neokarto:user:nickname'] = this.get('nickname');
+    });
+
+
     // checks localstorage for avatars, if not existing sets it to default
     if(localStorage['neokarto:user:avatar']){
       this.attributes.avatar = localStorage['neokarto:user:avatar'];
     }else{
       this.attributes.avatar = 'desert';
     }
-    
-    // updates user settings
-    this.on('change:nickname', function(){
-      localStorage['neokarto:user:nickname'] = this.get('nickname');
-    });
+
     this.on('change:avatar', function(){
       localStorage['neokarto:user:avatar'] = this.get('avatar');
       this.marker.setIcon(this.getAvatarIcon());
     });
 
-    // deal with id
-    if(localStorage['neokarto:user:id']) {
-      this.id = localStorage['neokarto:user:id'];
-    } else {
-      this.id = Math.random() * 10000000000000000; //FIXME use UUID
-    }
 
     // initiate track and notes
     this.notes = new NotesCollection();
@@ -74,29 +77,24 @@ var User = Backbone.Model.extend({
   ],
 
   getAvatarIcon: function() {
-    // FIXME: acquire email address and display avatar instead?
-    var iconUrl = 'assets/images/avatars/'+this.get('avatar')+'.png';
+    var iconUrl = 'assets/images/avatars/'+ this.get('avatar') + '.png';
     return new PixelIcon({iconUrl: iconUrl});
   },
-  
 
-  setLocation: function(location) {
-    if(this.location && this.location.lat == location.latlng.lat && this.location.lng == location.latlng.lng) {
-      // location didn't actually change.
-      return;
-    }
-    this.location = location.latlng;
-    this.location.accuracy = location.accuracy;
-    this.trigger('location-changed', this.location);
+  currentLocation: function() {
+    return this.track.at(this.track.length - 1);
   },
 
-  on: function(eventName, handler) {
-    if(eventName == 'location-changed' && this.location) {
-      handler(this.location);
+  updateLocation: function(mapLocation) {
+    var location = { lat: mapLocation.latlng.lat, lng: mapLocation.latlng.lng };
+    var current = this.currentLocation();
+    if(current &&
+       current.get('lat') == location.lat &&
+       current.get('lng') == location.lng) {
+      return; // location didn't actually change.
     }
-    return Backbone.Model.prototype.on.call(this, eventName, handler);
+    this.track.add(location);
   }
-
 });
 
 

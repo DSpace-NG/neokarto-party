@@ -14,7 +14,7 @@ var NoteModal = Modal.extend({
     var note = {
       text: this.textInput.val(),
       time: new Date().getTime(),
-      location: this.options.user.location
+      location: this.options.user.currentLocation().toJSON()
     };
 
     var picture = this.pictureInput[0].files[0];

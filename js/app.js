@@ -33,22 +33,23 @@ $(function() {
 
   // when location changes, add / update user marker,
   // and update location.
-  user.on('location-changed', function(location) {
+  user.track.on('add', function(location) {
+    var latlng = new L.latLng(location.get('lat'), location.get('lng'));
     if(user.marker) { // position changed.
-      user.marker.setLatLng(location);
+      user.marker.setLatLng(latlng);
       if(user.get('followMe')) {
-        map.setView(location, 15);
+        map.setView(latlng, 15);
       }
     } else { // acquired position for first time.
-      user.marker = L.marker(location, {
+      user.marker = L.marker(latlng, {
         icon: user.getAvatarIcon()
       }).addTo(map);
-      map.setView(location, 15);
+      map.setView(latlng, 15);
     }
   });
 
   // hook up leaflet's locate() to user model
-  map.on('locationfound', user.setLocation);
+  map.on('locationfound', user.updateLocation);
   map.on('locationerror', function(e) {
     console.error("Failed to acquire position: " + e.message);
   });
