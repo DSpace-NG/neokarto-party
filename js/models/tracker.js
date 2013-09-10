@@ -35,7 +35,7 @@ Tracker.prototype = {
   // note - an instance Backbone model User
   profile: function(user) {
     var data = user.attributes;
-    console.log('TRACK profile', data.nickname, ':', data.avatar);
+    console.log('TRACK profile', data.nickname, ':', data.avatar, ':', data.color);
     this.faye.publish(this.channels.profile, data);
   }
 };

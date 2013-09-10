@@ -45,6 +45,15 @@ var User = Backbone.Model.extend({
     });
 
 
+    // set color
+    if(localStorage['neokarto:user:color']){
+      this.attributes.color = localStorage['neokarto:user:color'];
+    }else{
+      this.attributes.color = this._randomColor(); // FIXME allow setting from ui
+      localStorage['neokarto:user:color'] = this.attributes.color;
+    }
+
+
     // initiate track and notes
     this.notes = new NotesCollection();
     this.track = new TrackCollection();
@@ -73,7 +82,6 @@ var User = Backbone.Model.extend({
     {file:'deathknight', name:'Deatch Knight'}, 
     {file:'desert', name:'Desert'},
     {file:'firefox', name:'Firefox'}, 
-    {file:'forest', name:'Forest'},
     {file:'ghost', name:'Ghost'},
     {file:'goldenarmor', name:'Golden Armor'}, 
     {file:'guard', name:'HTML5 Guard'}, 
@@ -104,6 +112,12 @@ var User = Backbone.Model.extend({
       return; // location didn't actually change.
     }
     this.track.add(location);
+  },
+
+  // gnerates random hex color string for css
+  // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
+  _randomColor: function() {
+    return '#' + Math.floor(Math.random()*16777215).toString(16);
   }
 });
 
@@ -117,7 +131,6 @@ var WatchedUser = Backbone.Model.extend({
 
     this.map = this.attributes.map;
     this.layerControl = this.attributes.layerControl;
-    this.color = this._randomColor();
 
     this.layerGroup = new L.LayerGroup();
     this.layerControl.addOverlay(this.layerGroup, this.id);
@@ -132,8 +145,9 @@ var WatchedUser = Backbone.Model.extend({
     this.trackOverlay = new TrackOverlay({
       map: this.map,
       collection: this.track,
-      color: this.color
+      color: this.get('color')
     });
+    window.foo = this.trackOverlay;
 
     this.on('change', this.updateProfile);
   },
@@ -144,19 +158,12 @@ var WatchedUser = Backbone.Model.extend({
     return new PixelIcon({iconUrl: iconUrl});
   },
 
+  // FIXME: what a mess i made :( !!!
   updateProfile: function() {
-    this.trackOverlay.marker.setIcon(this.getAvatarIcon()); //FIXME
-    var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.color + '">' + this.get('nickname') + '</em>';
+    this.trackOverlay.marker.setIcon(this.getAvatarIcon());
+    var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.get('color') + '">' + this.get('nickname') + '</em>';
     this.layerControl.addOverlay(this.layerGroup, label);
-  },
-
-  _randomColor: function() {
-    var color = '#';
-    for(var i=0;i<3;i++) {
-      color += Math.floor((Math.random() * 100000) % 256).
-        toString(16);
-    }
-    return color;
+    this.trackOverlay.track.setStyle({color: this.get('color')});
   }
 });
 
