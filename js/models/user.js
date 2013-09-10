@@ -35,7 +35,7 @@ var User = Backbone.Model.extend({
     if(localStorage['neokarto:user:avatar']){
       this.attributes.avatar = localStorage['neokarto:user:avatar'];
     }else{
-      this.attributes.avatar = 'desert';
+      this.attributes.avatar = 'desert'; // FIXME no magic values inline please ;)
     }
 
     this.on('change:avatar', function(){
@@ -47,6 +47,14 @@ var User = Backbone.Model.extend({
     // initiate track and notes
     this.notes = new NotesCollection();
     this.track = new TrackCollection();
+
+
+    // setup tracker
+    this.tracker = new Tracker({ user: this });
+
+    this.on('change', this.tracker.profile);
+    this.track.on('add', this.tracker.location);
+    this.notes.on('add', this.tracker.note);
   },
 
   // creates modal asking for nickname and setting it on this model

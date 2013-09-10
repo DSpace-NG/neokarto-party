@@ -4,7 +4,6 @@ $(function() {
    ** MODELS
    **/
   var user = new User();
-  var tracker = new Tracker(user);
 
   /**
    ** VIEWS
