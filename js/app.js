@@ -21,8 +21,8 @@ $(function() {
   });
 
   // add openstreetmap layer
-  var basemapCloudmade = new L.TileLayer(config.map.basemap, {
-    maxZoom : 19
+  var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
+    maxZoom : config.map.basemap.maxZoom
   });
   map.addLayer(basemapCloudmade);
 
@@ -37,13 +37,13 @@ $(function() {
     if(user.marker) { // position changed.
       user.marker.setLatLng(latlng);
       if(user.get('followMe')) {
-        map.setView(latlng, 15);
+        map.setView(latlng, config.map.zoom);
       }
     } else { // acquired position for first time.
       user.marker = L.marker(latlng, {
         icon: user.getAvatarIcon()
       }).addTo(map);
-      map.setView(latlng, 15);
+      map.setView(latlng, config.map.zoom);
     }
   });
 

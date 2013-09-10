@@ -5,8 +5,8 @@ $(function() {
     zoom: config.map.zoom, 
     attributionControl: false
   });
-  var basemapCloudmade = new L.TileLayer(config.map.basemap, {
-    maxZoom : 19
+  var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
+    maxZoom : config.map.basemap.zoom
   });
   map.addLayer(basemapCloudmade);
   L.control.scale({imperial:false}).addTo(map);
