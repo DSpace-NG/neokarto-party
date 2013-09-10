@@ -109,9 +109,23 @@ var User = Backbone.Model.extend({
 // a user from the HQ perspective.
 // FIXME: clean up the user above and make this the same.
 var WatchedUser = Backbone.Model.extend({
+
   initialize: function() {
+    _.bindAll(this, 'updateMarker');
     this.notes = new NotesCollection();
     this.track = new TrackCollection();
+    this.on('change', this.updateMarker);
+  },
+
+  // FIXME: duplicated from User!
+  getAvatarIcon: function() {
+    var iconUrl = 'assets/images/avatars/'+ this.get('avatar') + '.png';
+    return new PixelIcon({iconUrl: iconUrl});
+  },
+
+  updateMarker: function() {
+    window.user = this;
+    this.track.overlay.marker.setIcon(this.getAvatarIcon()); //FIXME
   }
 });
 

@@ -39,24 +39,16 @@ $(function() {
 
     faye.addExtension({
       incoming: function(message, callback) {
-        //console.log('incoming', message);
-        var md = message.channel.match(/^\/bolzano\/(track|notes)\/([^\/]+)$/);
+        console.log('incoming', message);
+        var md = message.channel.match(/^\/bolzano\/(track|notes|profile)\/([^\/]+)$/);
         if(md) {
           message.data.type = md[1].replace(/s$/,'');
           message.data.id = md[2];
-          //console.log('filtered', JSON.stringify(message.data));
+          console.log('filtered', JSON.stringify(message.data));
         }
         callback(message);
       }
     });
-
-    function randC() {
-      var s = Math.round((Math.random() * 10000) % 256).toString(16);
-      if(s.length < 2) {
-        s = '0'+s;
-      }
-      return s;
-    }
 
     var users = new UsersCollection();
 
@@ -71,6 +63,7 @@ $(function() {
         }),
         track: new TrackOverlay({
           map: map,
+          user: user,
           collection: user.track
         })
       };
@@ -95,13 +88,14 @@ $(function() {
           user.notes.add(record);
         } else if(message.type == 'track') {
           user.track.add(record);
+        } else if(message.type == 'profile') {
+          user.set(record);
         } else {
           console.log("WARNING: unhandled record!", record);
         }
       }
     });
 
-    
   }
 
   //     var layerGroup;
@@ -114,31 +108,6 @@ $(function() {
   //       }
   //     }
 
-  //     if(message.type == 'track') {
-  //       var line = lines[message.id];
-  //       if(! line) {
-  //         var color = ('#' + randC() + randC() + randC());
-  //         line = new L.Polyline([], { color: color }).addTo(layerGroup);
-  //         lines[message.id] = line;
-  //       }
-  //       line.addLatLng(new L.LatLng(message.lat, message.lng));
-
-  //       var marker = markers[message.id];
-  //       if(! marker) {
-  //         marker = new L.Marker(message).addTo(layerGroup);
-  //         markers[message.id] = marker;
-  //       } else {
-  //         marker.setLatLng(new L.LatLng(message.lat, message.lng));
-  //       }
-  //     } else if(message.type == 'note') {
-  //       var marker = new L.Marker(message.location, {
-  //         icon: noteIcon
-  //       }).addTo(layerGroup);
-  //       marker.bindPopup('<em>'+message.text+'</em>');
-  //       console.log('bound popup for message with text ', message.text);
-  //     }
-  //   });
-  // }
 
   var channel = '/bolzano/**';
   subscribe(channel);
