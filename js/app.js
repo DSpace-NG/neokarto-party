@@ -4,7 +4,7 @@ $(function() {
    ** MODELS
    **/
   var user = new User();
-  var bigBrother = new BigBrother(user);
+  var tracker = new Tracker(user);
 
   /**
    ** VIEWS

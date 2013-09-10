@@ -2,7 +2,7 @@ var BASE_URL = config.pubsub.url;
 var FAYE_URL = BASE_URL + '/faye';
 var FAYE_CHANNEL_PREFIX = '/bolzano/';
 
-var BigBrother = function(citizen) {
+var Tracker = function(citizen) {
   _.bindAll(this, 'trackPoint', 'trackNote', 'trackProfile');
 
   this.faye = new Faye.Client(FAYE_URL);
@@ -20,7 +20,7 @@ var BigBrother = function(citizen) {
   citizen.notes.on('add', this.trackNote);
 };
 
-BigBrother.prototype = {
+Tracker.prototype = {
 
   // note - an instance Backbone model
   trackPoint: function(location) {
