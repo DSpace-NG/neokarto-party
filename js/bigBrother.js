@@ -1,6 +1,5 @@
 var BASE_URL = config.pubsub.url;
 var FAYE_URL = BASE_URL + '/faye';
-var AUTH_URL = BASE_URL + '/auth';
 var FAYE_CHANNEL_PREFIX = '/bolzano/';
 
 var BigBrother = function(citizen) {
@@ -13,41 +12,9 @@ var BigBrother = function(citizen) {
     notes: FAYE_CHANNEL_PREFIX + 'notes/' + citizen.id,
   };
 
-  this.faye.addExtension({
-    outgoing: function(message, callback) {
-      if(! message.ext) message.ext = {};
-      message.ext.token = citizen.token;
-      callback(message);
-    }
-  });
-
   // hey you little fella!
   citizen.on('location-changed', this.trackPoint);
   citizen.notes.on('add', this._trackNote);
-};
-
-BigBrother.auth = function(credentials, callback) {
-  console.log('auth', credentials);
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', AUTH_URL, true);
-  xhr.onload = function() {
-    if(xhr.status == 200) {
-      callback(null, JSON.parse(xhr.responseText));
-    } else {
-      callback(xhr.responseText);
-    }
-  };
-  xhr.onerror = function(event) {
-    console.log('req failed', event);
-  };
-  xhr.send();
-};
-
-BigBrother.acquireId = function(callback) {
-  this.auth({}, function(error, result) {
-    if(error) callback(error);
-    else callback(null, result.id, result.token);
-  });
 };
 
 BigBrother.prototype = {

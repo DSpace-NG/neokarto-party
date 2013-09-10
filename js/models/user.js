@@ -9,7 +9,7 @@ var PixelIcon = L.Icon.extend({
 var User = Backbone.Model.extend({
 
   initialize: function() {
-    _.bindAll(this, 'setLocation', '_acquiredId');
+    _.bindAll(this, 'setLocation');
 
     // deal with nickname
     if(localStorage['neokarto:user:nickname']){
@@ -34,13 +34,11 @@ var User = Backbone.Model.extend({
       this.marker.setIcon(this.getAvatarIcon());
     });
 
-    // deal with id and token
-    if(localStorage['neokarto:user:id'] && localStorage['neokarto:user:token']) {
+    // deal with id
+    if(localStorage['neokarto:user:id']) {
       this.id = localStorage['neokarto:user:id'];
-      this.token = localStorage['neokarto:user:token'];
-      setTimeout(this.trigger.bind(this), 0, 'id-assigned');
     } else {
-      BigBrother.acquireId(this._acquiredId);
+      this.id = Math.random() * 10000000000000000; //FIXME use UUID
     }
 
     // initiate track and notes
@@ -90,18 +88,6 @@ var User = Backbone.Model.extend({
     this.location = location.latlng;
     this.location.accuracy = location.accuracy;
     this.trigger('location-changed', this.location);
-  },
-
-  _acquiredId: function(error, id, token) {
-    if(error) {
-      console.error("Failed to acquire ID: ", error);
-    } else {
-      this.id = id;
-      this.token = token;
-      localStorage['neokarto:user:id'] = id;
-      localStorage['neokarto:user:token'] = token;
-      this.trigger('id-assigned');
-    }
   },
 
   on: function(eventName, handler) {
