@@ -50,7 +50,7 @@ var User = Backbone.Model.extend({
 
   // creates modal asking for nickname and setting it on this model
   promptProfile: function() {
-    new Profile( {user: this} );
+    new ProfileModal( {user: this} );
   },
 
   // create list of avatar objects
