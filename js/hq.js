@@ -34,16 +34,10 @@ $(function() {
   var markers = {};
   var layerGroups = {};
 
-  function subscribe(channel, token) {
+  function subscribe(channel) {
     var faye = new Faye.Client(config.pubsub.url+ '/faye');
 
     faye.addExtension({
-      outgoing: function(message, callback) {
-        if(! message.ext) message.ext = {};
-        message.ext.token = token;
-        callback(message);
-      },
-
       incoming: function(message, callback) {
         //console.log('incoming', message);
         var md = message.channel.match(/^\/bolzano\/(track|notes)\/([^\/]+)$/);
@@ -147,17 +141,7 @@ $(function() {
   // }
 
   var channel = '/bolzano/**';
-  
-  if(localStorage.hq_token) {
-    subscribe(channel, localStorage.hq_token);
-    $('#login-link').remove();
-  } else {
-    var auth = new PersonaAuth(config.pubsub.url + '/auth', function(response) {
-      localStorage.hq_token = response.token;
-      subscribe(channel, response.token);
-    });
-    $('#login-link').click(auth.login.bind(auth));
-  }
+  subscribe(channel);
 
   window.app = {
     map: map,
