@@ -1,12 +1,12 @@
 $(function() {
 
   var map = new L.Map('map', {
-    center: config.map.center, 
-    zoom: config.map.zoom, 
+    center: config.map.center,
+    zoom: config.map.zoom - 3,
     attributionControl: false
   });
   var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
-    maxZoom : config.map.basemap.zoom
+    maxZoom : config.map.basemap.maxZoom
   });
   map.addLayer(basemapCloudmade);
   L.control.scale({imperial:false}).addTo(map);
