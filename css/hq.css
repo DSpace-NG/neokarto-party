@@ -5,3 +5,26 @@
     width: 100%;
     height: 100%;
 }
+
+.leaflet-marker-pane {
+  opacity: .8;
+}
+
+.leaflet-control-layers-overlays {
+  opacity: .7;
+}
+.leaflet-control-layers-overlays label {
+  font-size: 18px;
+  line-height: 28px;
+}
+.leaflet-control-layers-overlays label img {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+}
+.leaflet-control-layers-overlays label em {
+  border-bottom: 5px solid black;
+  border-radius: 3px;
+  padding: 0 .2em;
+  margin-right: .5em;
+}

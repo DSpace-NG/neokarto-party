@@ -35,8 +35,8 @@ $(function() {
       user: user, //FIXME
       collection: user.track
     });
-    var layerGroup = new L.LayerGroup();
-    layerControl.addOverlay(layerGroup, user.id);
+    user.layerGroup = new L.LayerGroup();
+    layerControl.addOverlay(user.layerGroup, user.id);
   });
 
 
@@ -83,4 +83,7 @@ $(function() {
       }
     }
   });
+
+  window.users = users; //FIXME
+  window.layerControl = layerControl;
 });

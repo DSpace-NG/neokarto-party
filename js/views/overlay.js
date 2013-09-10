@@ -32,6 +32,7 @@ var TrackOverlay = Overlay.extend({
     Overlay.prototype.initialize.call(this);
     this.options.user.track.overlay = this; //FIXME
     this.color = this._randomColor();
+    this.options.user.color = this.color;
     this.track = new L.Polyline([], {
       color: this.color
     }).addTo(this.layer);

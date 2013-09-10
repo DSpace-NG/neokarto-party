@@ -113,10 +113,10 @@ var User = Backbone.Model.extend({
 var WatchedUser = Backbone.Model.extend({
 
   initialize: function() {
-    _.bindAll(this, 'updateMarker');
+    _.bindAll(this, 'updateProfile');
     this.notes = new NotesCollection();
     this.track = new TrackCollection();
-    this.on('change', this.updateMarker);
+    this.on('change', this.updateProfile);
   },
 
   // FIXME: duplicated from User!
@@ -125,9 +125,10 @@ var WatchedUser = Backbone.Model.extend({
     return new PixelIcon({iconUrl: iconUrl});
   },
 
-  updateMarker: function() {
-    window.user = this;
+  updateProfile: function() {
     this.track.overlay.marker.setIcon(this.getAvatarIcon()); //FIXME
+    var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.color + '">' + this.get('nickname') + '</em>';
+    window.layerControl.addOverlay(this.layerGroup, label);
   }
 });
 
