@@ -28,6 +28,13 @@ var User = Backbone.Model.extend({
     }
 
     this.on('change:nickname', function(){
+      // FIXME tmp way of clearing localStorage from UI #hack
+      if(this.get('nickname') === 'RESET'){
+        this.reset();
+        alert('RESET: localStorage cleared!');
+        return;
+      }
+
       localStorage['neokarto:user:nickname'] = this.get('nickname');
     });
 
@@ -52,7 +59,6 @@ var User = Backbone.Model.extend({
       this.attributes.color = this._randomColor(); // FIXME allow setting from ui
       localStorage['neokarto:user:color'] = this.attributes.color;
     }
-
 
     // initiate track and notes
     this.notes = new NotesCollection();
@@ -114,6 +120,12 @@ var User = Backbone.Model.extend({
     this.track.add(location);
   },
 
+  // clear local storage expecting 'RESET' nickname
+  reset: function() {
+    localStorage.clear();
+    location.reload();
+  },
+
   // gnerates random hex color string for css
   // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
   _randomColor: function() {
@@ -160,6 +172,7 @@ var WatchedUser = Backbone.Model.extend({
 
   // FIXME: what a mess i made :( !!!
   updateProfile: function() {
+    // FIXME #BUG seen undefined on client user.reset()
     this.trackOverlay.marker.setIcon(this.getAvatarIcon());
     var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.get('color') + '">' + this.get('nickname') + '</em>';
     this.layerControl.addOverlay(this.layerGroup, label);
