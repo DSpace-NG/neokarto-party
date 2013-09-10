@@ -30,11 +30,8 @@ var TrackOverlay = Overlay.extend({
 
   initialize: function() {
     Overlay.prototype.initialize.call(this);
-    this.options.user.track.overlay = this; //FIXME
-    this.color = this._randomColor();
-    this.options.user.color = this.color;
     this.track = new L.Polyline([], {
-      color: this.color
+      color: this.options.color
     }).addTo(this.layer);
   },
 
@@ -46,14 +43,5 @@ var TrackOverlay = Overlay.extend({
       this.marker = new L.Marker(point.attributes).
         addTo(this.layer);
     }
-  },
-
-  _randomColor: function() {
-    var color = '#';
-    for(var i=0;i<3;i++) {
-      color += Math.floor((Math.random() * 100000) % 256).
-        toString(16);
-    }
-    return color;
   }
 });

@@ -24,22 +24,6 @@ $(function() {
 
   var users = new UsersCollection();
 
-  // new user, add overlays.
-  users.on('add', function(user) {
-    new NotesOverlay({
-      map: map,
-      collection: user.notes
-    });
-    new TrackOverlay({
-      map: map,
-      user: user, //FIXME
-      collection: user.track
-    });
-    user.layerGroup = new L.LayerGroup();
-    layerControl.addOverlay(user.layerGroup, user.id);
-  });
-
-
   var faye = new Faye.Client(config.pubsub.url+ '/faye');
 
   var triage = {
@@ -64,7 +48,9 @@ $(function() {
       var user = users.get(message.id);
       if(! user) {
         user = new WatchedUser({
-          id: message.id
+          id: message.id,
+          map: map,
+          layerControl: layerControl
         });
         users.add(user);
       }
@@ -83,7 +69,4 @@ $(function() {
       }
     }
   });
-
-  window.users = users; //FIXME
-  window.layerControl = layerControl;
 });

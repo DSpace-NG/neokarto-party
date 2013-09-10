@@ -114,8 +114,27 @@ var WatchedUser = Backbone.Model.extend({
 
   initialize: function() {
     _.bindAll(this, 'updateProfile');
+
+    this.map = this.attributes.map;
+    this.layerControl = this.attributes.layerControl;
+    this.color = this._randomColor();
+
+    this.layerGroup = new L.LayerGroup();
+    this.layerControl.addOverlay(this.layerGroup, this.id);
+
     this.notes = new NotesCollection();
     this.track = new TrackCollection();
+
+    this.notesOverlay = new NotesOverlay({
+      map: this.map,
+      collection: this.notes
+    });
+    this.trackOverlay = new TrackOverlay({
+      map: this.map,
+      collection: this.track,
+      color: this.color
+    });
+
     this.on('change', this.updateProfile);
   },
 
@@ -126,9 +145,18 @@ var WatchedUser = Backbone.Model.extend({
   },
 
   updateProfile: function() {
-    this.track.overlay.marker.setIcon(this.getAvatarIcon()); //FIXME
+    this.trackOverlay.marker.setIcon(this.getAvatarIcon()); //FIXME
     var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.color + '">' + this.get('nickname') + '</em>';
-    window.layerControl.addOverlay(this.layerGroup, label);
+    this.layerControl.addOverlay(this.layerGroup, label);
+  },
+
+  _randomColor: function() {
+    var color = '#';
+    for(var i=0;i<3;i++) {
+      color += Math.floor((Math.random() * 100000) % 256).
+        toString(16);
+    }
+    return color;
   }
 });
 
