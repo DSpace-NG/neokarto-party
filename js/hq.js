@@ -14,12 +14,11 @@ $(function() {
   var layerControl = new L.Control.Layers(undefined, undefined, { collapsed: false }).addTo(map);
 
   /*
-    1)   DONE Authenticate w/ Persona
+    1)   UNDONE Authenticate w/ Persona
     2)   DONE Subscribe to "/bolzano"
     2.1) TODO Get past data from the couch (proxied through the radar).
     3)   IN PROGRESS Display tracks, notes, etc.
-    4)   DONE Display list of channels (actually users) to turn on / off in the map view
-    5)   TODO Rule the world.
+    4)   IN PROGRESS Display list of channels (actually users) to turn on / off in the map view
    */
 
   var users = new UsersCollection();
@@ -28,12 +27,12 @@ $(function() {
 
   var triage = {
     incoming: function(message, callback) {
-      console.log('incoming', message);
+      //console.log('incoming', message);
       var md = message.channel.match(/^\/bolzano\/(track|notes|profile)\/([^\/]+)$/);
       if(md) {
         message.data.type = md[1].replace(/s$/,'');
         message.data.id = md[2];
-        console.log('filtered', JSON.stringify(message.data));
+        //console.log('filtered', JSON.stringify(message.data));
       }
       callback(message);
     }
@@ -43,7 +42,6 @@ $(function() {
   // faye -> user/notes/track collections
   var channel = '/bolzano/**';
   faye.subscribe(channel, function(message) {
-    console.log('incoming', message);
     if(message.id) {
       var user = users.get(message.id);
       if(! user) {
