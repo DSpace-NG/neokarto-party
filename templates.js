@@ -15,7 +15,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<!-- FIXME <label><input class=\"follow-me\" type=\"checkbox\">Follow Me</label> -->\n<button class=\"about icon-info\"></button>\n<button class=\"note icon-comment-alt\"></button>\n<button class=\"settings icon-target\"></button>\n";
+  return "<!-- FIXME <label><input class=\"follow-me\" type=\"checkbox\">Follow Me</label> -->\n<button class=\"about icon-info\"></button>\n<button class=\"note icon-comment\"></button>\n<button class=\"settings icon-profile\"></button>\n";
   });
 
 this["JST"]["note"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -24,7 +24,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<form>\n  <label class=\"photo icon-picture\"><input style=\"opacity:0;\" name=\"picture\" type=\"file\" accept=\"image/*;capture=camera\" capture=\"camera\"></label>\n  <br/>\n  <textarea name=\"text\" placeholder=\"What's up?\"></textarea>\n</form>\n";
+  return "<form>\n  <label class=\"photo icon-camera\"><input style=\"opacity:0;\" name=\"picture\" type=\"file\" accept=\"image/*;capture=camera\" capture=\"camera\"></label>\n  <br/>\n  <textarea name=\"text\" placeholder=\"What's up?\"></textarea>\n</form>\n";
   });
 
 this["JST"]["profile"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
