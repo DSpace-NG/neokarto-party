@@ -8,7 +8,7 @@ var NoteModal = Modal.extend({
   },
 
   submit: function(event) {
-    this.pictureInput = this.$('input[name="picture"]');
+    this.pictureInput = this.$('input[name="media"]');
     this.textInput = this.$('textarea[name="text"]');
 
     var note = {
