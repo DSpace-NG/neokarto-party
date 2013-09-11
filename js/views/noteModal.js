@@ -4,36 +4,29 @@ var NoteModal = Modal.extend({
 
   initialize: function() {
     this.collection = this.options.user.notes;
+    this.note = new Note();
+    //console.log(this.note.toJSON());
     this.render();
   },
 
   submit: function(event) {
-    this.pictureInput = this.$('input[name="media"]');
+    this.mediaInput = this.$('input[name="media"]');
     this.textInput = this.$('textarea[name="text"]');
 
-    var note = {
+    this.note.set({
       text: this.textInput.val(),
-      time: new Date().getTime(),
-      location: this.options.user.currentLocation().toJSON()
-    };
+      timeSubmit: new Date().getTime(),
+      locationSubmit: this.options.user.currentLocation().toJSON()
+    });
 
-    var picture = this.pictureInput[0].files[0];
-    if(picture) {
-      var reader = new FileReader();
-      reader.onload = function() {
-        note.picture = btoa(reader.result);
-        this._save(note);
-      }.bind(this);
-      reader.readAsBinaryString(picture);
-    } else if(note.text) {
-      this._save(note);
+    var media = this.mediaInput[0].files[0];
+    if(media) {
+      this.note.attachFile(media);
+    }
+    if(this.note.get('text') || media) {
+      this.collection.add(this.note);
     }
 
     this.close();
-  },
-
-  _save: function(note){
-    this.collection.add(note);
   }
-
 });

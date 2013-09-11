@@ -20,21 +20,21 @@ Tracker.prototype = {
 
   // note - an instance Backbone model
   location: function(location) {
-    var data = location.attributes;
+    var data = location.toJSON();
     console.log('TRACK POINT', [data.lat, data.lng]);
     this.faye.publish(this.channels.track, data);
   },
 
   // note - an instance Backbone model Note
   note: function(note) {
-    var data = note.attributes;
-    console.log('TRACK data', [data.location.lat, data.location.lng], ':', data.text);
+    var data = note.toJSON();
+    console.log('TRACK data', [data.locationSubmit.lat, data.locationSubmit.lng], ':', data.text);
     this.faye.publish(this.channels.notes, data);
   },
 
   // note - an instance Backbone model User
   profile: function(user) {
-    var data = user.attributes;
+    var data = user.toJSON();
     console.log('TRACK profile', data.nickname, ':', data.avatar, ':', data.color);
     this.faye.publish(this.channels.profile, data);
   }

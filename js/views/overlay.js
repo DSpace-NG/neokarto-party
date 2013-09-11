@@ -17,7 +17,8 @@ var NotesOverlay = Overlay.extend({
   }),
 
   renderData: function(note) {
-    var location = note.attributes.location;
+    console.log(note.markerLocation());
+    var location = note.markerLocation();
     var marker = new L.Marker([location.lat, location.lng], {
       icon: this.icon
     });
