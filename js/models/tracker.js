@@ -16,6 +16,7 @@ var Tracker = function(options) {
 
 };
 
+// FIXME: move to appropriate models/collections
 Tracker.prototype = {
 
   // note - an instance Backbone model
@@ -28,7 +29,7 @@ Tracker.prototype = {
   // note - an instance Backbone model Note
   note: function(note) {
     var data = note.toJSON();
-    console.log('TRACK data', [data.locationSubmit.lat, data.locationSubmit.lng], ':', data.text);
+    console.log('TRACK note', [data.locationSubmit.lat, data.locationSubmit.lng], ':', data.text);
     this.faye.publish(this.channels.notes, data);
   },
 
