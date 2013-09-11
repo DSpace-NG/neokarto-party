@@ -15,7 +15,7 @@ var User = Backbone.Model.extend({
     if(localStorage['neokarto:user:id']) {
       this.id = localStorage['neokarto:user:id'];
     } else {
-      this.id = Math.random() * 10000000000000000; //FIXME use UUID
+      this.id = uuid();
       localStorage['neokarto:user:id'] = this.id;
     }
 

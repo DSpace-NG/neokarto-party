@@ -23,6 +23,7 @@
     "backbone": "1.0.0",
     "handlebars.js": "1.0.12",
     "faye": "0.8.9",
-    "leaflet-dist": "0.6.4"
+    "leaflet-dist": "0.6.4",
+    "node-uuid": "~1.4.1"
   }
 }
