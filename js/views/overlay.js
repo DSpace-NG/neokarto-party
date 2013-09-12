@@ -1,11 +1,14 @@
 var Overlay = Backbone.View.extend({
   initialize: function(){
-    this.layer = new L.LayerGroup();
-    this.layer.addTo(this.options.map);
+    this.layer = this.options.layer;
 
-    _.bindAll(this, 'renderData');
+    _.bindAll(this, 'render');
 
-    this.collection.on('add', this.renderData);
+    if(this.collection) {
+      this.collection.on('add', this.render);
+    } else if(this.model) {
+      this.model.on('change', this.render);
+    }
   }
 });
 
@@ -16,7 +19,7 @@ var StoryOverlay = Overlay.extend({
     iconAnchor: [9, 29]
   }),
 
-  renderData: function(note) {
+  render: function(note) {
     var location = note.markerLocation();
     var marker = new L.Marker([location.lat, location.lng], {
       icon: this.icon
@@ -35,13 +38,33 @@ var TrackOverlay = Overlay.extend({
     }).addTo(this.layer);
   },
 
-  renderData: function(point) {
-    this.track.addLatLng(point.attributes);
+  render: function(location) {
+    this.track.addLatLng(location.toJSON());
+  }
+});
+
+var AvatarOverlay = Overlay.extend({
+
+  initialize: function() {
+    Overlay.prototype.initialize.call(this);
+    _.bindAll(this, 'move');
+    this.model.track.on('add', this.move);
+  },
+
+  render: function(user) {
+    var location = user.currentLocation().toJSON();
     if(this.marker) {
-      this.marker.setLatLng(point.attributes);
+      user.avatarOverlay.marker.setIcon(user.getAvatarIcon());
     } else {
-      this.marker = new L.Marker(point.attributes).
+      this.marker = new L.Marker(location).
         addTo(this.layer);
+      user.avatarOverlay.marker.setIcon(user.getAvatarIcon());
+    }
+  },
+
+  move: function(location) {
+    if(this.marker) {
+      this.marker.setLatLng(location.toJSON());
     }
   }
 });

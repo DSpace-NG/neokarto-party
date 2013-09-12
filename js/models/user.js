@@ -145,21 +145,25 @@ var WatchedUser = Backbone.Model.extend({
     this.layerControl = this.attributes.layerControl;
 
     this.layerGroup = new L.LayerGroup();
+    this.layerGroup.addTo(this.map);
     this.layerControl.addOverlay(this.layerGroup, this.id);
 
     this.story = new Story();
     this.track = new Track();
 
     this.storyOverlay = new StoryOverlay({
-      map: this.map,
-      collection: this.story
+      collection: this.story,
+      layer: this.layerGroup
     });
     this.trackOverlay = new TrackOverlay({
-      map: this.map,
       collection: this.track,
-      color: this.get('color')
+      color: this.get('color'),
+      layer: this.layerGroup
     });
-    window.foo = this.trackOverlay;
+    this.avatarOverlay = new AvatarOverlay({
+      model: this,
+      layer: this.layerGroup
+    });
 
     this.on('change', this.updateProfile);
   },
@@ -170,11 +174,13 @@ var WatchedUser = Backbone.Model.extend({
     return new PixelIcon({iconUrl: iconUrl});
   },
 
-  // FIXME: what a mess i made :( !!!
+  // FIXME: duplicated from User!
+  currentLocation: function() {
+    return this.track.at(this.track.length - 1);
+  },
+
+  // FIXME: move to overlays
   updateProfile: function() {
-    if(this.trackOverlay.marker){
-      this.trackOverlay.marker.setIcon(this.getAvatarIcon());
-    }
     var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.get('color') + '">' + this.get('nickname') + '</em>';
     this.layerControl.addOverlay(this.layerGroup, label);
     this.trackOverlay.track.setStyle({color: this.get('color')});
