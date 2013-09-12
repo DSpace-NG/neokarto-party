@@ -20,6 +20,7 @@ var StoryOverlay = Overlay.extend({
   }),
 
   render: function(note) {
+    console.log('render story overlay');
     var location = note.markerLocation();
     var marker = new L.Marker([location.lat, location.lng], {
       icon: this.icon

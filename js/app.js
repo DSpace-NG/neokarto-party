@@ -1,17 +1,5 @@
 $(function() {
 
-  /**
-   ** MODELS
-   **/
-  var user = new User();
-
-  /**
-   ** VIEWS
-   **/
-
-  // button(s) in top-right corner
-  var controls = new ControlsView({ user: user });
-
   // leaflet map
   $('body').append('<div id="map"></div>');
   var map = new L.Map('map', { 
@@ -25,6 +13,20 @@ $(function() {
     maxZoom : config.map.basemap.maxZoom
   });
   map.addLayer(basemapCloudmade);
+
+  /**
+   ** MODELS
+   **/
+  var user = new User();
+  user.createOverlays(map);
+
+  /**
+   ** VIEWS
+   **/
+
+  // button(s) in top-right corner
+  var controls = new ControlsView({ user: user });
+
 
   /**
    ** MAIN
@@ -58,16 +60,6 @@ $(function() {
     maximumAge: 15000,
     enableHighAccuracy: true
   });
-
-  var baseMaps = { 
-    'OpenStreetMap':basemapCloudmade
-  };
-
-  var overlayMaps = { 
-    //'OpenStreetMap':basemapCloudmade 
-  };
-
-  user.storyOverlay = new StoryOverlay({ collection: user.story, map: map });
 
   window.app = {
     user: user,

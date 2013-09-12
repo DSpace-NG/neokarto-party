@@ -64,7 +64,6 @@ var User = Backbone.Model.extend({
     this.story = new Story();
     this.track = new Track();
 
-
     // setup tracker and send initial profile
     this.tracker = new Tracker({ user: this });
     this.tracker.profile(this);
@@ -72,6 +71,20 @@ var User = Backbone.Model.extend({
     this.on('change', this.tracker.profile);
     this.track.on('add', this.tracker.location);
     this.story.on('add', this.tracker.note);
+  },
+
+  createOverlays: function(map) {
+    this.layerGroup = new L.LayerGroup();
+    this.layerGroup.addTo(map);
+    this.storyOverlay = new StoryOverlay({
+      collection: this.story,
+      layer: this.layerGroup
+    });
+    this.trackOverlay = new TrackOverlay({
+      collection: this.track,
+      color: this.get('color'),
+      layer: this.layerGroup
+    });
   },
 
   // creates modal asking for nickname and setting it on this model
