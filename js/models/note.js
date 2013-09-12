@@ -1,8 +1,11 @@
 var Note = Backbone.Model.extend({
   initialize: function() {
-    this.set('@type', 'note');
-    this.set('uuid', uuid());
-    this.set('timeStart', new Date().getTime());
+    // for new notes
+    if(!this.get('uuid')){
+      this.set('@type', 'note');
+      this.set('uuid', uuid());
+      this.set('timeStart', new Date().getTime());
+    }
   },
 
   /*

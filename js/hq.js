@@ -9,7 +9,6 @@ $(function() {
     maxZoom : config.map.basemap.maxZoom
   });
   map.addLayer(basemapCloudmade);
-  L.control.scale({imperial:false}).addTo(map);
 
   var layerControl = new L.Control.Layers(undefined, undefined, { collapsed: false }).addTo(map);
 
@@ -22,6 +21,8 @@ $(function() {
    */
 
   var users = new UsersCollection();
+  var media = new NotesCollection();
+  var stream = new Stream({collection: media});
 
   var faye = new Faye.Client(config.pubsub.url+ '/faye');
 
@@ -58,6 +59,11 @@ $(function() {
       delete record.id;
       if(message.type == 'note') {
         user.notes.add(record);
+        // handle media Stream
+        if(message.mediaType){
+          console.log(record);
+          media.add(record);
+        }
       } else if(message.type == 'track') {
         user.track.add(record);
       } else if(message.type == 'profile') {
@@ -67,4 +73,8 @@ $(function() {
       }
     }
   });
+
+  window.app = {
+    users: users
+  };
 });
