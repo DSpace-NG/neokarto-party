@@ -22,6 +22,7 @@ Tracker.prototype = {
   // note - an instance Backbone model
   location: function(location) {
     var data = location.toJSON();
+    data["@type"] = "location";
     console.log('TRACK POINT', [data.lat, data.lng]);
     this.faye.publish(this.channels.track, data);
   },
@@ -36,6 +37,7 @@ Tracker.prototype = {
   // note - an instance Backbone model User
   profile: function(user) {
     var data = user.toJSON();
+    data["@type"] = "profile";
     console.log('TRACK profile', data.nickname, ':', data.avatar, ':', data.color);
     this.faye.publish(this.channels.profile, data);
   }
