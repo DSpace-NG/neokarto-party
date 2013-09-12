@@ -13,10 +13,10 @@ var User = Backbone.Model.extend({
 
     // deal with id
     if(localStorage['neokarto:user:id']) {
-      this.id = localStorage['neokarto:user:id'];
+      this.set('id', localStorage['neokarto:user:id']);
     } else {
-      this.id = uuid();
-      localStorage['neokarto:user:id'] = this.id;
+      this.set('id', uuid());
+      localStorage['neokarto:user:id'] = this.get('id');
     }
 
 
