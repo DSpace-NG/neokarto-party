@@ -60,9 +60,9 @@ var User = Backbone.Model.extend({
       localStorage['neokarto:user:color'] = this.attributes.color;
     }
 
-    // initiate track and notes
-    this.notes = new NotesCollection();
-    this.track = new TrackCollection();
+    // initiate track and story
+    this.story = new Story();
+    this.track = new Track();
 
 
     // setup tracker and send initial profile
@@ -71,7 +71,7 @@ var User = Backbone.Model.extend({
 
     this.on('change', this.tracker.profile);
     this.track.on('add', this.tracker.location);
-    this.notes.on('add', this.tracker.note);
+    this.story.on('add', this.tracker.note);
   },
 
   // creates modal asking for nickname and setting it on this model
@@ -147,12 +147,12 @@ var WatchedUser = Backbone.Model.extend({
     this.layerGroup = new L.LayerGroup();
     this.layerControl.addOverlay(this.layerGroup, this.id);
 
-    this.notes = new NotesCollection();
-    this.track = new TrackCollection();
+    this.story = new Story();
+    this.track = new Track();
 
-    this.notesOverlay = new NotesOverlay({
+    this.storyOverlay = new StoryOverlay({
       map: this.map,
-      collection: this.notes
+      collection: this.story
     });
     this.trackOverlay = new TrackOverlay({
       map: this.map,
@@ -172,8 +172,9 @@ var WatchedUser = Backbone.Model.extend({
 
   // FIXME: what a mess i made :( !!!
   updateProfile: function() {
-    // FIXME #BUG seen undefined on client user.reset()
-    this.trackOverlay.marker.setIcon(this.getAvatarIcon());
+    if(this.trackOverlay.marker){
+      this.trackOverlay.marker.setIcon(this.getAvatarIcon());
+    }
     var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.get('color') + '">' + this.get('nickname') + '</em>';
     this.layerControl.addOverlay(this.layerGroup, label);
     this.trackOverlay.track.setStyle({color: this.get('color')});

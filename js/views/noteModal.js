@@ -3,7 +3,7 @@ var NoteModal = Modal.extend({
   ui: { close: true, submit: true, focus: 'textarea' },
 
   initialize: function() {
-    this.collection = this.options.user.notes;
+    this.collection = this.options.user.story;
     this.note = new Note();
     //console.log(this.note.toJSON());
     this.render();

@@ -67,7 +67,7 @@ $(function() {
     //'OpenStreetMap':basemapCloudmade 
   };
 
-  user.notesOverlay = new NotesOverlay({ collection: user.notes, map: map });
+  user.storyOverlay = new StoryOverlay({ collection: user.story, map: map });
 
   window.app = {
     user: user,

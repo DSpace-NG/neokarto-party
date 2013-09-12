@@ -21,7 +21,7 @@ $(function() {
    */
 
   var users = new UsersCollection();
-  var media = new NotesCollection();
+  var media = new Story();
   var stream = new Stream({collection: media});
 
   var faye = new Faye.Client(config.pubsub.url+ '/faye');
@@ -58,7 +58,7 @@ $(function() {
       var record = _.extend({}, message);
       delete record.id;
       if(message.type == 'note') {
-        user.notes.add(record);
+        user.story.add(record);
         // handle media Stream
         if(message.mediaType){
           console.log(record);

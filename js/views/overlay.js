@@ -9,7 +9,7 @@ var Overlay = Backbone.View.extend({
   }
 });
 
-var NotesOverlay = Overlay.extend({
+var StoryOverlay = Overlay.extend({
   icon: L.icon({
     iconUrl: 'assets/images/markers/bubble.png',
     iconSize: [32, 32],

@@ -1,2 +1,2 @@
-var TrackCollection = Backbone.Collection.extend({
+var Track = Backbone.Collection.extend({
 });
