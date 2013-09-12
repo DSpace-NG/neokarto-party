@@ -12,7 +12,7 @@ var Stream = Backbone.View.extend({
     var html = '<img src="' + config.media.url + note.get('uuid') + '" />';
     setTimeout(function() {
       this.$el.append(html);
-    }.bind(this), 3000);
+    }.bind(this), 30000);
   }
 
 });
