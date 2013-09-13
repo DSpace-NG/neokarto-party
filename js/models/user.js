@@ -9,73 +9,43 @@ var PixelIcon = L.Icon.extend({
 var User = Backbone.Model.extend({
 
   initialize: function() {
-    _.bindAll(this, 'updateLocation');
+    _.bindAll(this, 'setProfile', 'updateLocation');
 
-    // deal with id
-    if(localStorage['neokarto:user:id']) {
-      this.set('id', localStorage['neokarto:user:id']);
+    // move layerGroup out of attributes
+    this.layerGroup = this.get('layerGroup');
+    this.unset('layerGroup');
+
+    if(localStorage.profile) {
+      this.set(JSON.parse(localStorage.profile));
     } else {
-      this.set('id', uuid());
-      localStorage['neokarto:user:id'] = this.get('id');
-    }
-
-
-    // deal with nickname
-    if(localStorage['neokarto:user:nickname']){
-      this.attributes.nickname = localStorage['neokarto:user:nickname'];
-    } else {
+      this.set({
+        "@type": 'profile',
+        id: uuid(),
+        color: this._randomColor(), // FIXME allow setting from ui
+        avatar: 'desert'// FIXME no magic values inline please ;)
+      });
       this.promptProfile();
     }
 
+    // FIXME tmp way of clearing localStorage from UI #hack
     this.on('change:nickname', function(){
-      // FIXME tmp way of clearing localStorage from UI #hack
       if(this.get('nickname') === 'RESET'){
         this.reset();
         alert('RESET: localStorage cleared!');
         return;
       }
-
-      localStorage['neokarto:user:nickname'] = this.get('nickname');
     });
-
-
-    // checks localstorage for avatars, if not existing sets it to default
-    if(localStorage['neokarto:user:avatar']){
-      this.attributes.avatar = localStorage['neokarto:user:avatar'];
-    }else{
-      this.attributes.avatar = 'desert'; // FIXME no magic values inline please ;)
-    }
-
-    this.on('change:avatar', function(){
-      localStorage['neokarto:user:avatar'] = this.get('avatar');
-      this.marker.setIcon(this.getAvatarIcon());
-    });
-
-
-    // set color
-    if(localStorage['neokarto:user:color']){
-      this.attributes.color = localStorage['neokarto:user:color'];
-    }else{
-      this.attributes.color = this._randomColor(); // FIXME allow setting from ui
-      localStorage['neokarto:user:color'] = this.attributes.color;
-    }
 
     // initiate track and story
     this.story = new Story();
     this.track = new Track();
 
-    // setup tracker and send initial profile
     this.tracker = new Tracker({ user: this });
-    this.tracker.profile(this);
 
     this.on('change', this.tracker.profile);
     this.track.on('add', this.tracker.location);
     this.story.on('add', this.tracker.note);
-  },
 
-  createOverlays: function(map) {
-    this.layerGroup = new L.LayerGroup();
-    this.layerGroup.addTo(map);
     this.storyOverlay = new StoryOverlay({
       collection: this.story,
       layer: this.layerGroup
@@ -85,6 +55,16 @@ var User = Backbone.Model.extend({
       color: this.get('color'),
       layer: this.layerGroup
     });
+    this.avatarOverlay = new AvatarOverlay({
+      model: this,
+      collection: this.track,
+      layer: this.layerGroup
+    });
+  },
+
+  setProfile: function(attributes) {
+    this.set(attributes);
+    localStorage.profile = JSON.stringify(this.toJSON());
   },
 
   // creates modal asking for nickname and setting it on this model
@@ -175,6 +155,7 @@ var WatchedUser = Backbone.Model.extend({
     });
     this.avatarOverlay = new AvatarOverlay({
       model: this,
+      collection: this.track,
       layer: this.layerGroup
     });
 
@@ -194,6 +175,7 @@ var WatchedUser = Backbone.Model.extend({
 
   // FIXME: move to overlays
   updateProfile: function() {
+    this.avatarOverlay.updateAvatar(this);
     var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.get('color') + '">' + this.get('nickname') + '</em>';
     this.layerControl.addOverlay(this.layerGroup, label);
     this.trackOverlay.track.setStyle({color: this.get('color')});

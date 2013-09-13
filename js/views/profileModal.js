@@ -13,10 +13,7 @@ var ProfileModal = Modal.extend({
     this.user = this.options.user;
     this.templateData = this.user.toJSON();
     this.templateData.avatars = this.user.avatars;
-    var avatar = this.user.get('avatar');
-    if(avatar) {
-      this.selectedAvatar = avatar;
-    }
+    this.selectedAvatar = this.user.get('avatar');
     this.render();
   },
 
@@ -30,11 +27,13 @@ var ProfileModal = Modal.extend({
     var nickname = this.$('input').val();
     var avatar = this.selectedAvatar;
 
-    // if empty don't accept it
+    // if empty nickname don't accept it
     if(nickname === "") return false;
 
-    this.user.set('nickname', nickname);
-    this.user.set('avatar', avatar);
+    this.user.setProfile({
+      nickname: nickname,
+      avatar: avatar
+    });
 
     this.close();
   }

@@ -3,12 +3,7 @@ var Overlay = Backbone.View.extend({
     this.layer = this.options.layer;
 
     _.bindAll(this, 'render');
-
-    if(this.collection) {
-      this.collection.on('add', this.render);
-    } else if(this.model) {
-      this.model.on('change', this.render);
-    }
+    this.collection.on('add', this.render);
   }
 });
 
@@ -43,28 +38,32 @@ var TrackOverlay = Overlay.extend({
   }
 });
 
+// FIXME: sometimes profile arrives first and sometiems fist location, simplyfy!
 var AvatarOverlay = Overlay.extend({
 
   initialize: function() {
     Overlay.prototype.initialize.call(this);
-    _.bindAll(this, 'move');
-    this.model.track.on('add', this.move);
+    _.bindAll(this, 'updateAvatar');
+    this.model.on('change', this.updateAvatar);
   },
 
-  render: function(user) {
-    var location = user.currentLocation().toJSON();
-    if(this.marker) {
-      user.avatarOverlay.marker.setIcon(user.getAvatarIcon());
+  render: function(location) {
+    if(this.avatar) {
+      this.avatar.setLatLng(location.toJSON());
     } else {
-      this.marker = new L.Marker(location).
+      this.avatar = new L.Marker(location.toJSON()).
         addTo(this.layer);
-      user.avatarOverlay.marker.setIcon(user.getAvatarIcon());
+      if(this.initialIcon) {
+      this.avatar.setIcon(this.initialIcon);
+      }
     }
   },
 
-  move: function(location) {
-    if(this.marker) {
-      this.marker.setLatLng(location.toJSON());
+  updateAvatar: function(user) {
+    if(this.avatar){
+      this.avatar.setIcon(user.getAvatarIcon());
+    } else {
+      this.initialIcon = user.getAvatarIcon();
     }
   }
 });

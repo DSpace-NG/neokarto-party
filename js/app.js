@@ -13,12 +13,13 @@ $(function() {
     maxZoom : config.map.basemap.maxZoom
   });
   map.addLayer(basemapCloudmade);
+  var layerGroup = new L.LayerGroup();
+  layerGroup.addTo(map);
 
   /**
    ** MODELS
    **/
-  var user = new User();
-  user.createOverlays(map);
+  var user = new User({ layerGroup: layerGroup });
 
   /**
    ** VIEWS
@@ -32,19 +33,18 @@ $(function() {
    ** MAIN
    **/
 
-  // when location changes, add / update user marker,
+  // FIXME make possible to switch on/off from UI
+  user.followMe = true;
+
+  // when location changes, add / update user's avatar
   // and update location.
   user.track.on('add', function(location) {
     var latlng = new L.latLng(location.get('lat'), location.get('lng'));
-    if(user.marker) { // position changed.
-      user.marker.setLatLng(latlng);
-      if(user.get('followMe')) {
+    if(user.avatarOverlay.avatar) { // position changed.
+      if(user.followMe) {
         map.setView(latlng, config.map.zoom);
       }
     } else { // acquired position for first time.
-      user.marker = L.marker(latlng, {
-        icon: user.getAvatarIcon()
-      }).addTo(map);
       map.setView(latlng, config.map.zoom);
     }
   });
@@ -60,6 +60,9 @@ $(function() {
     maximumAge: 15000,
     enableHighAccuracy: true
   });
+
+  // initial profile
+  user.trigger('change', user);
 
   window.app = {
     user: user,

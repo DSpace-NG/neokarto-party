@@ -24,7 +24,7 @@ Tracker.prototype = {
     var data = location.toJSON();
     data.user = this.user.get('id');
     data["@type"] = "location";
-    console.log('TRACK POINT', [data.lat, data.lng]);
+    console.log('TRACK location', data);
     this.faye.publish(this.channels.track, data);
   },
 
@@ -33,7 +33,7 @@ Tracker.prototype = {
     var data = note.toJSON();
     data.user = this.user.get('id');
     data["@type"] = "note";
-    console.log('TRACK note', [data.locationSubmit.lat, data.locationSubmit.lng], ':', data.text);
+    console.log('TRACK note', data);
     this.faye.publish(this.channels.story, data);
   },
 
@@ -41,7 +41,7 @@ Tracker.prototype = {
   profile: function(user) {
     var data = user.toJSON();
     data["@type"] = "profile";
-    console.log('TRACK profile', data.nickname, ':', data.avatar, ':', data.color);
+    console.log('TRACK profile', data);
     this.faye.publish(this.channels.profile, data);
   }
 };
