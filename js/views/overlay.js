@@ -19,12 +19,13 @@ var StoryOverlay = Backbone.View.extend({
 
   add: function(note) {
     var location = note.markerLocation();
-    console.log(location);
-    var marker = new L.Marker([location.lat, location.lng], {
-      icon: this.icon
-    });
-    marker.bindPopup(new L.Popup().setContent('<em>'+note.attributes.text+'</em>'));
-    this.layer.addLayer(marker);
+    if(location) {
+      var marker = new L.Marker([location.lat, location.lng], {
+        icon: this.icon
+      });
+      marker.bindPopup(new L.Popup().setContent('<em>'+note.attributes.text+'</em>'));
+      this.layer.addLayer(marker);
+    }
   }
 });
 

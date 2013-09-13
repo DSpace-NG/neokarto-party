@@ -3,14 +3,16 @@ var Track = Backbone.Collection.extend({
   initialize: function() {
     _.bindAll(this, 'save');
 
-    if(localStorage.track){
-      this.set(JSON.parse(localStorage.track));
+    if(this.url) {
+      this.storageKey = 'track-' + this.url;
+      if(localStorage[this.storageKey]){
+        this.set(JSON.parse(localStorage[this.storageKey]));
+      }
+      this.on('add', this.save);
     }
-    this.on('add', this.save);
   },
 
   save: function() {
-    window.foo = this;
-    localStorage.track = JSON.stringify(this);
+    localStorage[this.storageKey] = JSON.stringify(this.toJSON());
   }
 });

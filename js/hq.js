@@ -13,6 +13,11 @@ $(function() {
   var layerControl = new L.Control.Layers(undefined, undefined, { collapsed: false }).addTo(map);
 
   var users = new UsersCollection();
+  users.on('change', function(user) {
+    var label = '<img src="assets/images/avatars/' + user.get('avatar')  + '.png" /><em style="border-color:' + user.get('color') + '">' + user.get('nickname') + '</em>';
+    layerControl.addOverlay(user.layerGroup, label);
+  });
+
   var media = new Story();
   var stream = new Stream({collection: media});
 
@@ -30,12 +35,16 @@ $(function() {
     }
     var user = users.get(userId);
     if(! user) {
+      var layerGroup = new L.LayerGroup();
+      layerGroup.addTo(map);
+      layerControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
         id: userId,
-        map: map,
-        layerControl: layerControl
+        layerGroup: layerGroup
       });
       users.add(user);
+
+      if(type === 'profile') user.trigger('change', user);
     }
     switch(type){
     case 'note':
@@ -53,7 +62,7 @@ $(function() {
     default:
       console.log("WARNING: unhandled record!", message);
     }
-  });
+  }.bind(this));
 
   window.app = {
     users: users

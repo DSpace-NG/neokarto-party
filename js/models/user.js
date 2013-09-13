@@ -15,12 +15,20 @@ var User = Backbone.Model.extend({
     this.layerGroup = this.get('layerGroup');
     this.unset('layerGroup');
 
-    if(localStorage.profile) {
-      this.set(JSON.parse(localStorage.profile));
+    if(localStorage.id) {
+      this.set("id", localStorage.id, {silent: true});
+    } else {
+      this.set("id", uuid(), {silent: true});
+      localStorage.id = this.get('id');
+    }
+
+    this.profileKey = 'profile-' + this.get('id');
+
+    if(localStorage[this.profileKey]) {
+      this.set(JSON.parse(localStorage[this.profileKey]));
     } else {
       this.set({
         "@type": 'profile',
-        id: uuid(),
         color: this._randomColor(), // FIXME allow setting from ui
         avatar: 'desert'// FIXME no magic values inline please ;)
       });
@@ -37,8 +45,8 @@ var User = Backbone.Model.extend({
     });
 
     // initiate track and story
-    this.story = new Story();
-    this.track = new Track();
+    this.story = new Story([], { url: this.id });
+    this.track = new Track([], { url: this.id });
 
     this.tracker = new Tracker({ user: this });
 
@@ -64,7 +72,7 @@ var User = Backbone.Model.extend({
 
   setProfile: function(attributes) {
     this.set(attributes);
-    localStorage.profile = JSON.stringify(this.toJSON());
+    localStorage[this.profileKey] = JSON.stringify(this.toJSON());
   },
 
   // creates modal asking for nickname and setting it on this model
@@ -134,15 +142,21 @@ var WatchedUser = Backbone.Model.extend({
   initialize: function() {
     _.bindAll(this, 'updateProfile');
 
-    this.map = this.attributes.map;
+    // move layerGroup out of attributes
+    this.layerGroup = this.get('layerGroup');
+    this.unset('layerGroup');
+
+
+    this.profileKey = 'profile-' + this.get('id');
+
+    if(localStorage[this.profileKey]) {
+      this.set(JSON.parse(localStorage[this.profileKey]));
+    }
+
     this.layerControl = this.attributes.layerControl;
 
-    this.layerGroup = new L.LayerGroup();
-    this.layerGroup.addTo(this.map);
-    this.layerControl.addOverlay(this.layerGroup, this.id);
-
-    this.story = new Story();
-    this.track = new Track();
+    this.story = new Story([], { url: this.id });
+    this.track = new Track([], { url: this.id });
 
     this.storyOverlay = new StoryOverlay({
       collection: this.story,
@@ -175,9 +189,8 @@ var WatchedUser = Backbone.Model.extend({
 
   // FIXME: move to overlays
   updateProfile: function() {
+    localStorage[this.profileKey] = JSON.stringify(this.toJSON());
     this.avatarOverlay.updateAvatar(this);
-    var label = '<img src="assets/images/avatars/' + this.get('avatar')  + '.png" /><em style="border-color:' + this.get('color') + '">' + this.get('nickname') + '</em>';
-    this.layerControl.addOverlay(this.layerGroup, label);
     this.trackOverlay.track.setStyle({color: this.get('color')});
   }
 });
