@@ -1,21 +1,25 @@
-var Overlay = Backbone.View.extend({
-  initialize: function(){
-    this.layer = this.options.layer;
-
-    _.bindAll(this, 'render');
-    this.collection.on('add', this.render);
-  }
-});
-
-var StoryOverlay = Overlay.extend({
+var StoryOverlay = Backbone.View.extend({
   icon: L.icon({
     iconUrl: 'assets/images/markers/bubble.png',
     iconSize: [32, 32],
     iconAnchor: [9, 29]
   }),
 
-  render: function(note) {
+  initialize: function() {
+    this.layer = this.options.layer;
+    _.bindAll(this, 'add');
+    this.collection.on('add', this.add);
+
+    if(this.collection.length > 0) {
+      this.collection.each(function(location){
+        this.add(location);
+      }, this);
+    }
+  },
+
+  add: function(note) {
     var location = note.markerLocation();
+    console.log(location);
     var marker = new L.Marker([location.lat, location.lng], {
       icon: this.icon
     });
@@ -24,30 +28,41 @@ var StoryOverlay = Overlay.extend({
   }
 });
 
-var TrackOverlay = Overlay.extend({
+var TrackOverlay = Backbone.View.extend({
 
   initialize: function() {
-    Overlay.prototype.initialize.call(this);
+    this.layer = this.options.layer;
+    _.bindAll(this, 'add');
+    this.collection.on('add', this.add);
+
     this.track = new L.Polyline([], {
       color: this.options.color
     }).addTo(this.layer);
+
+    if(this.collection.length > 0) {
+      this.collection.each(function(location){
+        this.add(location);
+      }, this);
+    }
   },
 
-  render: function(location) {
+  add: function(location) {
     this.track.addLatLng(location.toJSON());
   }
 });
 
 // FIXME: sometimes profile arrives first and sometiems fist location, simplyfy!
-var AvatarOverlay = Overlay.extend({
+var AvatarOverlay = Backbone.View.extend({
 
   initialize: function() {
-    Overlay.prototype.initialize.call(this);
-    _.bindAll(this, 'updateAvatar');
+    this.layer = this.options.layer;
+    _.bindAll(this, 'add', 'updateAvatar');
+    this.collection.on('add', this.add);
+
     this.model.on('change', this.updateAvatar);
   },
 
-  render: function(location) {
+  add: function(location) {
     if(this.avatar) {
       this.avatar.setLatLng(location.toJSON());
     } else {
