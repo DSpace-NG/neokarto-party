@@ -34,7 +34,7 @@ $(function() {
    **/
 
   // FIXME make possible to switch on/off from UI
-  user.followMe = true;
+  //user.followMe = true;
 
   // when location changes, add / update user's avatar
   // and update location.
