@@ -75,6 +75,7 @@ label.photo input {
 button.submit {
   float: right;
   margin-top: 20px;
+  margin-right: 50px;
 }
 
 #about {

@@ -17,11 +17,11 @@ var Modal = Backbone.View.extend({
       this.$el.append('<button class="close icon-cancel"></button>');
     }
 
-    this.$el.append(JST[this.id](this.templateData));
-
     if(this.ui.submit) {
       this.$el.append('<button class="submit icon-ok"></button>');
     }
+
+    this.$el.append(JST[this.id](this.templateData));
 
     $('body').append(this.el);
 
