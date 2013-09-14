@@ -33,10 +33,11 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 150px;
+  height: 160px !important;
   width: 100%;
   z-index: 1000000000;
   background-color: rgba(1,1,1,.5);
+  overflow: scroll;
 }
 
 #stream img {
