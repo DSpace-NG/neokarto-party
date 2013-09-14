@@ -46,7 +46,9 @@ var User = Backbone.Model.extend({
 
     // initiate track and story
     this.story = new Story([], { url: this.id });
+    this.story.fetch();
     this.track = new Track([], { url: this.id });
+    this.track.fetch();
 
     this.tracker = new Tracker({ user: this });
 
