@@ -24,7 +24,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<form>\n  <label class=\"photo icon-camera\"><input style=\"display:none;\" name=\"media\" type=\"file\" accept=\"image/*;capture=camera\" capture=\"camera\"></label>\n  <br/>\n  <textarea name=\"text\" placeholder=\"What's up?\"></textarea>\n</form>\n";
+  return "<form>\n  <label class=\"photo icon-camera\"><input name=\"media\" type=\"file\" accept=\"image/*;capture=camera\" capture=\"camera\"></label>\n  <br/>\n  <textarea name=\"text\" placeholder=\"What's up?\"></textarea>\n</form>\n";
   });
 
 this["JST"]["profile"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

@@ -65,11 +65,14 @@ button.close {
 
 label.photo {
   font-size: 30px;
+  width: 50px;
+  height: 30px;
 }
 
 label.photo input {
   width: 50px;
   height: 30px;
+  opacity: 0;
 }
 
 button.submit {
