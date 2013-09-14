@@ -156,7 +156,10 @@ var WatchedUser = Backbone.Model.extend({
     this.layerControl = this.attributes.layerControl;
 
     this.story = new Story([], { url: this.id });
+    this.story.fetch();
     this.track = new Track([], { url: this.id });
+    this.track.fetch();
+
 
     this.storyOverlay = new StoryOverlay({
       collection: this.story,

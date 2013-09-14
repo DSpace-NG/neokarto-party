@@ -3,14 +3,19 @@ var Story = Backbone.Collection.extend({
 
   initialize: function() {
     _.bindAll(this, 'save');
+    this.on('add', this.save);
 
     // for now faking url to pass user's uuid
     if(this.url) {
       this.storageKey = 'story-' + this.url;
-      if(localStorage[this.storageKey]){
-        this.set(JSON.parse(localStorage[this.storageKey]));
-      }
-      this.on('add', this.save);
+    } else {
+      this.storageKey = 'media';
+    }
+  },
+
+  fetch: function() {
+    if(localStorage[this.storageKey]){
+      this.reset(JSON.parse(localStorage[this.storageKey]));
     }
   },
 

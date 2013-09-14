@@ -18,6 +18,32 @@ $(function() {
     layerControl.addOverlay(user.layerGroup, label);
   });
 
+  // save(d) state
+  var ids = [];
+
+  if(localStorage.ids) {
+    ids = JSON.parse(localStorage.ids);
+  } else {
+    localStorage.ids = JSON.stringify(ids);
+  }
+
+  if(ids.length > 0){
+    // has saved records
+    var userId, layerGroup;
+    for(i=0;i<ids.length;i++) {
+      userId = ids[i];
+      layerGroup = new L.LayerGroup();
+      layerGroup.addTo(map);
+      layerControl.addOverlay(layerGroup, userId);
+      user = new WatchedUser({
+        id: userId,
+        layerGroup: layerGroup
+      });
+      users.add(user);
+      user.trigger('change', user);
+    }
+  }
+
   var media = new Story();
   var stream = new Stream({collection: media});
 
@@ -43,6 +69,7 @@ $(function() {
         layerGroup: layerGroup
       });
       users.add(user);
+
 
       if(type === 'profile') user.trigger('change', user);
     }
