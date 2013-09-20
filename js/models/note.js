@@ -23,7 +23,7 @@ var Note = Backbone.Model.extend({
     formData.append('file', file);
     formData.append('meta', JSON.stringify(metadata));
     $.ajax({
-      url: config.pubsub.url + '/upload',
+      url: config.media.url,
       data: formData,
       type: 'post',
       contentType: false,

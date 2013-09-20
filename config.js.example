@@ -3,7 +3,7 @@ var config = {
     url: "http://localhost:5000"
   },
   media: {
-    url: "http://192.168.11.103:5000/upload/"
+    url: "http://192.168.11.103:5001"
   },
   map: {
     center: [47.05549032107255, 15.4522705078125],  // graz
