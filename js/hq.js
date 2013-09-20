@@ -1,5 +1,12 @@
 $(function() {
 
+  // CORS proxy
+  jQuery.ajaxPrefilter(function(options) {
+    if (options.crossDomain && jQuery.support.cors) {
+      options.url = config.proxy.url + '/' + options.url;
+    }
+  });
+
   var map = new L.Map('map', {
     center: config.map.center,
     zoom: config.map.zoom - 3, //FIXME #magicnumber

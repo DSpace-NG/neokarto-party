@@ -1,5 +1,12 @@
 $(function() {
 
+  // CORS proxy
+  jQuery.ajaxPrefilter(function(options) {
+    if (options.crossDomain && jQuery.support.cors) {
+      options.url = config.proxy.url + '/' + options.url;
+    }
+  });
+
   // leaflet map
   $('body').append('<div id="map"></div>');
   var map = new L.Map('map', {

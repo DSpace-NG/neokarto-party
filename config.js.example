@@ -5,8 +5,11 @@ var config = {
   media: {
     url: "http://192.168.11.103:5001"
   },
+  proxy: {
+    url: "http://localhost:5002"
+  },
   map: {
-    center: [47.05549032107255, 15.4522705078125],  // graz
+    center: [47.05549032107255, 15.4522705078125],
     zoom: 17,
     basemap: {
      template: 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
