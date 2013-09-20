@@ -1,8 +1,8 @@
-var Note = Backbone.Model.extend({
+var Capture = Backbone.Model.extend({
   initialize: function() {
-    // for new notes
+    // for new capture
     if(!this.get('uuid')){
-      this.set('@type', 'note');
+      this.set('@type', 'capture');
       this.set('uuid', uuid());
       this.set('timeStart', new Date().getTime());
     }
@@ -13,13 +13,13 @@ var Note = Backbone.Model.extend({
    * videos: 'video/*'
    * audio rec: 'video/3gpp'
    *
-   * used to attach media files to notes
+   * used to attach media files to capture
    * #attribution http://blog.w3villa.com/websites/uploading-filesimage-with-ajax-jquery-without-submitting-a-form/
    */
   attachFile: function(file) {
     this.set('mediaType', file.type);
     var formData = new FormData();
-    var metadata = { noteUUID: this.get('uuid') };
+    var metadata = { captureUUID: this.get('uuid') };
     formData.append('file', file);
     formData.append('meta', JSON.stringify(metadata));
     $.ajax({
@@ -31,7 +31,7 @@ var Note = Backbone.Model.extend({
     });
   },
 
-  // for now we use for marker location where note got submited
+  // for now we use for marker location where capture got submited
   markerLocation: function() {
     return this.get('locationSubmit');
   }

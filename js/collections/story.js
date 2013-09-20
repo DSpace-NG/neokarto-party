@@ -1,5 +1,5 @@
 var Story = Backbone.Collection.extend({
-  model: Note,
+  model: Capture,
 
   initialize: function() {
     _.bindAll(this, 'save');

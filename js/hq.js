@@ -49,7 +49,7 @@ $(function() {
 
   var faye = new Faye.Client(config.pubsub.url+ '/faye');
 
-  // faye -> user/notes/track collections
+  // faye -> user/story/track collections
   var channel = '/bolzano/**';
   faye.subscribe(channel, function(message) {
     var userId;
@@ -74,7 +74,7 @@ $(function() {
       if(type === 'profile') user.trigger('change', user);
     }
     switch(type){
-    case 'note':
+    case 'capture':
       user.story.add(message);
       if(message.mediaType){
         media.add(message);

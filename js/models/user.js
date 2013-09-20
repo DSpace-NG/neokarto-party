@@ -54,7 +54,7 @@ var User = Backbone.Model.extend({
 
     this.on('change', this.tracker.profile);
     this.track.on('add', this.tracker.location);
-    this.story.on('add', this.tracker.note);
+    this.story.on('add', this.tracker.capture);
 
     this.storyOverlay = new StoryOverlay({
       collection: this.story,

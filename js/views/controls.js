@@ -3,8 +3,8 @@ var ControlsView = Backbone.View.extend({
   id: 'controls',
 
   events: {
-    'click .note': 'addNote',
-    'touchstart .note': 'addNote',
+    'click .capture': 'addCapture',
+    'touchstart .capture': 'addCapture',
     'click .about': 'showAbout',
     'touchstart .about': 'showAbout',
     'click .settings': 'setProfile',
@@ -21,8 +21,8 @@ var ControlsView = Backbone.View.extend({
     $('body').append(this.el);
   },
 
-  addNote: function() {
-    new NoteModal({ user: this.options.user });
+  addCapture: function() {
+    new CaptureModal({ user: this.options.user });
   },
 
   updateFollowMe: function(event) {

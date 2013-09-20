@@ -3,7 +3,7 @@ var FAYE_URL = BASE_URL + '/faye';
 var FAYE_CHANNEL_PREFIX = '/bolzano/';
 
 var Tracker = function(options) {
-  _.bindAll(this, 'location', 'note', 'profile');
+  _.bindAll(this, 'location', 'capture', 'profile');
 
   this.faye = new Faye.Client(FAYE_URL);
   this.user = options.user;
@@ -19,7 +19,6 @@ var Tracker = function(options) {
 // FIXME: move to appropriate models/collections
 Tracker.prototype = {
 
-  // note - an instance Backbone model
   location: function(location) {
     var data = location.toJSON();
     data.user = this.user.get('id');
@@ -28,16 +27,16 @@ Tracker.prototype = {
     this.faye.publish(this.channels.track, data);
   },
 
-  // note - an instance Backbone model Note
-  note: function(note) {
-    var data = note.toJSON();
+  // capture - an instance Backbone model Capture
+  capture: function(capture) {
+    var data = capture.toJSON();
     data.user = this.user.get('id');
-    data["@type"] = "note";
-    console.log('TRACK note', data);
+    data["@type"] = "capture";
+    console.log('TRACK capture', data);
     this.faye.publish(this.channels.story, data);
   },
 
-  // note - an instance Backbone model User
+  // user - an instance Backbone model User
   profile: function(user) {
     var data = user.toJSON();
     data["@type"] = "profile";

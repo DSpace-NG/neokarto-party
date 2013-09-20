@@ -6,8 +6,8 @@ var Stream = Backbone.View.extend({
     this.collection.on('add', this.addMedia);
   },
 
-  addMedia: function(note){
-    var html = '<img src="' + config.media.url + note.get('uuid') + '" />';
+  addMedia: function(capture){
+    var html = '<img src="' + config.media.url + capture.get('uuid') + '" />';
     setTimeout(function() {
       this.$el.append(html);
     }.bind(this), 30000);
