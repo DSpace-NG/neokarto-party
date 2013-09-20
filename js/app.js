@@ -2,20 +2,25 @@ $(function() {
 
   // leaflet map
   $('body').append('<div id="map"></div>');
-  var map = new L.Map('map', { 
-    center: config.map.center, 
-    zoom: config.map.zoom, 
-    attributionControl: false 
+  var map = new L.Map('map', {
+    center: config.map.center,
+    zoom: config.map.zoom,
+    attributionControl: false,
+    zoomControl: false
   });
 
   // add openstreetmap layer
   var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
     maxZoom : config.map.basemap.maxZoom
-  });
-  map.addLayer(basemapCloudmade);
+  }).addTo(map);
+
+  var usersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+  var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
+
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
 
+  usersControl.addOverlay(layerGroup, 'me');
   /**
    ** MODELS
    **/

@@ -2,20 +2,21 @@ $(function() {
 
   var map = new L.Map('map', {
     center: config.map.center,
-    zoom: config.map.zoom - 3,
-    attributionControl: false
+    zoom: config.map.zoom - 3, //FIXME #magicnumber
+    attributionControl: false,
+    zoomControl: false
   });
   var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
     maxZoom : config.map.basemap.maxZoom
-  });
-  map.addLayer(basemapCloudmade);
+  }).addTo(map);
 
-  var layerControl = new L.Control.Layers(undefined, undefined, { collapsed: false }).addTo(map);
+  var usersControl = new L.Control.Layers(undefined, undefined, { collapsed: false, position: 'topleft' }).addTo(map);
+  var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: false, position: 'topright' }).addTo(map);
 
   var users = new UsersCollection();
   users.on('change', function(user) {
     var label = '<img src="assets/images/avatars/' + user.get('avatar')  + '.png" /><em style="border-color:' + user.get('color') + '">' + user.get('nickname') + '</em>';
-    layerControl.addOverlay(user.layerGroup, label);
+    usersControl.addOverlay(user.layerGroup, label);
   });
 
   // save(d) state
@@ -34,7 +35,7 @@ $(function() {
       userId = ids[i];
       layerGroup = new L.LayerGroup();
       layerGroup.addTo(map);
-      layerControl.addOverlay(layerGroup, userId);
+      usersControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
         uuid: userId,
         layerGroup: layerGroup
@@ -64,7 +65,7 @@ $(function() {
     if(! user) {
       var layerGroup = new L.LayerGroup();
       layerGroup.addTo(map);
-      layerControl.addOverlay(layerGroup, userId);
+      usersControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
         uuid: userId,
         layerGroup: layerGroup
