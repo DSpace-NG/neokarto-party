@@ -8,6 +8,8 @@ var PixelIcon = L.Icon.extend({
 
 var User = Backbone.Model.extend({
 
+  idAttribute: 'uuid',
+
   initialize: function() {
     _.bindAll(this, 'setProfile', 'updateLocation');
 
@@ -15,14 +17,14 @@ var User = Backbone.Model.extend({
     this.layerGroup = this.get('layerGroup');
     this.unset('layerGroup');
 
-    if(localStorage.id) {
-      this.set("id", localStorage.id, {silent: true});
+    if(localStorage.uuid) {
+      this.set("uuid", localStorage.uuid, {silent: true});
     } else {
-      this.set("id", uuid(), {silent: true});
-      localStorage.id = this.get('id');
+      this.set("uuid", uuid(), {silent: true});
+      localStorage.uuid = this.get('uuid');
     }
 
-    this.profileKey = 'profile-' + this.get('id');
+    this.profileKey = 'profile-' + this.get('uuid');
 
     if(localStorage[this.profileKey]) {
       this.set(JSON.parse(localStorage[this.profileKey]));
@@ -45,9 +47,9 @@ var User = Backbone.Model.extend({
     });
 
     // initiate track and story
-    this.story = new Story([], { url: this.id });
+    this.story = new Story([], { url: this.uuid });
     this.story.fetch();
-    this.track = new Track([], { url: this.id });
+    this.track = new Track([], { url: this.uuid });
     this.track.fetch();
 
     this.tracker = new Tracker({ user: this });
@@ -141,6 +143,8 @@ var User = Backbone.Model.extend({
 // FIXME: clean up the user above and make this the same.
 var WatchedUser = Backbone.Model.extend({
 
+  idAttribute: 'uuid',
+
   initialize: function() {
     _.bindAll(this, 'updateProfile');
 
@@ -149,17 +153,15 @@ var WatchedUser = Backbone.Model.extend({
     this.unset('layerGroup');
 
 
-    this.profileKey = 'profile-' + this.get('id');
+    this.profileKey = 'profile-' + this.get('uuid');
 
     if(localStorage[this.profileKey]) {
       this.set(JSON.parse(localStorage[this.profileKey]));
     }
 
-    this.layerControl = this.attributes.layerControl;
-
-    this.story = new Story([], { url: this.id });
+    this.story = new Story([], { url: this.uuid });
     this.story.fetch();
-    this.track = new Track([], { url: this.id });
+    this.track = new Track([], { url: this.uuid });
     this.track.fetch();
 
 

@@ -36,7 +36,7 @@ $(function() {
       layerGroup.addTo(map);
       layerControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
-        id: userId,
+        uuid: userId,
         layerGroup: layerGroup
       });
       users.add(user);
@@ -52,10 +52,11 @@ $(function() {
   // faye -> user/story/track collections
   var channel = '/bolzano/**';
   faye.subscribe(channel, function(message) {
+    console.log(message);
     var userId;
     var type = message["@type"];
     if(type === "profile") {
-      userId = message.id;
+      userId = message.uuid;
     } else {
       userId = message.user;
     }
@@ -65,7 +66,7 @@ $(function() {
       layerGroup.addTo(map);
       layerControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
-        id: userId,
+        uuid: userId,
         layerGroup: layerGroup
       });
       users.add(user);

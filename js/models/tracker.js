@@ -9,9 +9,9 @@ var Tracker = function(options) {
   this.user = options.user;
 
   this.channels = {
-    profile: FAYE_CHANNEL_PREFIX + 'profile/' + this.user.get('id'),
-    track: FAYE_CHANNEL_PREFIX + 'track/' + this.user.get('id'),
-    story: FAYE_CHANNEL_PREFIX + 'story/' + this.user.get('id')
+    profile: FAYE_CHANNEL_PREFIX + 'profile/' + this.user.get('uuid'),
+    track: FAYE_CHANNEL_PREFIX + 'track/' + this.user.get('uuid'),
+    story: FAYE_CHANNEL_PREFIX + 'story/' + this.user.get('uuid')
   };
 
 };
@@ -21,7 +21,7 @@ Tracker.prototype = {
 
   location: function(location) {
     var data = location.toJSON();
-    data.user = this.user.get('id');
+    data.user = this.user.get('uuid');
     data["@type"] = "location";
     console.log('TRACK location', data);
     this.faye.publish(this.channels.track, data);
@@ -30,7 +30,7 @@ Tracker.prototype = {
   // capture - an instance Backbone model Capture
   capture: function(capture) {
     var data = capture.toJSON();
-    data.user = this.user.get('id');
+    data.user = this.user.get('uuid');
     data["@type"] = "capture";
     console.log('TRACK capture', data);
     this.faye.publish(this.channels.story, data);

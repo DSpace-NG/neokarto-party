@@ -1,10 +1,15 @@
 var Capture = Backbone.Model.extend({
+
+  idAttribute: 'uuid',
+
   initialize: function() {
     // for new capture
     if(!this.get('uuid')){
-      this.set('@type', 'capture');
-      this.set('uuid', uuid());
-      this.set('timeStart', new Date().getTime());
+      this.set({
+        '@type': 'capture',
+        uuid: uuid(),
+        timeStart: new Date().getTime()
+      });
     }
   },
 

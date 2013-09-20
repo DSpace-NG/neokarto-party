@@ -4,9 +4,9 @@ var UsersCollection = Backbone.Collection.extend({
   initialize: function() {
     this.on('add', function(user){
       var ids = JSON.parse(localStorage.ids);
-      var id = user.get('id');
-      if(ids.indexOf(id) < 0){
-        ids.push(id);
+      var uuid = user.get('uuid');
+      if(ids.indexOf(uuid) < 0){
+        ids.push(uuid);
         localStorage.ids = JSON.stringify(ids);
       }
     });
