@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'neokarto';
-  src: url('../assets/font/neokarto.eot?68150723');
-  src: url('../assets/font/neokarto.eot?68150723#iefix') format('embedded-opentype'),
-       url('../assets/font/neokarto.woff?68150723') format('woff'),
-       url('../assets/font/neokarto.ttf?68150723') format('truetype'),
-       url('../assets/font/neokarto.svg?68150723#neokarto') format('svg');
+  src: url('../assets/font/neokarto.eot?5677972');
+  src: url('../assets/font/neokarto.eot?5677972#iefix') format('embedded-opentype'),
+       url('../assets/font/neokarto.woff?5677972') format('woff'),
+       url('../assets/font/neokarto.ttf?5677972') format('truetype'),
+       url('../assets/font/neokarto.svg?5677972#neokarto') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'neokarto';
-    src: url('../font/neokarto.svg?68150723#neokarto') format('svg');
+    src: url('../font/neokarto.svg?5677972#neokarto') format('svg');
   }
 }
 */
@@ -51,9 +51,11 @@
 }
  
 .icon-info:before { content: '\e805'; } /* '' */
+.icon-settings:before { content: '\e808'; } /* '' */
 .icon-ok:before { content: '\e802'; } /* '' */
 .icon-cancel:before { content: '\e803'; } /* '' */
 .icon-comment:before { content: '\e801'; } /* '' */
+.icon-marker:before { content: '\e804'; } /* '' */
 .icon-camera:before { content: '\e807'; } /* '' */
 .icon-target:before { content: '\e800'; } /* '' */
 .icon-profile:before { content: '\e806'; } /* '' */
