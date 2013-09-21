@@ -1,6 +1,8 @@
 html, body {
   width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 button {
@@ -19,8 +21,8 @@ button {
 #controls {
     position: absolute;
     bottom: 20px;
-    width: 80%;
-    left: 10%;
+    width: 70%;
+    left: 5%;
     z-index: 10000;
 }
 
@@ -29,11 +31,11 @@ button {
   padding: 0.25em 0;
 }
 #controls button.capture {
-  width: 50%;
+  width: 40%;
   margin: 0 1%;
 }
 #controls button.about, #controls button.settings {
-  width: 22%;
+  width: 20%;
 }
 
 .modal {
@@ -81,13 +83,16 @@ button.submit {
   margin-right: 50px;
 }
 
-#about {
-  padding: 20px;
-}
-
 img.avatar {
   margin:5px;
   background-color: #d5d5d5;
   border: 2px solid black;
 }
+
+.leaflet-control-layers-toggle {
+  font-size: 28px;
+  text-align: center;
+}
+
+.leaflet-control-layers a { color: rgba(0,0,0,.3);
 

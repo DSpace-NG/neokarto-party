@@ -21,8 +21,13 @@ $(function() {
     maxZoom : config.map.basemap.maxZoom
   }).addTo(map);
 
+  var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
+
   var usersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
+
   var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
+  $('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
 
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
