@@ -30,7 +30,7 @@ var ProfileModal = Modal.extend({
     // if empty nickname don't accept it
     if(nickname === "") return false;
 
-    this.user.setProfile({
+    this.user.set({
       nickname: nickname,
       avatar: avatar
     });

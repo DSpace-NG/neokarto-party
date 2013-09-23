@@ -36,7 +36,7 @@ $(function() {
   /**
    ** MODELS
    **/
-  var user = new User();
+  var user = new LocalUser();
 
   if(!localStorage[user.profileKey]) {
     new ProfileModal( {user: user} );
@@ -75,8 +75,7 @@ $(function() {
   // FIXME make possible to switch on/off from UI
   user.followMe = true;
 
-  // when location changes, add / update user's avatar
-  // and update location.
+  // set map viewport when location changes
   user.track.on('add', function(location) {
     var latlng = new L.latLng(location.get('lat'), location.get('lng'));
     if(avatarOverlay.avatar) { // position changed.
@@ -89,7 +88,13 @@ $(function() {
   });
 
   // hook up leaflet's locate() to user model
-  map.on('locationfound', user.updateLocation);
+  map.on('locationfound', function(mapLocation){
+    var location = new Backbone.Model({ 
+      lat: mapLocation.latlng.lat,
+      lng: mapLocation.latlng.lng
+    });
+    user.updateLocation(location);
+  });
   map.on('locationerror', function(e) {
     console.error("Failed to acquire position: " + e.message);
   });

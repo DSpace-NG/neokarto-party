@@ -1,5 +1,5 @@
 var UsersCollection = Backbone.Collection.extend({
-  model: WatchedUser,
+  model: RemoteUser,
 
   initialize: function() {
     this.on('add', function(user){

@@ -65,7 +65,7 @@ $(function() {
       layerGroup = new L.LayerGroup();
       layerGroup.addTo(map);
       usersControl.addOverlay(layerGroup, userId);
-      user = new WatchedUser({
+      user = new RemoteUser({
         uuid: userId,
       });
 
@@ -98,7 +98,7 @@ $(function() {
       var layerGroup = new L.LayerGroup();
       layerGroup.addTo(map);
       usersControl.addOverlay(layerGroup, userId);
-      user = new WatchedUser({
+      user = new RemoteUser({
         uuid: userId
       });
 
@@ -114,7 +114,7 @@ $(function() {
       }
       break;
     case 'location':
-      user.track.add(message);
+      user.updateLocation(message);
       break;
     case 'profile':
       user.set(message);
