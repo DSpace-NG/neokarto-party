@@ -8,8 +8,6 @@ var Story = Backbone.Collection.extend({
     // for now faking url to pass user's uuid
     if(this.url) {
       this.storageKey = 'story-' + this.url;
-    } else {
-      this.storageKey = 'media';
     }
   },
 

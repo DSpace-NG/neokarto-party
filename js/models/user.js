@@ -1,21 +1,10 @@
-var PixelIcon = L.Icon.extend({
-  options: {
-    iconSize:     [48, 48],
-    iconAnchor:   [24, 48],
-    popupAnchor:  [-3, -76]
-  }
-});
-
 var User = Backbone.Model.extend({
 
   idAttribute: 'uuid',
 
   initialize: function() {
     _.bindAll(this, 'setProfile', 'updateLocation');
-
-    // move layerGroup out of attributes
-    this.layerGroup = this.get('layerGroup');
-    this.unset('layerGroup');
+    this.set('@type', 'profile', { silent: true });
 
     if(localStorage.uuid) {
       this.set("uuid", localStorage.uuid, {silent: true});
@@ -28,86 +17,24 @@ var User = Backbone.Model.extend({
 
     if(localStorage[this.profileKey]) {
       this.set(JSON.parse(localStorage[this.profileKey]));
-    } else {
-      this.set({
-        "@type": 'profile',
-        color: this._randomColor(), // FIXME allow setting from ui
-        avatar: 'desert'// FIXME no magic values inline please ;)
-      });
-      this.promptProfile();
     }
 
-    // FIXME tmp way of clearing localStorage from UI #hack
-    this.on('change:nickname', function(){
-      if(this.get('nickname') === 'RESET'){
-        this.reset();
-        alert('RESET: localStorage cleared!');
-        return;
-      }
-    });
-
     // initiate track and story
-    this.story = new Story([], { url: this.uuid });
+    this.story = new Story([], { url: this.get('uuid') });
     this.story.fetch();
-    this.track = new Track([], { url: this.uuid });
+
+    this.track = new Track([], { url: this.get('uuid') });
     this.track.fetch();
 
     this.tracker = new Tracker({ user: this });
-
     this.on('change', this.tracker.profile);
     this.track.on('add', this.tracker.location);
     this.story.on('add', this.tracker.capture);
-
-    this.storyOverlay = new StoryOverlay({
-      collection: this.story,
-      layer: this.layerGroup
-    });
-    this.trackOverlay = new TrackOverlay({
-      collection: this.track,
-      color: this.get('color'),
-      layer: this.layerGroup
-    });
-    this.avatarOverlay = new AvatarOverlay({
-      model: this,
-      collection: this.track,
-      layer: this.layerGroup
-    });
   },
 
   setProfile: function(attributes) {
     this.set(attributes);
     localStorage[this.profileKey] = JSON.stringify(this.toJSON());
-  },
-
-  // creates modal asking for nickname and setting it on this model
-  promptProfile: function() {
-    new ProfileModal( {user: this} );
-  },
-
-  // create list of avatar objects
-  avatars: [
-    {file:'agent', name:'Agent'},
-    {file:'boss', name:'Skeleton Boss'},
-    {file:'clotharmor', name:'Cloth Armor'}, 
-    {file:'coder', name:'Coder'},
-    {file:'deathknight', name:'Deatch Knight'}, 
-    {file:'desert', name:'Desert'},
-    {file:'firefox', name:'Firefox'}, 
-    {file:'ghost', name:'Ghost'},
-    {file:'goldenarmor', name:'Golden Armor'}, 
-    {file:'guard', name:'HTML5 Guard'}, 
-    {file:'king', name:'King'},
-    {file:'ninja', name:'Ninja'},
-    {file:'priest', name:'Priest'}, 
-    {file:'scientist', name:'Scientist'}, 
-    {file:'skeleton', name:'Skeleton'}, 
-    {file:'villager', name:'Villager'},
-    {file:'zombie', name:'Zombie'}
-  ],
-
-  getAvatarIcon: function() {
-    var iconUrl = 'assets/images/avatars/'+ this.get('avatar') + '.png';
-    return new PixelIcon({iconUrl: iconUrl});
   },
 
   currentLocation: function() {
@@ -123,19 +50,9 @@ var User = Backbone.Model.extend({
       return; // location didn't actually change.
     }
     this.track.add(location);
+    this.trigger('location', this.currentLocation());
   },
 
-  // clear local storage expecting 'RESET' nickname
-  reset: function() {
-    localStorage.clear();
-    location.reload();
-  },
-
-  // gnerates random hex color string for css
-  // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
-  _randomColor: function() {
-    return '#' + Math.floor(Math.random()*16777215).toString(16);
-  }
 });
 
 

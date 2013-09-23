@@ -52,7 +52,7 @@ $(function() {
     }
   }
 
-  var media = new Story();
+  var media = new Story({ url: 'media' });
   var stream = new Stream({collection: media});
 
   var faye = new Faye.Client(config.pubsub.url+ '/faye');

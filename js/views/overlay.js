@@ -53,17 +53,30 @@ var TrackOverlay = Backbone.View.extend({
 });
 
 // FIXME: sometimes profile arrives first and sometiems fist location, simplyfy!
+var PixelIcon = L.Icon.extend({
+  options: {
+    iconSize:     [48, 48],
+    iconAnchor:   [24, 48],
+    popupAnchor:  [-3, -76]
+  }
+});
+
 var AvatarOverlay = Backbone.View.extend({
 
   initialize: function() {
     this.layer = this.options.layer;
-    _.bindAll(this, 'add', 'updateAvatar');
-    this.collection.on('add', this.add);
+    _.bindAll(this, 'move', 'update');
 
-    this.model.on('change', this.updateAvatar);
+    this.model.on('location', this.move);
+    this.model.on('change', this.update);
   },
 
-  add: function(location) {
+  getAvatarIcon: function() {
+    var iconUrl = 'assets/images/avatars/'+ this.model.get('avatar') + '.png';
+    return new PixelIcon({iconUrl: iconUrl});
+  },
+
+  move: function(location) {
     if(this.avatar) {
       this.avatar.setLatLng(location.toJSON());
     } else {
@@ -75,11 +88,11 @@ var AvatarOverlay = Backbone.View.extend({
     }
   },
 
-  updateAvatar: function(user) {
+  update: function(user) {
     if(this.avatar){
-      this.avatar.setIcon(user.getAvatarIcon());
+      this.avatar.setIcon(this.getAvatarIcon());
     } else {
-      this.initialIcon = user.getAvatarIcon();
+      this.initialIcon = this.getAvatarIcon();
     }
   }
 });

@@ -36,7 +36,16 @@ $(function() {
   /**
    ** MODELS
    **/
-  var user = new User({ layerGroup: layerGroup });
+  var user = new User();
+
+  if(!localStorage[user.profileKey]) {
+    new ProfileModal( {user: user} );
+    user.set({
+      // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
+      color: '#' + Math.floor(Math.random()*16777215).toString(16),
+      avatar: 'desert'// FIXME no magic values inline please ;)
+    });
+  }
 
   /**
    ** VIEWS
@@ -45,6 +54,19 @@ $(function() {
   // button(s) in top-right corner
   var controls = new ControlsView({ user: user });
 
+  var storyOverlay = new StoryOverlay({
+    collection: user.story,
+    layer: layerGroup
+  });
+  var trackOverlay = new TrackOverlay({
+    collection: user.track,
+    color: user.get('color'),
+    layer: layerGroup
+  });
+  var avatarOverlay = new AvatarOverlay({
+    model: user,
+    layer: layerGroup
+  });
 
   /**
    ** MAIN
@@ -57,7 +79,7 @@ $(function() {
   // and update location.
   user.track.on('add', function(location) {
     var latlng = new L.latLng(location.get('lat'), location.get('lng'));
-    if(user.avatarOverlay.avatar) { // position changed.
+    if(avatarOverlay.avatar) { // position changed.
       if(user.followMe) {
         map.setView(latlng, config.map.zoom);
       }

@@ -12,7 +12,7 @@ var ProfileModal = Modal.extend({
 
     this.user = this.options.user;
     this.templateData = this.user.toJSON();
-    this.templateData.avatars = this.user.avatars;
+    this.templateData.avatars = this.avatars;
     this.selectedAvatar = this.user.get('avatar');
     this.render();
   },
@@ -36,6 +36,27 @@ var ProfileModal = Modal.extend({
     });
 
     this.close();
-  }
+  },
+
+  // create list of avatar objects
+  avatars: [
+    {file:'agent', name:'Agent'},
+    {file:'boss', name:'Skeleton Boss'},
+    {file:'clotharmor', name:'Cloth Armor'},
+    {file:'coder', name:'Coder'},
+    {file:'deathknight', name:'Deatch Knight'},
+    {file:'desert', name:'Desert'},
+    {file:'firefox', name:'Firefox'},
+    {file:'ghost', name:'Ghost'},
+    {file:'goldenarmor', name:'Golden Armor'},
+    {file:'guard', name:'HTML5 Guard'},
+    {file:'king', name:'King'},
+    {file:'ninja', name:'Ninja'},
+    {file:'priest', name:'Priest'},
+    {file:'scientist', name:'Scientist'},
+    {file:'skeleton', name:'Skeleton'},
+    {file:'villager', name:'Villager'},
+    {file:'zombie', name:'Zombie'}
+  ],
 
 });
