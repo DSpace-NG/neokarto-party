@@ -21,12 +21,34 @@ $(function() {
   var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: false, position: 'topright' }).addTo(map);
 
   var users = new UsersCollection();
+  var userOverlays = {};
+  //FIXME
   users.on('change', function(user) {
     var label = '<img src="assets/images/avatars/' + user.get('avatar')  + '.png" /><em style="border-color:' + user.get('color') + '">' + user.get('nickname') + '</em>';
-    usersControl.addOverlay(user.layerGroup, label);
+    usersControl.addOverlay(userOverlays[user.get('uuid')].layer, label);
   });
 
   // save(d) state
+
+  var createOverlays = function(user, layer){
+    userOverlays[user.get('uuid')] = {};
+    var group = userOverlays[user.get('uuid')];
+    group.layer = layer;
+    group.story = new StoryOverlay({
+      collection: user.story,
+      layer: layer
+    });
+    group.track = new TrackOverlay({
+      collection: user.track,
+      color: user.get('color'),
+      layer: layer
+    });
+    group.avatar = new AvatarOverlay({
+      model: user,
+      layer: layer
+    });
+  };
+
   var ids = [];
 
   if(localStorage.ids) {
@@ -45,10 +67,13 @@ $(function() {
       usersControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
         uuid: userId,
-        layerGroup: layerGroup
       });
+
+      createOverlays(user, layerGroup);
+
       users.add(user);
-      user.trigger('change', user);
+
+      user.trigger('change', user); //to set initial avatar
     }
   }
 
@@ -74,13 +99,12 @@ $(function() {
       layerGroup.addTo(map);
       usersControl.addOverlay(layerGroup, userId);
       user = new WatchedUser({
-        uuid: userId,
-        layerGroup: layerGroup
+        uuid: userId
       });
+
+      createOverlays(user, layerGroup);
+
       users.add(user);
-
-
-      if(type === 'profile') user.trigger('change', user);
     }
     switch(type){
     case 'capture':
@@ -94,6 +118,7 @@ $(function() {
       break;
     case 'profile':
       user.set(message);
+    //FIXME this.trackOverlay.track.setStyle({color: this.get('color')});
       break;
     default:
       console.log("WARNING: unhandled record!", message);

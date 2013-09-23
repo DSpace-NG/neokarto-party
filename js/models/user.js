@@ -51,8 +51,7 @@ var User = Backbone.Model.extend({
     }
     this.track.add(location);
     this.trigger('location', this.currentLocation());
-  },
-
+  }
 });
 
 
@@ -63,47 +62,24 @@ var WatchedUser = Backbone.Model.extend({
   idAttribute: 'uuid',
 
   initialize: function() {
-    _.bindAll(this, 'updateProfile');
+    _.bindAll(this, 'save');
 
-    // move layerGroup out of attributes
-    this.layerGroup = this.get('layerGroup');
-    this.unset('layerGroup');
-
-
+    // FIXME anticipate lack of uuid
     this.profileKey = 'profile-' + this.get('uuid');
 
     if(localStorage[this.profileKey]) {
       this.set(JSON.parse(localStorage[this.profileKey]));
     }
 
-    this.story = new Story([], { url: this.uuid });
+    this.story = new Story([], { url: this.get('uuid') });
     this.story.fetch();
-    this.track = new Track([], { url: this.uuid });
+    this.track = new Track([], { url: this.get('uuid') });
     this.track.fetch();
 
-
-    this.storyOverlay = new StoryOverlay({
-      collection: this.story,
-      layer: this.layerGroup
-    });
-    this.trackOverlay = new TrackOverlay({
-      collection: this.track,
-      color: this.get('color'),
-      layer: this.layerGroup
-    });
-    this.avatarOverlay = new AvatarOverlay({
-      model: this,
-      collection: this.track,
-      layer: this.layerGroup
-    });
-
-    this.on('change', this.updateProfile);
-  },
-
-  // FIXME: duplicated from User!
-  getAvatarIcon: function() {
-    var iconUrl = 'assets/images/avatars/'+ this.get('avatar') + '.png';
-    return new PixelIcon({iconUrl: iconUrl});
+    this.on('change', this.save);
+    this.track.on('add', function(location){
+      this.trigger('location', this.currentLocation());
+    }.bind(this));
   },
 
   // FIXME: duplicated from User!
@@ -111,11 +87,8 @@ var WatchedUser = Backbone.Model.extend({
     return this.track.at(this.track.length - 1);
   },
 
-  // FIXME: move to overlays
-  updateProfile: function() {
+  save: function() {
     localStorage[this.profileKey] = JSON.stringify(this.toJSON());
-    this.avatarOverlay.updateAvatar(this);
-    this.trackOverlay.track.setStyle({color: this.get('color')});
   }
 });
 
