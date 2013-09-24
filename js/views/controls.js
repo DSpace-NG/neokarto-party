@@ -1,3 +1,8 @@
+var ProfileModal = require('./profileModal');
+var CaptureModal = require('./captureModal');
+var AboutModal = require('./aboutModal');
+var template = require('../../templates/controls.hbs');
+
 var ControlsView = Backbone.View.extend({
 
   id: 'controls',
@@ -17,7 +22,7 @@ var ControlsView = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.append(JST.controls());
+    this.$el.append(template());
     $('body').append(this.el);
   },
 
@@ -38,3 +43,5 @@ var ControlsView = Backbone.View.extend({
   }
 
 });
+
+module.exports = ControlsView;

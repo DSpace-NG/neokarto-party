@@ -1,5 +1,10 @@
+var Modal = require('./modal');
+var Capture = require('../models/capture');
+var template = require('../../templates/capture.hbs');
+
 var CaptureModal = Modal.extend({
   id: 'capture',
+  template: template,
   ui: { close: true, submit: true, focus: 'textarea' },
 
   initialize: function() {
@@ -30,3 +35,5 @@ var CaptureModal = Modal.extend({
     this.close();
   }
 });
+
+module.exports = CaptureModal;

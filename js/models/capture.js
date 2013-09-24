@@ -1,3 +1,5 @@
+var uuid = require('node-uuid');
+
 var Capture = Backbone.Model.extend({
 
   idAttribute: 'uuid',
@@ -41,3 +43,5 @@ var Capture = Backbone.Model.extend({
     return this.get('locationSubmit');
   }
 });
+
+module.exports = Capture;
