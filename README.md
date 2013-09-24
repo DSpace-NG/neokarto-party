@@ -5,28 +5,6 @@ Neokarto Party is a HTML5 Web App created for a [neogeographic](https://en.wikip
 
 The software is licensed under the [Public Domain](http://unlicense.org/)
 
-## DEPENDENCIES
-### Client
-- [Mozilla Persona Authentification](https://www.persona.org/)
-- [jQuery](http://jquery.com/)
-- [jQuery UI](http://jqueryui.com/)
-- [Leaflet](http://leafletjs.com/)
-	- [Leaflet Plugin: Awesome Markers]()
-		- [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
-	- [Leaflet Plugin: LeafletPlayback](https://github.com/hallahan/LeafletPlayback)
-		- [Bootstrap](http://getbootstrap.com/)
-		- [Bootstrap Timepicker](http://jdewit.github.io/bootstrap-timepicker/)
-- faye-client
-- [fontello](http://fontello.com)
-
-### Server
-it expects this server running on localhost:
-https://github.com/elevate-festival/dspace-bayeux-server
-
-### Config
-
-    $ cp config.js.example config.js
-
 ## INSTALL INSTRUCTIONS
 
 ### Development
@@ -43,12 +21,24 @@ npm install
 grunt
 ```
 
-### Server
+### Config
 
+    $ cp config.js.example config.js
+
+
+## DEPENDENCIES
+
+### Client
+- [Leaflet](http://leafletjs.com/)
+- [Faye]()
+- [fontello](http://fontello.com)
+
+### Server
+it expects this server running on localhost:
+https://github.com/elevate-festival/dspace-bayeux-server
 
 
 ## CHANGELOG
-
 
 
 <!--

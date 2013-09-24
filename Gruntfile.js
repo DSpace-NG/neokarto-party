@@ -4,10 +4,19 @@ module.exports = function(grunt) {
   grunt.initConfig({
     //pkg: grunt.file.readJSON('package.json'),
     connect: {
-      server: {
+      app: {
         options: {
+          port: 8000,
           hostname: "*",
           livereload: true
+        }
+      },
+      doc: {
+        options: {
+          port: 8001,
+          hostname: "*",
+          base: 'build/doc',
+          livereload: 35730
         }
       }
     },
@@ -22,6 +31,23 @@ module.exports = function(grunt) {
       templates: {
         files: "templates/*.hbs",
         tasks: ["jshint", 'browserify:app', 'concat']
+      },
+      doc: {
+        files: "README.md",
+        tasks:["markdown"],
+        options: {
+          livereload: 35730
+        }
+      }
+    },
+    markdown: {
+      all: {
+        files: [
+          {
+            src: 'README.md',
+            dest: 'build/doc/README.md.html'
+          }
+        ]
       }
     },
     jshint: {
@@ -82,11 +108,12 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-markdown');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'browserify', 'concat', 'connect', 'watch']);
+  grunt.registerTask('default', ['markdown', 'jshint', 'browserify', 'concat', 'connect', 'watch']);
 
 };
