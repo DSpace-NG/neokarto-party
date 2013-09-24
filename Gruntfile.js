@@ -33,7 +33,7 @@ module.exports = function(grunt) {
     browserify: {
       vendor: {
         src: [
-          'bower_components/jquery/jquery.js',
+          'bower_components/zepto/zepto.js',
           'bower_components/leaflet-dist/leaflet-src.js',
           'bower_components/underscore/underscore.js',
           'bower_components/backbone/backbone.js',
@@ -42,8 +42,8 @@ module.exports = function(grunt) {
         dest: 'build/vendor.js',
         options: {
           shim: {
-            jQuery: {
-              path: 'bower_components/jquery/jquery.js',
+            zepto: {
+              path: 'bower_components/zepto/zepto.js',
               exports: '$'
             },
             leaflet: {
