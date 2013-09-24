@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         src: [
           'bower_components/zepto/zepto.js',
           'bower_components/leaflet-dist/leaflet-src.js',
-          'bower_components/underscore/underscore.js',
+          'bower_components/lodash/dist/lodash.js',
           'bower_components/backbone/backbone.js',
           'bower_components/faye/include.js',
         ],
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
               exports: 'L'
             },
             underscore: {
-              path: 'bower_components/underscore/underscore.js',
+              path: 'bower_components/lodash/dist/lodash.js',
               exports: '_'
             },
             backbone: {

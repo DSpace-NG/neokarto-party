@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "zepto": "~1.0.0",
-    "underscore": "1.5.1",
+    "lodash": "~2.1.0",
     "backbone": "1.0.0",
     "faye": "0.8.9",
     "leaflet-dist": "0.6.4"
