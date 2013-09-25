@@ -1,4 +1,4 @@
-var RemoteUser = require('../modles/remoteUser');
+var RemoteUser = require('../models/remoteUser');
 
 var UsersCollection = Backbone.Collection.extend({
   model: RemoteUser,

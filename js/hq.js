@@ -1,12 +1,15 @@
 $(function() {
 
-  // CORS proxy
-  jQuery.ajaxPrefilter(function(options) {
-    if (options.crossDomain && jQuery.support.cors) {
-      options.url = config.proxy.url + '/' + options.url;
-    }
-  });
+  var config = require('../config');
+  var UsersCollection = require('./collections/users');
+  var RemoteUser = require('./models/remoteUser');
+  var StoryOverlay = require('./views/storyOverlay');
+  var TrackOverlay = require('./views/trackOverlay');
+  var AvatarOverlay = require('./views/avatarOverlay');
+  var Story = require('./collections/story');
+  var Stream = require('./views/stream');
 
+  $('body').append('<div id="map"></div>');
   var map = new L.Map('map', {
     center: config.map.center,
     zoom: config.map.zoom - 3, //FIXME #magicnumber
@@ -78,6 +81,7 @@ $(function() {
   }
 
   var media = new Story({ url: 'media' });
+  $('body').append('<div id="stream"></div>');
   var stream = new Stream({collection: media});
 
   var faye = new Faye.Client(config.pubsub.url+ '/faye');
@@ -114,7 +118,8 @@ $(function() {
       }
       break;
     case 'location':
-      user.updateLocation(message);
+      var location = new Backbone.Model(message);
+      user.updateLocation(location);
       break;
     case 'profile':
       user.set(message);

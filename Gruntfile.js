@@ -26,11 +26,11 @@ module.exports = function(grunt) {
       },
       scripts: {
         files: "js/**",
-        tasks: ["jshint", 'browserify:app', 'concat']
+        tasks: ["jshint", 'browserify:mobile', 'browserify:hq', 'concat']
       },
       templates: {
         files: "templates/*.hbs",
-        tasks: ["jshint", 'browserify:app', 'concat']
+        tasks: ["jshint", 'browserify:hq', 'browserify:hq', 'concat']
       },
       doc: {
         files: "README.md",
@@ -91,9 +91,18 @@ module.exports = function(grunt) {
           }
         }
       },
-      app: {
-        src: ['js/app.js'],
-        dest: 'build/app.js',
+      mobile: {
+        src: ['js/mobile.js'],
+        dest: 'build/mobile.js',
+        options: {
+          external: ["$", "L", "_", "Backbone", "Faye"],
+          transform: ['hbsfy'],
+          debug: true
+        }
+      },
+      hq: {
+        src: ['js/hq.js'],
+        dest: 'build/hq.js',
         options: {
           external: ["$", "L", "_", "Backbone", "Faye"],
           transform: ['hbsfy'],
@@ -102,7 +111,8 @@ module.exports = function(grunt) {
       }
     },
     concat: {
-      'build/main.js': ['build/vendor.js', 'build/app.js']
+      'build/mobile.js': ['build/vendor.js', 'build/mobile.js'],
+      'build/hq.js': ['build/vendor.js', 'build/hq.js']
     }
   });
 
