@@ -21,7 +21,7 @@ var Modal = Backbone.View.extend({
       this.$el.append('<button class="submit icon-ok"></button>');
     }
 
-    this.$el.append(JST[this.id](this.templateData));
+    this.$el.append(this.template(this.templateData));
 
     $('body').append(this.el);
 
@@ -35,3 +35,5 @@ var Modal = Backbone.View.extend({
   },
 
 });
+
+module.exports = Modal;

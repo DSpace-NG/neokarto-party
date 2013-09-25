@@ -1,3 +1,6 @@
+var Story = require('../collections/story');
+var Track  = require('../collections/track');
+
 var User = Backbone.Model.extend({
 
   idAttribute: 'uuid',
@@ -42,29 +45,4 @@ var User = Backbone.Model.extend({
   }
 });
 
-var LocalUser = User.extend({
-
-  initialize: function() {
-    if(localStorage.uuid) {
-      this.set("uuid", localStorage.uuid, {silent: true});
-    } else {
-      this.set("uuid", uuid(), {silent: true});
-      localStorage.uuid = this.get('uuid');
-    }
-
-    User.prototype.initialize.call(this);
-
-    this.tracker = new Tracker({ user: this });
-    this.on('change', this.tracker.profile);
-    this.track.on('add', this.tracker.location);
-    this.story.on('add', this.tracker.capture);
-  }
-});
-
-// represents people connecting through other devices
-var RemoteUser = User.extend({
-
-  //FIXME support case if no uuid!
-
-});
-
+module.exports = User;

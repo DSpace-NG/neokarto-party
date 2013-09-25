@@ -20,3 +20,5 @@ var Track = Backbone.Collection.extend({
     localStorage[this.storageKey] = JSON.stringify(this.toJSON());
   }
 });
+
+module.exports = Track;

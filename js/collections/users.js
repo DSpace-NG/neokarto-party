@@ -1,3 +1,5 @@
+var RemoteUser = require('../models/remoteUser');
+
 var UsersCollection = Backbone.Collection.extend({
   model: RemoteUser,
 
@@ -12,3 +14,5 @@ var UsersCollection = Backbone.Collection.extend({
     });
   }
 });
+
+module.exports = UsersCollection;

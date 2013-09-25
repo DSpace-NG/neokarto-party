@@ -1,3 +1,5 @@
+var config = require('../../config');
+
 var BASE_URL = config.pubsub.url;
 var FAYE_URL = BASE_URL + '/faye';
 var FAYE_CHANNEL_PREFIX = '/bolzano/';
@@ -44,3 +46,5 @@ Tracker.prototype = {
     this.faye.publish(this.channels.profile, data);
   }
 };
+
+module.exports = Tracker;

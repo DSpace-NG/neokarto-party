@@ -1,4 +1,7 @@
-var Stream = Backbone.View.extend({
+var config = require('../../config');
+var Capture = require('../models/capture');
+
+var Stream  = Backbone.View.extend({
   el: "#stream",
 
   initialize: function() {
@@ -14,3 +17,5 @@ var Stream = Backbone.View.extend({
   }
 
 });
+
+module.exports = Stream;

@@ -1,3 +1,6 @@
+var uuid = require('node-uuid');
+var config = require('../../config');
+
 var Capture = Backbone.Model.extend({
 
   idAttribute: 'uuid',
@@ -24,7 +27,7 @@ var Capture = Backbone.Model.extend({
   attachFile: function(file) {
     this.set('mediaType', file.type);
     var formData = new FormData();
-    var metadata = { captureUUID: this.get('uuid') };
+    var metadata = { uuid: this.get('uuid') };
     formData.append('file', file);
     formData.append('meta', JSON.stringify(metadata));
     $.ajax({
@@ -41,3 +44,5 @@ var Capture = Backbone.Model.extend({
     return this.get('locationSubmit');
   }
 });
+
+module.exports = Capture;

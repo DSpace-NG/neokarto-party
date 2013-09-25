@@ -1,11 +1,12 @@
 $(function() {
 
-  // CORS proxy
-  jQuery.ajaxPrefilter(function(options) {
-    if (options.crossDomain && jQuery.support.cors) {
-      options.url = config.proxy.url + '/' + options.url;
-    }
-  });
+  var config = require('../config');
+  var LocalUser = require('./models/localUser');
+  var ProfileModal = require('./views/profileModal');
+  var ControlsView = require('./views/controls');
+  var StoryOverlay = require('./views/storyOverlay');
+  var TrackOverlay = require('./views/trackOverlay');
+  var AvatarOverlay = require('./views/avatarOverlay');
 
   // leaflet map
   $('body').append('<div id="map"></div>');
@@ -39,12 +40,12 @@ $(function() {
   var user = new LocalUser();
 
   if(!localStorage[user.profileKey]) {
-    new ProfileModal( {user: user} );
     user.set({
       // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
       color: '#' + Math.floor(Math.random()*16777215).toString(16),
       avatar: 'desert'// FIXME no magic values inline please ;)
-    });
+    }, { silent: true });
+    new ProfileModal( {user: user} );
   }
 
   /**

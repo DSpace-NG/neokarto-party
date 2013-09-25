@@ -1,5 +1,9 @@
+var Modal = require('./modal');
+var template = require('../../templates/profile.hbs');
+
 var ProfileModal = Modal.extend({
   id: 'profile',
+  template: template,
   ui: { close: true, submit: true },
 
   subEvents: {
@@ -60,3 +64,5 @@ var ProfileModal = Modal.extend({
   ],
 
 });
+
+module.exports = ProfileModal;

@@ -1,3 +1,5 @@
+var Capture = require('../models/capture');
+
 var Story = Backbone.Collection.extend({
   model: Capture,
 
@@ -21,3 +23,5 @@ var Story = Backbone.Collection.extend({
     localStorage[this.storageKey] = JSON.stringify(this.toJSON());
   }
 });
+
+module.exports = Story;
