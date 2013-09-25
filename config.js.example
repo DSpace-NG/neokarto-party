@@ -1,4 +1,4 @@
-var config = {
+module.exports = {
   pubsub: {
     url: "http://localhost:5000"
   },
