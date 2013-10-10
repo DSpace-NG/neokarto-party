@@ -25,12 +25,12 @@ module.exports = function(grunt) {
         livereload: true
       },
       scripts: {
-        files: "js/**",
-        tasks: ["jshint", 'browserify:mobile', 'browserify:hq', 'concat']
+        files: ["js/**", "node_modules/dspace*/**"],
+        tasks: ["jshint", 'browserify:mobile', 'browserify:hq']
       },
       templates: {
         files: "templates/*.hbs",
-        tasks: ["jshint", 'browserify:hq', 'browserify:hq', 'concat']
+        tasks: ["jshint", 'browserify:hq', 'browserify:hq']
       },
       doc: {
         files: "README.md",
@@ -109,10 +109,6 @@ module.exports = function(grunt) {
           debug: true
         }
       }
-    },
-    concat: {
-      'build/mobile.js': ['build/vendor.js', 'build/mobile.js'],
-      'build/hq.js': ['build/vendor.js', 'build/hq.js']
     }
   });
 
@@ -121,9 +117,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-markdown');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Default task(s).
-  grunt.registerTask('default', ['markdown', 'jshint', 'browserify', 'concat', 'connect', 'watch']);
+  grunt.registerTask('default', ['markdown', 'jshint', 'browserify', 'connect', 'watch']);
 
 };
