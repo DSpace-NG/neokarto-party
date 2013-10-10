@@ -26,11 +26,11 @@ module.exports = function(grunt) {
       },
       scripts: {
         files: ["js/**", "node_modules/dspace*/**"],
-        tasks: ["jshint", 'browserify:mobile', 'browserify:hq']
+        tasks: ["jshint", 'browserify:mobile']
       },
       templates: {
         files: "templates/*.hbs",
-        tasks: ["jshint", 'browserify:hq', 'browserify:hq']
+        tasks: ["jshint"]
       },
       doc: {
         files: "README.md",
@@ -94,15 +94,6 @@ module.exports = function(grunt) {
       mobile: {
         src: ['js/mobile.js'],
         dest: 'build/mobile.js',
-        options: {
-          external: ["$", "L", "_", "Backbone", "Faye"],
-          transform: ['hbsfy'],
-          debug: true
-        }
-      },
-      hq: {
-        src: ['js/hq.js'],
-        dest: 'build/hq.js',
         options: {
           external: ["$", "L", "_", "Backbone", "Faye"],
           transform: ['hbsfy'],
