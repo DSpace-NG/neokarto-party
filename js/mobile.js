@@ -4,9 +4,9 @@ $(function() {
   var LocalUser = require('dspace-api-core/models/localUser');
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
-  var StoryOverlay = require('./views/storyOverlay');
-  var TrackOverlay = require('./views/trackOverlay');
-  var AvatarOverlay = require('./views/avatarOverlay');
+  var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
+  var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
+  var AvatarOverlay = require('dspace-ui-leaflet/overlays/avatar');
 
   // leaflet map
   $('body').append('<div id="map"></div>');
