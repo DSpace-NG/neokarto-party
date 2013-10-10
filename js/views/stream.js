@@ -1,5 +1,5 @@
 var config = require('../../config');
-var Capture = require('../models/capture');
+var Capture = require('dspace-api-core/models/capture');
 
 var Stream  = Backbone.View.extend({
   el: "#stream",

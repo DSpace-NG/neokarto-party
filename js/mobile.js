@@ -1,7 +1,7 @@
 $(function() {
 
   var config = require('../config');
-  var LocalUser = require('./models/localUser');
+  var LocalUser = require('dspace-api-core/models/localUser');
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
   var StoryOverlay = require('./views/storyOverlay');

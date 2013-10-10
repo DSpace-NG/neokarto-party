@@ -1,12 +1,12 @@
 $(function() {
 
   var config = require('../config');
-  var UsersCollection = require('./collections/users');
-  var RemoteUser = require('./models/remoteUser');
+  var UsersCollection = require('dspace-api-core/collections/users');
+  var RemoteUser = require('dspace-api-core/models/remoteUser');
   var StoryOverlay = require('./views/storyOverlay');
   var TrackOverlay = require('./views/trackOverlay');
   var AvatarOverlay = require('./views/avatarOverlay');
-  var Story = require('./collections/story');
+  var Story = require('dspace-api-core/collections/story');
   var Stream = require('./views/stream');
 
   $('body').append('<div id="map"></div>');

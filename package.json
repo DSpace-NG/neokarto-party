@@ -12,7 +12,9 @@
   "license": "Unlicense",
   "dependencies": {
     "handlebars-runtime": "~1.0.12",
-    "node-uuid": "~1.4.1"
+    "node-uuid": "~1.4.1",
+
+    "dspace-api-core": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

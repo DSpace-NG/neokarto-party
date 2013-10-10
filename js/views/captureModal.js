@@ -1,5 +1,5 @@
 var Modal = require('./modal');
-var Capture = require('../models/capture');
+var Capture = require('dspace-api-core/models/capture');
 var template = require('../../templates/capture.hbs');
 
 var CaptureModal = Modal.extend({
