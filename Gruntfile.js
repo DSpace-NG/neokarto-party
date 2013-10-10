@@ -51,10 +51,7 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      all: ["Gruntfile.js", "js/**"],
-      options: {
-        ignores: "js/LeafletPlayback.js"
-      }
+      all: ["Gruntfile.js", "js/**"]
     },
     browserify: {
       vendor: {
