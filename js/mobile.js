@@ -37,7 +37,12 @@ $(function() {
   /**
    ** MODELS
    **/
-  var user = new LocalUser();
+  var user = new LocalUser({
+    tracker: {
+      url: config.pubsub.url + '/faye',
+      prefix: '/bolzano/'
+    }
+  });
 
   if(!localStorage[user.profileKey]) {
     user.set({
