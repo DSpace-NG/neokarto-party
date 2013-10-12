@@ -96,6 +96,38 @@ module.exports = function(grunt) {
           transform: ['hbsfy'],
           debug: true
         }
+      },
+      build: {
+        src: ['js/main.js'],
+        dest: 'tmp/main.js',
+        options: {
+          external: ["$", "L", "_", "Backbone", "Faye"],
+          transform: ['hbsfy']
+        }
+      }
+    },
+    uglify: {
+      app: {
+        files: {
+          'build/main.js': ['tmp/vendor.js', 'tmp/main.js']
+        }
+      }
+    },
+    cssmin: {
+      combine: {
+        files: {
+          'build/main.css': [
+            'bower_components/leaflet-dist/leaflet.css',
+            'css/fontello.css',
+            'css/main.css'
+          ]
+        }
+      }
+    },
+    copy: {
+      assets: {
+        src: 'assets/*/**',
+        dest: 'build/'
       }
     }
   });
@@ -105,8 +137,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-markdown');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task(s).
-  grunt.registerTask('default', ['markdown', 'jshint', 'browserify', 'connect', 'watch']);
+  grunt.registerTask('default', ['markdown', 'jshint', 'browserify:vendor', 'browserify:main', 'connect', 'watch']);
+  grunt.registerTask('build', ['jshint', 'browserify:vendor', 'browserify:build', 'uglify', 'cssmin', 'copy']);
 
 };
