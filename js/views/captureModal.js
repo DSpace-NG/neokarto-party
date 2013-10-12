@@ -1,3 +1,4 @@
+var config = require('../../config');
 var Modal = require('./modal');
 var Capture = require('dspace-api-core/models/capture');
 var template = require('../../templates/capture.hbs');
@@ -26,7 +27,7 @@ var CaptureModal = Modal.extend({
 
     var media = this.mediaInput[0].files[0];
     if(media) {
-      this.capture.attachFile(media);
+      this.capture.attachFile(config.media.url, media);
     }
     if(this.capture.get('text') || media) {
       this.collection.add(this.capture);
