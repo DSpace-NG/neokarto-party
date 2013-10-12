@@ -15,7 +15,7 @@ module.exports = function(grunt) {
         options: {
           port: 8001,
           hostname: "*",
-          base: 'build/doc',
+          base: 'tmp/doc',
           livereload: 35730
         }
       }
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
       },
       scripts: {
         files: ["js/**", "node_modules/dspace*/**"],
-        tasks: ["jshint", 'browserify:mobile']
+        tasks: ["jshint", 'browserify:main']
       },
       templates: {
         files: "templates/*.hbs",
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
         files: [
           {
             src: 'README.md',
-            dest: 'build/doc/README.md.html'
+            dest: 'tmp/doc/README.md.html'
           }
         ]
       }
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
           'bower_components/backbone/backbone.js',
           'bower_components/faye/include.js',
         ],
-        dest: 'build/vendor.js',
+        dest: 'tmp/vendor.js',
         options: {
           shim: {
             zepto: {
@@ -88,9 +88,9 @@ module.exports = function(grunt) {
           }
         }
       },
-      mobile: {
-        src: ['js/mobile.js'],
-        dest: 'build/mobile.js',
+      main: {
+        src: ['js/main.js'],
+        dest: 'tmp/main.js',
         options: {
           external: ["$", "L", "_", "Backbone", "Faye"],
           transform: ['hbsfy'],
