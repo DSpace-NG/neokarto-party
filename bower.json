@@ -21,7 +21,7 @@
     "zepto": "~1.0.0",
     "lodash": "~2.1.0",
     "backbone": "1.0.0",
-    "faye": "0.8.9",
+    "faye": "1.0.0",
     "leaflet-dist": "0.6.4"
   }
 }
