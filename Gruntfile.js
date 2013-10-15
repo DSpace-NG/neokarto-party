@@ -25,7 +25,7 @@ module.exports = function(grunt) {
         livereload: true
       },
       scripts: {
-        files: ["js/**", "node_modules/dspace*/**"],
+        files: ["js/**"],
         tasks: ["jshint", 'browserify:main']
       },
       templates: {
