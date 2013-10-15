@@ -17,6 +17,7 @@ module.exports = function(config) {
       'bower_components/zepto/zepto.js',
       'bower_components/lodash/dist/lodash.js',
       'bower_components/backbone/backbone.js',
+      'bower_components/leaflet-dist/leaflet-src.js',
       'js/main.js',
       'test/**/*Spec.js'
     ],
