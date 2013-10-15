@@ -1,14 +1,16 @@
 $(function() {
 
-  var config = require('../config');
-  var LocalUser = require('dspace-api-core/models/localUser');
-  var ProfileModal = require('./views/profileModal');
-  var ControlsView = require('./views/controls');
+  var DSpace = require('dspace-api-core/dspace');
+  var LocalOperator = require('dspace-api-core/models/localOperator');
   var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
   var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
   var AvatarOverlay = require('dspace-ui-leaflet/overlays/avatar');
 
-  var DSpace = require('dspace-api-core/dspace');
+  var config = require('../config');
+
+  var ProfileModal = require('./views/profileModal');
+  var ControlsView = require('./views/controls');
+
   var dspace = new DSpace('elevate');
 
   //#debug
@@ -30,7 +32,7 @@ $(function() {
 
   var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 
-  var usersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+  var operatorsControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
   $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
 
   var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
@@ -39,7 +41,7 @@ $(function() {
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
 
-  usersControl.addOverlay(layerGroup, 'me');
+  operatorsControl.addOverlay(layerGroup, 'me');
 
   // we can start using dspace only once ready
   dspace.on('ready', function(){
@@ -49,15 +51,15 @@ $(function() {
     /**
      ** MODELS
      **/
-    var user = new LocalUser();
+    var operator = new LocalOperator();
 
-    if(!localStorage[user.profileKey]) {
-      user.set({
+    if(!localStorage[operator.profileKey]) {
+      operator.set({
         // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
         color: '#' + Math.floor(Math.random()*16777215).toString(16),
         avatar: 'desert'// FIXME no magic values inline please ;)
       }, { silent: true });
-      //new ProfileModal( {user: user} ); FIXME
+      //new ProfileModal( {operator: operator} ); FIXME
     }
 
     /**
@@ -65,19 +67,19 @@ $(function() {
      **/
 
     // button(s) in top-right corner
-    var controls = new ControlsView({ user: user });
+    var controls = new ControlsView({ operator: operator });
 
     var storyOverlay = new StoryOverlay({
-      collection: user.story,
+      collection: operator.story,
       layer: layerGroup
     });
     var trackOverlay = new TrackOverlay({
-      collection: user.track,
-      color: user.get('color'),
+      collection: operator.track,
+      color: operator.get('color'),
       layer: layerGroup
     });
     var avatarOverlay = new AvatarOverlay({
-      model: user,
+      model: operator,
       layer: layerGroup
     });
 
@@ -86,14 +88,14 @@ $(function() {
      **/
 
     // FIXME make possible to switch on/off from UI
-    user.followMe = true;
+    operator.followMe = true;
 
     // set map viewport when location changes
-    // FIXME user.on('change:position')
-    user.track.on('add', function(location) {
+    // FIXME operator.on('change:position')
+    operator.track.on('add', function(location) {
       var latlng = new L.latLng(location.get('lat'), location.get('lng'));
       if(avatarOverlay.avatar) { // position changed.
-        if(user.followMe) {
+        if(operator.followMe) {
           map.setView(latlng, config.map.zoom);
         }
       } else { // acquired position for first time.
@@ -101,13 +103,13 @@ $(function() {
       }
     });
 
-    // hook up leaflet's locate() to user model
+    // hook up leaflet's locate() to operator model
     map.on('locationfound', function(mapLocation){
       var location = new Backbone.Model({ 
         lat: mapLocation.latlng.lat,
         lng: mapLocation.latlng.lng
       });
-      user.updateLocation(location);
+      operator.updateLocation(location);
     });
     map.on('locationerror', function(e) {
       console.error("Failed to acquire position: " + e.message);
@@ -120,10 +122,10 @@ $(function() {
     });
 
     // initial profile
-    user.trigger('change', user);
+    operator.trigger('change', operator);
 
     window.app = {
-      user: user,
+      operator: operator,
       map: map
     };
   });

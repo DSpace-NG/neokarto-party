@@ -1,16 +1,16 @@
 var config = require('../../config');
 var Modal = require('./modal');
-var Capture = require('dspace-api-core/models/capture');
+var Action = require('dspace-api-core/models/action');
 var template = require('../../templates/capture.hbs');
 
-var CaptureModal = Modal.extend({
+var ActionModal = Modal.extend({
   id: 'capture',
   template: template,
   ui: { close: true, submit: true, focus: 'textarea' },
 
   initialize: function() {
     this.collection = this.options.user.story;
-    this.capture = new Capture();
+    this.capture = new Action();
     //console.log(this.capture.toJSON());
     this.render();
   },
@@ -37,4 +37,4 @@ var CaptureModal = Modal.extend({
   }
 });
 
-module.exports = CaptureModal;
+module.exports = ActionModal;
