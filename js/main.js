@@ -83,50 +83,5 @@ $(function() {
       layer: layerGroup
     });
 
-    /**
-     ** MAIN
-     **/
-
-    // FIXME make possible to switch on/off from UI
-    operator.followMe = true;
-
-    // set map viewport when location changes
-    // FIXME operator.on('change:position')
-    operator.track.on('add', function(location) {
-      var latlng = new L.latLng(location.get('lat'), location.get('lng'));
-      if(avatarOverlay.avatar) { // position changed.
-        if(operator.followMe) {
-          map.setView(latlng, config.map.zoom);
-        }
-      } else { // acquired position for first time.
-        map.setView(latlng, config.map.zoom);
-      }
-    });
-
-    // hook up leaflet's locate() to operator model
-    map.on('locationfound', function(mapLocation){
-      var location = new Backbone.Model({ 
-        lat: mapLocation.latlng.lat,
-        lng: mapLocation.latlng.lng
-      });
-      operator.updateLocation(location);
-    });
-    map.on('locationerror', function(e) {
-      console.error("Failed to acquire position: " + e.message);
-    });
-    map.locate({
-      setView: false,
-      watch: true,
-      maximumAge: 15000,
-      enableHighAccuracy: true
-    });
-
-    // initial profile
-    operator.trigger('change', operator);
-
-    window.app = {
-      operator: operator,
-      map: map
-    };
   });
 });
