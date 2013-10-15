@@ -59,8 +59,7 @@ module.exports = function(grunt) {
           'bower_components/zepto/zepto.js',
           'bower_components/leaflet-dist/leaflet-src.js',
           'bower_components/lodash/dist/lodash.js',
-          'bower_components/backbone/backbone.js',
-          'bower_components/faye/include.js',
+          'bower_components/backbone/backbone.js'
         ],
         dest: 'tmp/vendor.js',
         options: {
@@ -80,11 +79,7 @@ module.exports = function(grunt) {
             backbone: {
               path: 'bower_components/backbone/backbone.js',
               exports: 'Backbone'
-            },
-            faye: {
-              path: 'bower_components/faye/include.js',
-              exports: 'Faye'
-            },
+            }
           }
         }
       },
@@ -92,7 +87,7 @@ module.exports = function(grunt) {
         src: ['js/main.js'],
         dest: 'tmp/main.js',
         options: {
-          external: ["$", "L", "_", "Backbone", "Faye"],
+          external: ["$", "L", "_", "Backbone"],
           transform: ['hbsfy'],
           debug: true
         }
@@ -101,7 +96,7 @@ module.exports = function(grunt) {
         src: ['js/main.js'],
         dest: 'tmp/main.js',
         options: {
-          external: ["$", "L", "_", "Backbone", "Faye"],
+          external: ["$", "L", "_", "Backbone"],
           transform: ['hbsfy']
         }
       }
