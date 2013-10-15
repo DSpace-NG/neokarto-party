@@ -1,9 +1,9 @@
 {
-  "name": "neokarto-party",
+  "name": "dspace-dist-elevate-mobile",
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/karma start karma.conf.js"
   },
   "authors": [
     "elf Pavlik <perpetual-tripper@wwelves.org>"
@@ -27,6 +27,12 @@
     "grunt-markdown": "~0.4.0",
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-contrib-cssmin": "~0.6.2",
-    "grunt-contrib-copy": "~0.4.1"
+    "grunt-contrib-copy": "~0.4.1",
+    "karma": "~0.10.2",
+    "karma-mocha": "~0.1.0",
+    "karma-sinon-chai": "~0.1.1",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma-growler-reporter": "0.0.1",
+    "karma-browserify": "0.0.5"
   }
 }
