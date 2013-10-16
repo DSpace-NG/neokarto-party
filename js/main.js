@@ -1,7 +1,7 @@
 $(function() {
 
   var DSpace = require('dspace-api-core/dspace');
-  var LocalOperator = require('dspace-api-core/models/localOperator');
+  var LocalPlayer = require('dspace-api-core/models/localPlayer');
   var BayeuxHub = require('dspace-api-bayeux/hub');
   //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
   var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
@@ -36,7 +36,7 @@ $(function() {
 
   var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 
-  var operatorsControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+  var playersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
   $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
 
   var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
@@ -45,7 +45,7 @@ $(function() {
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
 
-  operatorsControl.addOverlay(layerGroup, 'me');
+  playersControl.addOverlay(layerGroup, 'me');
 
   // we can start using dspace only once ready
   dspace.on('ready', function(){
@@ -55,19 +55,19 @@ $(function() {
     /**
      ** MODELS
      **/
-    var operator = new LocalOperator();
+    var player = new LocalPlayer();
 
     //#debug
-    app.operator = operator;
-    operator.overlays = {};
+    app.player = player;
+    player.overlays = {};
 
-    if(!operator.profile) {
-      operator.set({
+    if(!player.profile) {
+      player.set({
         // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
         color: '#' + Math.floor(Math.random()*16777215).toString(16),
         avatar: 'cupido'// FIXME no magic values inline please ;)
       }, { silent: true });
-      //new ProfileModal( {operator: operator} ); FIXME
+      //new ProfileModal( {player: player} ); FIXME
     }
 
     /*
@@ -81,45 +81,45 @@ $(function() {
 
     channels.positions = pubsub.getChannel('/positions');
     channels.positions.subscribe(function(message){
-      if(message.from !== operator.get('uuid')){
+      if(message.from !== player.get('uuid')){
         console.log(message);
       }
     });
 
     var publishPosition = function(position){
       var message = {
-        from: operator.get('uuid'),
+        from: player.get('uuid'),
         type: '@position',
         body: position
       };
       channels.positions.publish(message);
     };
 
-    operator.on('change:position', publishPosition);
+    player.on('change:position', publishPosition);
 
     /**
      ** VIEWS
      **/
 
     var avatarOverlay = new AvatarOverlay({
-      model: operator,
+      model: player,
       layer: layerGroup
     });
-    operator.overlays.avatar = avatarOverlay;
+    player.overlays.avatar = avatarOverlay;
 
     //// button(s) in top-right corner
-    var controls = new ControlsView({ operator: operator });
+    var controls = new ControlsView({ player: player });
 
     //var storyOverlay = new StoryOverlay({
-      //collection: operator.story,
+      //collection: player.story,
       //layer: layerGroup
     //});
     var trackOverlay = new TrackOverlay({
-      collection: operator.track,
-      color: operator.get('color'),
+      collection: player.track,
+      color: player.get('color'),
       layer: layerGroup
     });
-    operator.overlays.track = trackOverlay;
+    player.overlays.track = trackOverlay;
 
   });
 });
