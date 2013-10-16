@@ -8,8 +8,8 @@ $(function() {
 
   var config = require('../config');
 
-  //var ProfileModal = require('./views/profileModal');
-  //var ControlsView = require('./views/controls');
+  var ProfileModal = require('./views/profileModal');
+  var ControlsView = require('./views/controls');
 
   var dspace = new DSpace('elevate');
 
@@ -34,16 +34,16 @@ $(function() {
 
   var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 
-  //var operatorsControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
-  //$('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
+  var operatorsControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
 
-  //var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
-  //$('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
+  var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
+  $('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
 
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
 
-  //operatorsControl.addOverlay(layerGroup, 'me');
+  operatorsControl.addOverlay(layerGroup, 'me');
 
   // we can start using dspace only once ready
   dspace.on('ready', function(){
@@ -63,7 +63,7 @@ $(function() {
       operator.set({
         // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
         color: '#' + Math.floor(Math.random()*16777215).toString(16),
-        avatar: 'desert'// FIXME no magic values inline please ;)
+        avatar: 'cupido'// FIXME no magic values inline please ;)
       }, { silent: true });
       //new ProfileModal( {operator: operator} ); FIXME
     }
@@ -79,7 +79,7 @@ $(function() {
     operator.overlays.avatar = avatarOverlay;
 
     //// button(s) in top-right corner
-    //var controls = new ControlsView({ operator: operator });
+    var controls = new ControlsView({ operator: operator });
 
     //var storyOverlay = new StoryOverlay({
       //collection: operator.story,

@@ -14,10 +14,10 @@ var ProfileModal = Modal.extend({
   initialize: function() {
     _.extend(this.events, this.subEvents);
 
-    this.user = this.options.user;
-    this.templateData = this.user.toJSON();
+    this.operator = this.options.operator;
+    this.templateData = this.operator.toJSON();
     this.templateData.avatars = this.avatars;
-    this.selectedAvatar = this.user.get('avatar');
+    this.selectedAvatar = this.operator.get('avatar');
     this.render();
   },
 
@@ -34,7 +34,7 @@ var ProfileModal = Modal.extend({
     // if empty nickname don't accept it
     if(nickname === "") return false;
 
-    this.user.set({
+    this.operator.set({
       nickname: nickname,
       avatar: avatar
     });
@@ -44,23 +44,61 @@ var ProfileModal = Modal.extend({
 
   // create list of avatar objects
   avatars: [
-    {file:'agent', name:'Agent'},
-    {file:'boss', name:'Skeleton Boss'},
-    {file:'clotharmor', name:'Cloth Armor'},
-    {file:'coder', name:'Coder'},
-    {file:'deathknight', name:'Deatch Knight'},
-    {file:'desert', name:'Desert'},
-    {file:'firefox', name:'Firefox'},
-    {file:'ghost', name:'Ghost'},
-    {file:'goldenarmor', name:'Golden Armor'},
-    {file:'guard', name:'HTML5 Guard'},
-    {file:'king', name:'King'},
-    {file:'ninja', name:'Ninja'},
-    {file:'priest', name:'Priest'},
-    {file:'scientist', name:'Scientist'},
-    {file:'skeleton', name:'Skeleton'},
-    {file:'villager', name:'Villager'},
-    {file:'zombie', name:'Zombie'}
+    { file: 'afro' },
+    { file: 'alien' },
+    { file: 'anciano' },
+    { file: 'artista' },
+    { file: 'astronauta' },
+    { file: 'barbaman' },
+    { file: 'bombero' },
+    { file: 'boxeador' },
+    { file: 'bruce_lee' },
+    { file: 'caradebolsa' },
+    { file: 'chavo' },
+    { file: 'cientifica' },
+    { file: 'cientifico_loco' },
+    { file: 'comisario' },
+    { file: 'cupido' },
+    { file: 'diabla' },
+    { file: 'director' },
+    { file: 'dreds' },
+    { file: 'elsanto' },
+    { file: 'elvis' },
+    { file: 'emo' },
+    { file: 'escafandra' },
+    { file: 'estilista' },
+    { file: 'extraterrestre' },
+    { file: 'fisicoculturista' },
+    { file: 'funky' },
+    { file: 'futbolista_brasilero' },
+    { file: 'gay' },
+    { file: 'geisha' },
+    { file: 'ghostbuster' },
+    { file: 'glamrock_singer' },
+    { file: 'guerrero_chino' },
+    { file: 'hiphopper' },
+    { file: 'hombre_hippie' },
+    { file: 'hotdog_man' },
+    { file: 'indio' },
+    { file: 'joker' },
+    { file: 'karateka' },
+    { file: 'mago' },
+    { file: 'maori' },
+    { file: 'mario_barakus' },
+    { file: 'mascara_antigua' },
+    { file: 'metalero' },
+    { file: 'meteoro' },
+    { file: 'mimo' },
+    { file: 'mister' },
+    { file: 'mounstrico1' },
+    { file: 'mounstrico2' },
+    { file: 'mounstrico4' },
+    { file: 'mounstruo' },
+    { file: 'muerte' },
+    { file: 'mujer_hippie' },
+    { file: 'mujer_latina' },
+    { file: 'muneco_lego' },
+    { file: 'nena_afro' }
   ],
 
 });

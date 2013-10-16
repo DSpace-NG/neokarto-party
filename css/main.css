@@ -65,6 +65,11 @@ button.close {
   height: 4em;
 }
 
+.modal input[type=text] {
+  font-size: 1.3em;
+  padding: .2em;
+}
+
 label.photo {
   font-size: 30px;
   width: 50px;
