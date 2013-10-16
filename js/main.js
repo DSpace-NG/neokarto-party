@@ -2,9 +2,11 @@ $(function() {
 
   var DSpace = require('dspace-api-core/dspace');
   var LocalOperator = require('dspace-api-core/models/localOperator');
+  var BayeuxHub = require('dspace-api-bayeux/hub');
   //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
   var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
   var AvatarOverlay = require('dspace-ui-leaflet/overlays/avatar');
+
 
   var config = require('../config');
 
@@ -67,6 +69,33 @@ $(function() {
       }, { silent: true });
       //new ProfileModal( {operator: operator} ); FIXME
     }
+
+    /*
+     * CHANNELS
+     */
+    var pubsub = new BayeuxHub(config.pubsub.url);
+    var channels = {};
+
+    //#debug
+    app.channels = channels;
+
+    channels.positions = pubsub.getChannel('/positions');
+    channels.positions.subscribe(function(message){
+      if(message.from !== operator.get('uuid')){
+        console.log(message);
+      }
+    });
+
+    var publishPosition = function(position){
+      var message = {
+        from: operator.get('uuid'),
+        type: '@position',
+        body: position
+      };
+      channels.positions.publish(message);
+    };
+
+    operator.on('change:position', publishPosition);
 
     /**
      ** VIEWS
