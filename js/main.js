@@ -81,9 +81,22 @@ $(function() {
       });
       player.overlays.avatar = avatarOverlay;
 
+      var trackOverlay = new TrackOverlay({
+        collection: player.track,
+        color: player.get('color'),
+        layer: layerGroup
+      });
+      player.overlays.track = trackOverlay;
+      //var storyOverlay = new StoryOverlay({
+      //collection: player.story,
+      //layer: layerGroup
+      //});
+
+      joinGame();
     };
 
     player.on('loaded', loadedPlayer);
+    player.load();
 
     /*
      * CHANNELS
@@ -94,25 +107,24 @@ $(function() {
     //#debug
     app.channels = channels;
 
-    channels.positions = pubsub.getChannel('/positions');
-    channels.profiles = pubsub.getChannel('/profiles');
+    channels.positions = pubsub.getChannel('/positions/' + player.get('uuid'));
+    channels.profiles = pubsub.getChannel('/profiles/' + player.get('uuid'));
 
     var publishProfile = function(profile){
-      var message = {
-        from: player.get('uuid'),
-        type: '@profile',
-        body: profile
-      };
-      channels.profiles.publish(message);
+      channels.profiles.publish(profile);
     };
 
     var publishPosition = function(position){
-      var message = {
-        from: player.get('uuid'),
-        type: '@position',
-        body: position
-      };
-      channels.positions.publish(message);
+      console.log('publish position');
+      channels.positions.publish(position);
+    };
+
+    var receivedPosition = function(message){
+      console.log(message);
+    };
+
+    var receivedProfile = function(message){
+      console.log(message);
     };
 
     // on join player
@@ -122,26 +134,17 @@ $(function() {
     var joinGame = function(){
       channels.positions.subscribe(function(message){
         if(message.from !== player.get('uuid')){
-          console.log(message);
+          receivedPosition(message);
         }
       });
       channels.profiles.subscribe(function(message){
         if(message.from !== player.get('uuid')){
-          console.log(message);
+          receivedProfile(message);
         }
       });
       publishProfile(player.toJSON());
-    };
-
-    // on play player
-    // 1. starts publishng one's own positions
-    var playGame = function(){
       player.on('change:position', publishPosition);
     };
-
-    player.on('ready:join', joinGame);
-    player.on('ready:play', playGame);
-
 
     /**
      ** VIEWS
@@ -150,16 +153,6 @@ $(function() {
     //// button(s) in top-right corner
     var controls = new ControlsView({ player: player });
 
-    //var storyOverlay = new StoryOverlay({
-      //collection: player.story,
-      //layer: layerGroup
-    //});
-    var trackOverlay = new TrackOverlay({
-      collection: player.track,
-      color: player.get('color'),
-      layer: layerGroup
-    });
-    player.overlays.track = trackOverlay;
 
   });
 });
