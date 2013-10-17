@@ -80,10 +80,6 @@ module.exports = function(grunt) {
             leaflet: {
               path: 'bower_components/leaflet-dist/leaflet-src.js',
               exports: 'L'
-            },
-            faye: {
-              path: 'bower_components/faye/include.js',
-              exports: 'Faye'
             }
           }
         }
@@ -92,7 +88,7 @@ module.exports = function(grunt) {
         src: ['js/main.js'],
         dest: 'tmp/main.js',
         options: {
-          external: ["$", "_", "Backbone", "L", "Faye"],
+          external: ["$", "_", "Backbone", "L"],
           transform: ['hbsfy'],
           debug: true
         }
@@ -101,7 +97,7 @@ module.exports = function(grunt) {
         src: ['js/main.js'],
         dest: 'tmp/main.js',
         options: {
-          external: ["$", "_", "Backbone", "L", "Faye"],
+          external: ["$", "_", "Backbone", "L"],
           transform: ['hbsfy']
         }
       }
