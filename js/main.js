@@ -74,6 +74,9 @@ $(function() {
         new ProfileModal( { player: player } );
       }
 
+      // load cached track data
+      player.track.load();
+
       // create avatar overlay
       var avatarOverlay = new AvatarOverlay({
         model: player,
@@ -108,42 +111,42 @@ $(function() {
     app.channels = channels;
 
     channels.positions = pubsub.getChannel('/positions/' + player.get('uuid'));
-    channels.profiles = pubsub.getChannel('/profiles/' + player.get('uuid'));
+    channels.players = pubsub.getChannel('/players/' + player.get('uuid'));
 
-    var publishProfile = function(profile){
-      channels.profiles.publish(profile);
+    var publishPlayer = function(players){
+      channels.players.publish(players);
     };
 
     var publishPosition = function(position){
-      console.log('publish position');
       channels.positions.publish(position);
+    };
+
+    var receivedPlayer = function(message){
+      console.log(message);
     };
 
     var receivedPosition = function(message){
       console.log(message);
     };
 
-    var receivedProfile = function(message){
-      console.log(message);
-    };
-
     // on join player
     // 1. fetches current state of game TODO
-    // 2. subscribe to position and profiles
-    // 3. publishes one's own profile
+    // 2. subscribe to position and players
+    // 3. publishes one's own players
     var joinGame = function(){
       channels.positions.subscribe(function(message){
         if(message.from !== player.get('uuid')){
           receivedPosition(message);
         }
       });
-      channels.profiles.subscribe(function(message){
+      channels.players.subscribe(function(message){
         if(message.from !== player.get('uuid')){
-          receivedProfile(message);
+          receivedPlayer(message);
         }
       });
-      publishProfile(player.toJSON());
+      publishPlayer(player.toJSON());
       player.on('change:position', publishPosition);
+      player.on('change', publishPlayer);
     };
 
     /**
