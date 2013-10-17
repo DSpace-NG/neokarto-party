@@ -27,15 +27,15 @@ var ControlsView = Backbone.View.extend({
   },
 
   addCapture: function() {
-    new CaptureModal({ operator: this.options.operator });
+    new CaptureModal({ player: this.options.player });
   },
 
   updateFollowMe: function(event) {
-    this.options.operator.set('followMe', event.target.checked);
+    this.options.player.set('followMe', event.target.checked);
   },
 
   setProfile: function() {
-    new ProfileModal({ operator: this.options.operator });
+    new ProfileModal({ player: this.options.player });
   },
 
   showAbout: function() {

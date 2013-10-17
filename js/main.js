@@ -26,6 +26,7 @@ $(function() {
 
   //#debug
   var app = {};
+  app.dspace = dspace;
   app.map = map;
   window.app = app;
 
@@ -55,20 +56,34 @@ $(function() {
     /**
      ** MODELS
      **/
-    var player = new LocalPlayer();
+    var player = new LocalPlayer({}, { store: dspace.store });
 
     //#debug
     app.player = player;
     player.overlays = {};
 
-    if(!player.profile) {
-      player.set({
-        // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
-        color: '#' + Math.floor(Math.random()*16777215).toString(16),
-        avatar: 'cupido'// FIXME no magic values inline please ;)
-      }, { silent: true });
-      //new ProfileModal( {player: player} ); FIXME
-    }
+    var loadedPlayer = function(){
+
+      // if no profile prompt for it
+      if(!player.get('nickname')) {
+        player.set({
+          // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
+          color: '#' + Math.floor(Math.random()*16777215).toString(16),
+          avatar: 'escafandra'// FIXME no magic values inline please ;)
+        }, { silent: true });
+        new ProfileModal( { player: player } );
+      }
+
+      // create avatar overlay
+      var avatarOverlay = new AvatarOverlay({
+        model: player,
+        layer: layerGroup
+      });
+      player.overlays.avatar = avatarOverlay;
+
+    };
+
+    player.on('loaded', loadedPlayer);
 
     /*
      * CHANNELS
@@ -80,11 +95,16 @@ $(function() {
     app.channels = channels;
 
     channels.positions = pubsub.getChannel('/positions');
-    channels.positions.subscribe(function(message){
-      if(message.from !== player.get('uuid')){
-        console.log(message);
-      }
-    });
+    channels.profiles = pubsub.getChannel('/profiles');
+
+    var publishProfile = function(profile){
+      var message = {
+        from: player.get('uuid'),
+        type: '@profile',
+        body: profile
+      };
+      channels.profiles.publish(message);
+    };
 
     var publishPosition = function(position){
       var message = {
@@ -95,17 +115,37 @@ $(function() {
       channels.positions.publish(message);
     };
 
-    player.on('change:position', publishPosition);
+    // on join player
+    // 1. fetches current state of game TODO
+    // 2. subscribe to position and profiles
+    // 3. publishes one's own profile
+    var joinGame = function(){
+      channels.positions.subscribe(function(message){
+        if(message.from !== player.get('uuid')){
+          console.log(message);
+        }
+      });
+      channels.profiles.subscribe(function(message){
+        if(message.from !== player.get('uuid')){
+          console.log(message);
+        }
+      });
+      publishProfile(player.toJSON());
+    };
+
+    // on play player
+    // 1. starts publishng one's own positions
+    var playGame = function(){
+      player.on('change:position', publishPosition);
+    };
+
+    player.on('ready:join', joinGame);
+    player.on('ready:play', playGame);
+
 
     /**
      ** VIEWS
      **/
-
-    var avatarOverlay = new AvatarOverlay({
-      model: player,
-      layer: layerGroup
-    });
-    player.overlays.avatar = avatarOverlay;
 
     //// button(s) in top-right corner
     var controls = new ControlsView({ player: player });

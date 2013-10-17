@@ -14,10 +14,10 @@ var ProfileModal = Modal.extend({
   initialize: function() {
     _.extend(this.events, this.subEvents);
 
-    this.operator = this.options.operator;
-    this.templateData = this.operator.toJSON();
+    this.player = this.options.player;
+    this.templateData = this.player.toJSON();
     this.templateData.avatars = this.avatars;
-    this.selectedAvatar = this.operator.get('avatar');
+    this.selectedAvatar = this.player.get('avatar');
     this.render();
   },
 
@@ -34,7 +34,7 @@ var ProfileModal = Modal.extend({
     // if empty nickname don't accept it
     if(nickname === "") return false;
 
-    this.operator.set({
+    this.player.set({
       nickname: nickname,
       avatar: avatar
     });
