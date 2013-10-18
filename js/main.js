@@ -83,9 +83,6 @@ $(function() {
         new ProfileModal( { player: localPlayer } );
       }
 
-      // load cached track data
-      localPlayer.track.load();
-
       // create avatar overlay
       var avatarOverlay = new AvatarOverlay({
         model: localPlayer,
@@ -107,7 +104,7 @@ $(function() {
       joinGame();
     };
 
-    localPlayer.on('loaded', loadedPlayer);
+    localPlayer.on('load:error load:success', loadedPlayer);
     localPlayer.load();
 
     /*
@@ -128,7 +125,7 @@ $(function() {
 
     var publishPosition = function(position){
       position.player = {};
-      position.player.uuid = localPlayer.uuid;
+      position.player.uuid = localPlayer.get('uuid');
       channels.positions.publish(position);
     };
 
@@ -139,11 +136,23 @@ $(function() {
 
       } else {
         var newPlayer = new RemotePlayer(player, { store: dspace.store });
+        var lGroup = new L.LayerGroup();
+        lGroup.addTo(map);
+        var aOverlay = new AvatarOverlay({
+          model: newPlayer,
+          layer: lGroup
+        });
+        newPlayer.overlays = {};
+        newPlayer.overlays.avatar = aOverlay;
+        playersControl.addOverlay(lGroup, newPlayer.get('nickname'));
         allPlayers.add(newPlayer);
       }
     };
 
     var receivedPosition = function(position){
+      console.log(position);
+      selectedPlayer = allPlayers.get(position.player.uuid);
+      selectedPlayer.track.add(position);
     };
 
     // on join player
