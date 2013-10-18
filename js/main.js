@@ -2,6 +2,9 @@ $(function() {
 
   var DSpace = require('dspace-api-core/dspace');
   var LocalPlayer = require('dspace-api-core/models/localPlayer');
+  var RemotePlayer = require('dspace-api-core/models/remotePlayer');
+  var Team = require('dspace-api-core/collections/team');
+
   var BayeuxHub = require('dspace-api-bayeux/hub');
   //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
   var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
@@ -56,50 +59,56 @@ $(function() {
     /**
      ** MODELS
      **/
-    var player = new LocalPlayer({}, { store: dspace.store });
+    var localPlayer = new LocalPlayer({}, { store: dspace.store });
+    localPlayer.geolocation.enable();
+
+
+    var allPlayers = new Team();
 
     //#debug
-    app.player = player;
-    player.overlays = {};
+    app.localPlayer = localPlayer;
+    app.allPlayers = allPlayers;
+
+    localPlayer.overlays = {};
 
     var loadedPlayer = function(){
 
       // if no profile prompt for it
-      if(!player.get('nickname')) {
-        player.set({
+      if(!localPlayer.get('nickname')) {
+        localPlayer.set({
           // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
           color: '#' + Math.floor(Math.random()*16777215).toString(16),
           avatar: 'escafandra'// FIXME no magic values inline please ;)
         }, { silent: true });
-        new ProfileModal( { player: player } );
+        new ProfileModal( { player: localPlayer } );
       }
 
       // load cached track data
-      player.track.load();
+      localPlayer.track.load();
 
       // create avatar overlay
       var avatarOverlay = new AvatarOverlay({
-        model: player,
+        model: localPlayer,
         layer: layerGroup
       });
-      player.overlays.avatar = avatarOverlay;
+      localPlayer.overlays.avatar = avatarOverlay;
 
       var trackOverlay = new TrackOverlay({
-        collection: player.track,
-        color: player.get('color'),
+        collection: localPlayer.track,
+        color: localPlayer.get('color'),
         layer: layerGroup
       });
-      player.overlays.track = trackOverlay;
+      localPlayer.overlays.track = trackOverlay;
       //var storyOverlay = new StoryOverlay({
-      //collection: player.story,
+      //collection: localPlayer.story,
       //layer: layerGroup
       //});
 
       joinGame();
     };
 
-    player.on('loaded', loadedPlayer);
-    player.load();
+    localPlayer.on('loaded', loadedPlayer);
+    localPlayer.load();
 
     /*
      * CHANNELS
@@ -110,23 +119,31 @@ $(function() {
     //#debug
     app.channels = channels;
 
-    channels.positions = pubsub.getChannel('/positions/' + player.get('uuid'));
-    channels.players = pubsub.getChannel('/players/' + player.get('uuid'));
+    channels.positions = pubsub.getChannel('/positions');
+    channels.players = pubsub.getChannel('/players');
 
-    var publishPlayer = function(players){
-      channels.players.publish(players);
+    var publishPlayer = function(player){
+      channels.players.publish(player.toJSON());
     };
 
     var publishPosition = function(position){
+      position.player = {};
+      position.player.uuid = localPlayer.uuid;
       channels.positions.publish(position);
     };
 
-    var receivedPlayer = function(message){
-      console.log(message);
+    var receivedPlayer = function(player){
+      console.log('addPlayer');
+      //FIXME move logix to collection!
+      if(allPlayers.get(player.uuid)){
+
+      } else {
+        var newPlayer = new RemotePlayer(player, { store: dspace.store });
+        allPlayers.add(newPlayer);
+      }
     };
 
-    var receivedPosition = function(message){
-      console.log(message);
+    var receivedPosition = function(position){
     };
 
     // on join player
@@ -135,18 +152,18 @@ $(function() {
     // 3. publishes one's own players
     var joinGame = function(){
       channels.positions.subscribe(function(message){
-        if(message.from !== player.get('uuid')){
+        if(message.player.uuid !== localPlayer.get('uuid')){
           receivedPosition(message);
         }
       });
       channels.players.subscribe(function(message){
-        if(message.from !== player.get('uuid')){
+        if(message.uuid !== localPlayer.get('uuid')){
           receivedPlayer(message);
         }
       });
-      publishPlayer(player.toJSON());
-      player.on('change:position', publishPosition);
-      player.on('change', publishPlayer);
+      publishPlayer(localPlayer);
+      localPlayer.on('change:position', publishPosition);
+      localPlayer.on('change', publishPlayer);
     };
 
     /**
@@ -154,7 +171,7 @@ $(function() {
      **/
 
     //// button(s) in top-right corner
-    var controls = new ControlsView({ player: player });
+    var controls = new ControlsView({ player: localPlayer });
 
 
   });
