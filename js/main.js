@@ -46,17 +46,19 @@ $(function() {
    ** MODELS
    **/
   var localPlayer = new LocalPlayer();
-  var teams = {};
+  var roster = {};
+  roster.local = localPlayer;
+  roster.remote = new Team();
 
-  teams.all = new Team();
-  teams.blue = new Team();
-  teams.red = new Team();
-  teams.misc = new Team();
+  roster.blue = new Team();
+  roster.red = new Team();
+  roster.misc = new Team();
+
   _.each(['blue', 'red', 'misc'], function(name){
     var lg_avatars = new L.LayerGroup();
     var lg_tracks = new L.LayerGroup();
-    teams[name].avatarsLayer = lg_avatars;
-    teams[name].tracksLayer = lg_tracks;
+    roster[name].avatarsLayer = lg_avatars;
+    roster[name].tracksLayer = lg_tracks;
     lg_avatars.addTo(map);
     lg_tracks.addTo(map);
     playersControl.addOverlay(lg_avatars, name + '-avatars');
@@ -82,14 +84,12 @@ $(function() {
     model: localPlayer,
     layer: layerGroup
   });
-  localPlayer.overlays.avatar = avatarOverlay;
 
   var trackOverlay = new TrackOverlay({
     collection: localPlayer.track,
     color: localPlayer.get('color'),
     layer: layerGroup
   });
-  localPlayer.overlays.track = trackOverlay;
 
   //var storyOverlay = new StoryOverlay({
   //collection: localPlayer.story,
@@ -104,7 +104,6 @@ $(function() {
   var pubsub = new BayeuxHub(config.pubsub.url);
   var channels = {};
 
-  channels.positions = pubsub.getChannel('/positions');
   channels.players = pubsub.getChannel('/players');
 
   var publishPlayer = function(player){
@@ -118,18 +117,19 @@ $(function() {
   };
 
   var receivedPlayer = function(player){
-    var selectedPlayer = teams.all.get(player.uuid);
+    var selectedPlayer = roster.remote.get(player.uuid);
     //FIXME move logix to collection!
     if(selectedPlayer){
       selectedPlayer.set(player);
     } else {
       console.log('addPlayer', player);
-      var newPlayer = new RemotePlayer(player);
-      var avatarGroup = teams.misc.avatarsLayer;
-      var tracksGroup = teams.misc.tracksLayer;
+      var geolocation = pubsub.getGeolocationChannel('/' + player.uuid + '/track');
+      var newPlayer = new RemotePlayer(player, { geolocation: geolocation });
+      var avatarGroup = roster.misc.avatarsLayer;
+      var tracksGroup = roster.misc.tracksLayer;
       if(newPlayer.get('team')){
-        avatarGroup = teams[newPlayer.get('team')].avatarsLayer;
-        tracksGroup = teams[newPlayer.get('team')].tracksLayer;
+        avatarGroup = roster[newPlayer.get('team')].avatarsLayer;
+        tracksGroup = roster[newPlayer.get('team')].tracksLayer;
       }
       var aOverlay = new AvatarOverlay({
         model: newPlayer,
@@ -145,35 +145,19 @@ $(function() {
       newPlayer.overlays = {};
       newPlayer.overlays.avatar = aOverlay;
       newPlayer.overlays.track = tOverlay;
-      teams.all.add(newPlayer);
-    }
-  };
-
-  var receivedPosition = function(position){
-    var selectedPlayer = teams.all.get(position.player.uuid);
-    if(selectedPlayer){
-      selectedPlayer.track.add(position);
-      selectedPlayer.trigger('change:position', position);
-    } else {
-      //fetchPlayer(uuid)
+      roster.remote.add(newPlayer);
     }
   };
 
   // 1. fetches current state of game TODO
   // 2. subscribe to position and players
   // 3. publishes one's own players
-  channels.positions.subscribe(function(message){
-    if(message.player.uuid !== localPlayer.get('uuid')){
-      receivedPosition(message);
-    }
-  });
   channels.players.subscribe(function(message){
     if(message.uuid !== localPlayer.get('uuid')){
       receivedPlayer(message);
     }
   });
   publishPlayer(localPlayer);
-  localPlayer.on('change:position', publishPosition);
   localPlayer.on('change', publishPlayer);
 
   /**
@@ -186,8 +170,7 @@ $(function() {
   //#debug
   var app = {};
   app.map = map;
-  app.localPlayer = localPlayer;
-  app.teams = teams;
+  app.roster = roster;
   app.channels = channels;
   window.app = app;
 
