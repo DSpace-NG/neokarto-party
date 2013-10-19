@@ -26,7 +26,7 @@ $(function() {
   });
 
   //// add openstreetmap layer
-  var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
+  var basemap = new L.TileLayer(config.map.basemap.template, {
     maxZoom : config.map.basemap.maxZoom
   }).addTo(map);
 
@@ -35,13 +35,11 @@ $(function() {
   var playersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
   $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
 
-  var poisControl = new L.Control.Layers({ "OSM": basemapCloudmade }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
+  var poisControl = new L.Control.Layers({ "OSM-MapBox": basemap }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
   $('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
 
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
-
-  playersControl.addOverlay(layerGroup, 'me');
 
   /**
    ** MODELS

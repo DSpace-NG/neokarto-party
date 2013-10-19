@@ -99,5 +99,5 @@ img.avatar {
   text-align: center;
 }
 
-.leaflet-control-layers a { color: rgba(0,0,0,.3);
-
+.leaflet-control-layers a { color: rgba(0,0,0,.3); }
+.leaflet-control-layers-list { font-size: 2em; }
