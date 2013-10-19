@@ -126,21 +126,30 @@ $(function() {
   roster.local = localPlayer;
   roster.remote = new Team();
 
-  roster.blue = new Team();
-  roster.red = new Team();
-  roster.misc = new Team();
+  _.each(config.teams, function(team){
+    var name = team.name;
+    roster[name] = new Team();
 
-  _.each(['blue', 'red', 'misc'], function(name){
     var lg_avatars = new L.LayerGroup();
-    var lg_tracks = new L.LayerGroup();
     roster[name].avatarsLayer = lg_avatars;
-    roster[name].tracksLayer = lg_tracks;
     lg_avatars.addTo(map);
-    lg_tracks.addTo(map);
     playersControl.addOverlay(lg_avatars, name + '-avatars');
+
+    var lg_tracks = new L.LayerGroup();
+    roster[name].tracksLayer = lg_tracks;
+    lg_tracks.addTo(map);
     playersControl.addOverlay(lg_tracks, name + '-tracks');
   });
 
+  roster.misc = new Team();
+  var lg_avatars = new L.LayerGroup();
+  roster.misc.avatarsLayer = lg_avatars;
+  lg_avatars.addTo(map);
+  playersControl.addOverlay(lg_avatars, 'misc-avatars');
+  var lg_tracks = new L.LayerGroup();
+  roster.misc.tracksLayer = lg_tracks;
+  lg_tracks.addTo(map);
+  playersControl.addOverlay(lg_tracks, 'misc-tracks');
 
 
   var publishPlayer = function(player){
@@ -164,7 +173,7 @@ $(function() {
     if(selectedPlayer){
       selectedPlayer.set(player);
     } else {
-      console.log('addPlayer:', player.nickname);
+      console.log('addPlayer:', player.team);
       var newPlayer = new RemotePlayer(player, { dspace: dspace });
       var avatarGroup = roster.misc.avatarsLayer;
       var tracksGroup = roster.misc.tracksLayer;
