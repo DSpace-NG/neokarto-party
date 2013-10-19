@@ -45,6 +45,26 @@ $(function() {
   /**
    ** MODELS
    **/
+  var DSpace = function(config){
+    this.hubs = {};
+
+    this.hubs[config.url] = new BayeuxHub(config.url);
+    this.realm = this.hubs[config.url].getChannel(config.path);
+    this.getGeolocationChannel = function(template){
+      var hub = this.hubs[template.url];
+      if(!hub){
+        hub = new BayeuxHub(template.url);
+        this.hubs[template.url] = hub;
+      }
+      return hub.getGeolocationChannel(template.path);
+    }.bind(this);
+  };
+
+  var dspace = new DSpace({
+    url: config.pubsub.url,
+    path: '/players'
+  });
+
   var localPlayer = new LocalPlayer();
   var roster = {};
   roster.local = localPlayer;
@@ -77,7 +97,6 @@ $(function() {
     localPlayer.set('nickname', 'tester');
   //}
 
-  localPlayer.overlays = {};
 
   // create avatar overlay
   var avatarOverlay = new AvatarOverlay({
@@ -101,19 +120,14 @@ $(function() {
   /*
    * CHANNELS
    */
-  var pubsub = new BayeuxHub(config.pubsub.url);
-  var channels = {};
-
-  channels.players = pubsub.getChannel('/players');
-
   var publishPlayer = function(player){
-    channels.players.publish(player.toJSON());
+    dspace.realm.publish(player.toJSON());
   };
 
   var publishPosition = function(position){
     position.player = {};
     position.player.uuid = localPlayer.get('uuid');
-    channels.positions.publish(position);
+    //channels.positions.publish(position);
   };
 
   var receivedPlayer = function(player){
@@ -122,9 +136,8 @@ $(function() {
     if(selectedPlayer){
       selectedPlayer.set(player);
     } else {
-      console.log('addPlayer', player);
-      var geolocation = pubsub.getGeolocationChannel('/' + player.uuid + '/track');
-      var newPlayer = new RemotePlayer(player, { geolocation: geolocation });
+      console.log('addPlayer:', player.nickname);
+      var newPlayer = new RemotePlayer(player, { dspace: dspace });
       var avatarGroup = roster.misc.avatarsLayer;
       var tracksGroup = roster.misc.tracksLayer;
       if(newPlayer.get('team')){
@@ -142,9 +155,6 @@ $(function() {
         layer: tracksGroup
       });
 
-      newPlayer.overlays = {};
-      newPlayer.overlays.avatar = aOverlay;
-      newPlayer.overlays.track = tOverlay;
       roster.remote.add(newPlayer);
     }
   };
@@ -152,11 +162,11 @@ $(function() {
   // 1. fetches current state of game TODO
   // 2. subscribe to position and players
   // 3. publishes one's own players
-  channels.players.subscribe(function(message){
+  dspace.realm.subscribe(function(message){
     if(message.uuid !== localPlayer.get('uuid')){
       receivedPlayer(message);
     }
-  });
+  }.bind(this));
   publishPlayer(localPlayer);
   localPlayer.on('change', publishPlayer);
 
@@ -171,7 +181,7 @@ $(function() {
   var app = {};
   app.map = map;
   app.roster = roster;
-  app.channels = channels;
   window.app = app;
+  window.dspace = dspace;
 
 });
