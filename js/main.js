@@ -11,6 +11,7 @@ $(function() {
 
 
   var config = require('../config');
+  var UUID = require('node-uuid');
 
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
@@ -51,7 +52,7 @@ $(function() {
     this.hubs[config.url] = new BayeuxHub(config.url);
 
     // FIXME support multiple realms
-    this.realm = this.hubs[config.url].getChannel(config.path);
+    this.realm = this.hubs[config.url].getChannel(config.roster.path);
 
     this.getChannel = function(template){
       var hub = this.hubs[template.url];
@@ -80,30 +81,27 @@ $(function() {
   };
 
   // FIXME support multiple realms
-  var dspace = new DSpace({
-    url: config.pubsub.url,
-    path: '/roster'
-  });
+  var dspace = new DSpace(config.realm);
 
-  var localPlayer = new LocalPlayer({
-    channels: {
-      track: {
-        url: config.pubsub.url
-        //FIXME path should go here, how do to deal with uuid?
-      }
-    }
-  }, { dspace: dspace });
+  var uuid;
+  if(localStorage.profile) {
+    uuid = localStorage.uuid;
+  } else {
+    uuid =  UUID();
+    localStorage.uuid = uuid;
+  }
+
+  config.player.uuid = uuid;
+  config.player.channels.track.path =  '/' + uuid + '/track';
+  config.player.color = dspace.utils.randomColor();
+
+  var localPlayer = new LocalPlayer(config.player, { dspace: dspace });
 
   localPlayer.geolocation.enable();
 
   // if no profile prompt for it
   //if(!localPlayer.get('nickname')) {
-    localPlayer.set({
-      avatar: 'escafandra',// FIXME no magic values inline please ;)
-      nickname: 'tester',
-      color: dspace.utils.randomColor()
-    }, { silent: true });
-    //new ProfileModal( { player: localPlayer } );
+  //new ProfileModal( { player: localPlayer } );
   //}
 
   // create avatar overlay
@@ -198,10 +196,8 @@ $(function() {
   var controls = new ControlsView({ player: localPlayer });
 
   //#debug
-  var app = {};
-  app.map = map;
-  app.roster = roster;
-  window.app = app;
+  dspace.map = map;
+  dspace.roster = roster;
   window.dspace = dspace;
 
 });
