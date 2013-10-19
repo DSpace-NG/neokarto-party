@@ -104,17 +104,20 @@ $(function() {
   //new ProfileModal( { player: localPlayer } );
   //}
 
-  // create avatar overlay
-  var avatarOverlay = new AvatarOverlay({
-    model: localPlayer,
-    layer: layerGroup
-  });
+  var createPlayerOverlays = function(player, avatarGroup, trackGroup){
+    var avatarOverlay = new AvatarOverlay({
+      model: player,
+      layer: avatarGroup
+    });
 
-  var trackOverlay = new TrackOverlay({
-    collection: localPlayer.track,
-    color: localPlayer.get('color'),
-    layer: layerGroup
-  });
+    var trackOverlay = new TrackOverlay({
+      collection: player.track,
+      color: player.get('color'),
+      layer: trackGroup
+    });
+  };
+
+  createPlayerOverlays(localPlayer, layerGroup, layerGroup);
 
   //var storyOverlay = new StoryOverlay({
   //collection: localPlayer.story,
@@ -126,35 +129,27 @@ $(function() {
   roster.local = localPlayer;
   roster.remote = new Team();
 
-  _.each(config.teams, function(team){
-    var name = team.name;
-    roster[name] = new Team();
-
+  var createTeamOverlays = function(name){
     var lg_avatars = new L.LayerGroup();
-    roster[name].avatarsLayer = lg_avatars;
+    roster[name].avatarGroup = lg_avatars;
     lg_avatars.addTo(map);
     playersControl.addOverlay(lg_avatars, name + '-avatars');
 
     var lg_tracks = new L.LayerGroup();
-    roster[name].tracksLayer = lg_tracks;
+    roster[name].trackGroup = lg_tracks;
     lg_tracks.addTo(map);
     playersControl.addOverlay(lg_tracks, name + '-tracks');
+  };
+
+  _.each(config.teams, function(team){
+    var name = team.name;
+    roster[team.name] = new Team();
+    createTeamOverlays(team.name);
+
   });
 
   roster.misc = new Team();
-  var lg_avatars = new L.LayerGroup();
-  roster.misc.avatarsLayer = lg_avatars;
-  lg_avatars.addTo(map);
-  playersControl.addOverlay(lg_avatars, 'misc-avatars');
-  var lg_tracks = new L.LayerGroup();
-  roster.misc.tracksLayer = lg_tracks;
-  lg_tracks.addTo(map);
-  playersControl.addOverlay(lg_tracks, 'misc-tracks');
-
-
-  var publishPlayer = function(player){
-    dspace.realm.publish(player.toJSON());
-  };
+  createTeamOverlays('misc');
 
   // 1. fetches current state of game TODO
   // 2. subscribe to position and players
@@ -164,6 +159,10 @@ $(function() {
       receivedPlayer(message);
     }
   }.bind(this));
+
+  var publishPlayer = function(player){
+    dspace.realm.publish(player.toJSON());
+  };
   publishPlayer(localPlayer);
   localPlayer.on('change', publishPlayer);
 
@@ -175,22 +174,14 @@ $(function() {
     } else {
       console.log('addPlayer:', player.team);
       var newPlayer = new RemotePlayer(player, { dspace: dspace });
-      var avatarGroup = roster.misc.avatarsLayer;
-      var tracksGroup = roster.misc.tracksLayer;
+      var avatarGroup = roster.misc.avatarGroup;
+      var trackGroup = roster.misc.trackGroup;
       if(newPlayer.get('team')){
-        avatarGroup = roster[newPlayer.get('team')].avatarsLayer;
-        tracksGroup = roster[newPlayer.get('team')].tracksLayer;
+        avatarGroup = roster[newPlayer.get('team')].avatarGroup;
+        trackGroup = roster[newPlayer.get('team')].trackGroup;
       }
-      var aOverlay = new AvatarOverlay({
-        model: newPlayer,
-        layer: avatarGroup
-      });
 
-      var tOverlay = new TrackOverlay({
-        collection: newPlayer.track,
-        color: newPlayer.get('color'),
-        layer: tracksGroup
-      });
+      createPlayerOverlays(newPlayer, avatarGroup, trackGroup);
 
       roster.remote.add(newPlayer);
     }
