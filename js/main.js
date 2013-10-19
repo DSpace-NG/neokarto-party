@@ -24,11 +24,6 @@ $(function() {
     zoomControl: false
   });
 
-  //#debug
-  var app = {};
-  app.map = map;
-  window.app = app;
-
   //// add openstreetmap layer
   var basemapCloudmade = new L.TileLayer(config.map.basemap.template, {
     maxZoom : config.map.basemap.maxZoom
@@ -51,14 +46,22 @@ $(function() {
    ** MODELS
    **/
   var localPlayer = new LocalPlayer();
+  var teams = {};
 
-  var allPlayers = new Team();
-
-  //#debug
-  app.localPlayer = localPlayer;
-  app.allPlayers = allPlayers;
-
-  localPlayer.overlays = {};
+  teams.all = new Team();
+  teams.blue = new Team();
+  teams.red = new Team();
+  teams.misc = new Team();
+  _.each(['blue', 'red', 'misc'], function(name){
+    var lg_avatars = new L.LayerGroup();
+    var lg_tracks = new L.LayerGroup();
+    teams[name].avatarsLayer = lg_avatars;
+    teams[name].tracksLayer = lg_tracks;
+    lg_avatars.addTo(map);
+    lg_tracks.addTo(map);
+    playersControl.addOverlay(lg_avatars, name + '-avatars');
+    playersControl.addOverlay(lg_tracks, name + '-tracks');
+  });
 
   // if no profile prompt for it
   //if(!localPlayer.get('nickname')) {
@@ -71,6 +74,8 @@ $(function() {
     //#debug
     localPlayer.set('nickname', 'tester');
   //}
+
+  localPlayer.overlays = {};
 
   // create avatar overlay
   var avatarOverlay = new AvatarOverlay({
@@ -99,9 +104,6 @@ $(function() {
   var pubsub = new BayeuxHub(config.pubsub.url);
   var channels = {};
 
-  //#debug
-  app.channels = channels;
-
   channels.positions = pubsub.getChannel('/positions');
   channels.players = pubsub.getChannel('/players');
 
@@ -116,36 +118,39 @@ $(function() {
   };
 
   var receivedPlayer = function(player){
-    var selectedPlayer = allPlayers.get(player.uuid);
+    var selectedPlayer = teams.all.get(player.uuid);
     //FIXME move logix to collection!
     if(selectedPlayer){
       selectedPlayer.set(player);
     } else {
-      console.log('addPlayer');
+      console.log('addPlayer', player);
       var newPlayer = new RemotePlayer(player);
-      var lGroup = new L.LayerGroup();
-      lGroup.addTo(map);
+      var avatarGroup = teams.misc.avatarsLayer;
+      var tracksGroup = teams.misc.tracksLayer;
+      if(newPlayer.get('team')){
+        avatarGroup = teams[newPlayer.get('team')].avatarsLayer;
+        tracksGroup = teams[newPlayer.get('team')].tracksLayer;
+      }
       var aOverlay = new AvatarOverlay({
         model: newPlayer,
-        layer: lGroup
+        layer: avatarGroup
       });
 
       var tOverlay = new TrackOverlay({
         collection: newPlayer.track,
         color: newPlayer.get('color'),
-        layer: lGroup
+        layer: tracksGroup
       });
 
       newPlayer.overlays = {};
       newPlayer.overlays.avatar = aOverlay;
       newPlayer.overlays.track = tOverlay;
-      playersControl.addOverlay(lGroup, newPlayer.get('nickname'));
-      allPlayers.add(newPlayer);
+      teams.all.add(newPlayer);
     }
   };
 
   var receivedPosition = function(position){
-    var selectedPlayer = allPlayers.get(position.player.uuid);
+    var selectedPlayer = teams.all.get(position.player.uuid);
     if(selectedPlayer){
       selectedPlayer.track.add(position);
       selectedPlayer.trigger('change:position', position);
@@ -177,5 +182,13 @@ $(function() {
 
   //// button(s) in top-right corner
   var controls = new ControlsView({ player: localPlayer });
+
+  //#debug
+  var app = {};
+  app.map = map;
+  app.localPlayer = localPlayer;
+  app.teams = teams;
+  app.channels = channels;
+  window.app = app;
 
 });
