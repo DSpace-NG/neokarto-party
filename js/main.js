@@ -49,7 +49,19 @@ $(function() {
     this.hubs = {};
 
     this.hubs[config.url] = new BayeuxHub(config.url);
+
+    // FIXME support multiple realms
     this.realm = this.hubs[config.url].getChannel(config.path);
+
+    this.getChannel = function(template){
+      var hub = this.hubs[template.url];
+      if(!hub){
+        hub = new BayeuxHub(template.url);
+        this.hubs[template.url] = hub;
+      }
+      return hub.getChannel(template.path);
+    }.bind(this);
+
     this.getGeolocationChannel = function(template){
       var hub = this.hubs[template.url];
       if(!hub){
@@ -58,14 +70,60 @@ $(function() {
       }
       return hub.getGeolocationChannel(template.path);
     }.bind(this);
+
+    // various handy functions
+    this.utils = {
+
+      // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
+      randomColor: function(){ return '#' + Math.floor(Math.random()*16777215).toString(16); }
+    };
   };
 
+  // FIXME support multiple realms
   var dspace = new DSpace({
     url: config.pubsub.url,
-    path: '/players'
+    path: '/roster'
   });
 
-  var localPlayer = new LocalPlayer();
+  var localPlayer = new LocalPlayer({
+    channels: {
+      track: {
+        url: config.pubsub.url
+        //FIXME path should go here, how do to deal with uuid?
+      }
+    }
+  }, { dspace: dspace });
+
+  localPlayer.geolocation.enable();
+
+  // if no profile prompt for it
+  //if(!localPlayer.get('nickname')) {
+    localPlayer.set({
+      avatar: 'escafandra',// FIXME no magic values inline please ;)
+      nickname: 'tester',
+      color: dspace.utils.randomColor()
+    }, { silent: true });
+    //new ProfileModal( { player: localPlayer } );
+  //}
+
+  // create avatar overlay
+  var avatarOverlay = new AvatarOverlay({
+    model: localPlayer,
+    layer: layerGroup
+  });
+
+  var trackOverlay = new TrackOverlay({
+    collection: localPlayer.track,
+    color: localPlayer.get('color'),
+    layer: layerGroup
+  });
+
+  //var storyOverlay = new StoryOverlay({
+  //collection: localPlayer.story,
+  //layer: layerGroup
+  //});
+
+
   var roster = {};
   roster.local = localPlayer;
   roster.remote = new Team();
@@ -85,50 +143,22 @@ $(function() {
     playersControl.addOverlay(lg_tracks, name + '-tracks');
   });
 
-  // if no profile prompt for it
-  //if(!localPlayer.get('nickname')) {
-    localPlayer.set({
-      // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
-      color: '#' + Math.floor(Math.random()*16777215).toString(16),
-      avatar: 'escafandra'// FIXME no magic values inline please ;)
-    }, { silent: true });
-    //new ProfileModal( { player: localPlayer } );
-    //#debug
-    localPlayer.set('nickname', 'tester');
-  //}
 
 
-  // create avatar overlay
-  var avatarOverlay = new AvatarOverlay({
-    model: localPlayer,
-    layer: layerGroup
-  });
-
-  var trackOverlay = new TrackOverlay({
-    collection: localPlayer.track,
-    color: localPlayer.get('color'),
-    layer: layerGroup
-  });
-
-  //var storyOverlay = new StoryOverlay({
-  //collection: localPlayer.story,
-  //layer: layerGroup
-  //});
-
-  localPlayer.geolocation.enable();
-
-  /*
-   * CHANNELS
-   */
   var publishPlayer = function(player){
     dspace.realm.publish(player.toJSON());
   };
 
-  var publishPosition = function(position){
-    position.player = {};
-    position.player.uuid = localPlayer.get('uuid');
-    //channels.positions.publish(position);
-  };
+  // 1. fetches current state of game TODO
+  // 2. subscribe to position and players
+  // 3. publishes one's own players
+  dspace.realm.subscribe(function(message){
+    if(message.uuid !== localPlayer.get('uuid')){
+      receivedPlayer(message);
+    }
+  }.bind(this));
+  publishPlayer(localPlayer);
+  localPlayer.on('change', publishPlayer);
 
   var receivedPlayer = function(player){
     var selectedPlayer = roster.remote.get(player.uuid);
@@ -159,16 +189,6 @@ $(function() {
     }
   };
 
-  // 1. fetches current state of game TODO
-  // 2. subscribe to position and players
-  // 3. publishes one's own players
-  dspace.realm.subscribe(function(message){
-    if(message.uuid !== localPlayer.get('uuid')){
-      receivedPlayer(message);
-    }
-  }.bind(this));
-  publishPlayer(localPlayer);
-  localPlayer.on('change', publishPlayer);
 
   /**
    ** VIEWS
