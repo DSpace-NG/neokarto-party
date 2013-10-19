@@ -88,10 +88,14 @@ button.submit {
   margin-right: 50px;
 }
 
-img.avatar {
+img.avatar, img.team {
   margin:5px;
   background-color: #d5d5d5;
   border: 2px solid black;
+}
+
+#select-avatar {
+  clear: both;
 }
 
 .leaflet-control-layers-toggle {

@@ -82,7 +82,7 @@ $(function() {
   var dspace = new DSpace(config.realm);
 
   var uuid;
-  if(localStorage.profile) {
+  if(localStorage.uuid) {
     uuid = localStorage.uuid;
   } else {
     uuid =  UUID();
@@ -98,9 +98,15 @@ $(function() {
   localPlayer.geolocation.enable();
 
   // if no profile prompt for it
-  //if(!localPlayer.get('nickname')) {
-  //new ProfileModal( { player: localPlayer } );
-  //}
+  if(localStorage.nickname){
+    localPlayer.set('nickname', localStorage.nickname);
+  }
+  if(!localPlayer.get('nickname')) {
+    new ProfileModal( { player: localPlayer } );
+  }
+  localPlayer.on('change:nickname', function(player){
+    localStorage.nickname = player.get('nickname');
+  });
 
   var createPlayerOverlays = function(player, avatarGroup, trackGroup){
     var avatarOverlay = new AvatarOverlay({
