@@ -193,12 +193,6 @@ $(function() {
     };
   };
 
-  var dspace = new DSpace(config);
-
-  //#debug
-  dspace.map = map;
-  window.dspace = dspace;
-
   var uuid;
   if(localStorage.uuid) {
     uuid = localStorage.uuid;
@@ -210,6 +204,13 @@ $(function() {
   config.player.uuid = uuid;
   config.player.channels.track.path =  '/' + uuid + '/track';
   config.player.color = dspace.utils.randomColor();
+
+  var dspace = new DSpace(config);
+
+  //#debug
+  dspace.map = map;
+  window.dspace = dspace;
+
 
   var localPlayer = new LocalPlayer(config.player, { dspace: dspace });
 
