@@ -90,7 +90,7 @@ $(function() {
   }
 
   config.player.uuid = uuid;
-  config.player.channels.track.path =  '/' + uuid + '/track';
+  config.player.channels.track.live.path =  '/' + uuid + '/track';
   config.player.color = dspace.utils.randomColor();
 
   var localPlayer = new LocalPlayer(config.player, { dspace: dspace });
