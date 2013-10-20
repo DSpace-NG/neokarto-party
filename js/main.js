@@ -252,7 +252,7 @@ $(function() {
 
   var mc = {};
   window.mc = mc;
-  mc.faye = hub = dspace.hubs['http://localhost:5000/bayeux'].client;
+  mc.faye = dspace.hubs[config.party.channels.roster.url].client;
   mc.faye.subscribe('/control', function(message){
     console.log(message);
     if(message.command === '!!!RELOAD!!!'){
