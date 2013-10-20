@@ -1,11 +1,13 @@
 <form>
   <input type="text" placeholder="your nickname" value="{{nickname}}" />
   <div id='select-team'>
+    <p>choose your team</p>
     {{#each teams}}
       <img class="team" src="assets/images/teams/{{this.file}}.png" alt="{{this.name}}" title="{{this.name}}" data="{{this.file}}" width="48" height="48"></img>
     {{/each}}
   </div>
   <div id='select-avatar'>
+    <p>choose your avatar</p>
     {{#each avatars}}
       <img class="avatar" src="assets/images/avatars/{{this.file}}_48.png" alt="{{this.name}}" title="{{this.name}}" data="{{this.file}}" width="48" height="48"></img>
     {{/each}}

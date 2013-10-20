@@ -3,15 +3,15 @@ module.exports = {
     avatar: 'escafandra',
     channels: {
       track: {
-        live: {
-          url:  'http://192.168.1.186:5000/bayeux',
-          path: 'NEEDS UUID, generating in app!!!',
-          protocol: 'bayeux'
-        },
-        history: {
-          url:  'http://192.168.1.186:5000/',
-          path: 'NEEDS UUID, generating in app!!!',
-        },
+        url:  'http://localhost:5000/bayeux',
+        path: 'NEEDS UUID, generating in app!!!',
+        protocol: 'bayeux'
+      }
+    },
+    feeds: {
+      track: {
+        url:  'http://localhost:5000',
+        path: 'NEEDS UUID, generating in app!!!',
       }
     }
   },
@@ -23,10 +23,18 @@ module.exports = {
       routino: {}
     }
   },
-  realm: {
-    url: 'http://192.168.1.186:5000/bayeux',
-    roster: {
-      path: "/roster"
+  party: {
+    channels: {
+      roster: {
+        url: 'http://localhost:5000/bayeux',
+        path: '/roster'
+      }
+    },
+    feeds: {
+      roster: {
+        url: 'http://localhost:5000',
+        path: "/roster"
+      }
     }
   },
   media: {
