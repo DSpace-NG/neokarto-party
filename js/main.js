@@ -203,7 +203,6 @@ $(function() {
 
   config.player.uuid = uuid;
   config.player.channels.track.path =  '/' + uuid + '/track';
-  config.player.color = dspace.utils.randomColor();
 
   var dspace = new DSpace(config);
 
@@ -212,6 +211,7 @@ $(function() {
   window.dspace = dspace;
 
 
+  config.player.color = dspace.utils.randomColor();
   var localPlayer = new LocalPlayer(config.player, { dspace: dspace });
 
   localPlayer.geolocation.enable();
