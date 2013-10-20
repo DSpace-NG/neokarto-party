@@ -44,20 +44,26 @@ $(function() {
   /**
    ** MODELS
    **/
-  var Roster = function(feed, channel){
+  var Roster = Backbone.Collection.extend({
 
-    this.feed = feed;
-    this.channel = channel;
+    model: RemotePlayer,
 
-    this.fetch = function(){
-      console.log('FETCH ROSTER');
-    };
+    initialize: function(attrs, options){
+      this.feed = options.feed;
+      this.channel = options.channel;
+    },
+
+    // remove oneself!
+    parse: function(response){
+      _.remove(response, function(resource){ return resource.uuid === localStorage.uuid; });
+      return response;
+    }
 
     // convenience proxies ?
     //this.subscribe = function(){};
     //this.publish = function(){};
 
-  };
+  });
 
   var Party = function(template, dspace){
 
@@ -65,7 +71,11 @@ $(function() {
 
     var rosterFeed = {}; //dspace.getFeed(template.feeeds.roster);
     var rosterChannel = dspace.getChannel(template.channels.roster);
-    this.roster = new Roster(rosterFeed, rosterChannel);
+    this.roster = new Roster([], {
+      feed: rosterFeed,
+      channel: rosterChannel,
+      url: template.feeds.roster.url + template.feeds.roster.path
+    });
 
   };
 
@@ -107,6 +117,12 @@ $(function() {
   };
 
   var dspace = new DSpace(config);
+
+  //#debug
+  dspace.map = map;
+  window.dspace = dspace;
+
+  dspace.party.roster.fetch();
 
   var uuid;
   if(localStorage.uuid) {
@@ -197,7 +213,7 @@ $(function() {
 
   var receivedPlayer = function(player){
     var selectedPlayer = dspace.party.roster.remote.get(player.uuid);
-    //FIXME move logix to collection!
+    //FIXME move logix to Roster!
     if(selectedPlayer){
       selectedPlayer.set(player);
     } else {
@@ -223,9 +239,5 @@ $(function() {
 
   //// button(s) in top-right corner
   var controls = new ControlsView({ player: localPlayer });
-
-  //#debug
-  dspace.map = map;
-  window.dspace = dspace;
 
 });
