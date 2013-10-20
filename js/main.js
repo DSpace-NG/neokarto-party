@@ -44,13 +44,37 @@ $(function() {
   /**
    ** MODELS
    **/
+  var Roster = function(feed, channel){
+
+    this.feed = feed;
+    this.channel = channel;
+
+    this.fetch = function(){
+      console.log('FETCH ROSTER');
+    };
+
+    // convenience proxies ?
+    //this.subscribe = function(){};
+    //this.publish = function(){};
+
+  };
+
+  var Party = function(template, dspace){
+
+    this.dspace = dspace;
+
+    var rosterFeed = {}; //dspace.getFeed(template.feeeds.roster);
+    var rosterChannel = dspace.getChannel(template.channels.roster);
+    this.roster = new Roster(rosterFeed, rosterChannel);
+
+  };
+
   var DSpace = function(config){
+
+    this.config = config;
+
+    // keeps track on hubs to prevening creating duplicates when requiesting channels
     this.hubs = {};
-
-    this.hubs[config.url] = new BayeuxHub(config.url);
-
-    // FIXME support multiple realms
-    this.realm = this.hubs[config.url].getChannel(config.roster.path);
 
     this.getChannel = function(template){
       var hub = this.hubs[template.url];
@@ -70,6 +94,10 @@ $(function() {
       return hub.getGeolocationChannel(template.path);
     }.bind(this);
 
+    // FIXME support multiple parties!
+    this.party = new Party(config.party, this);
+
+
     // various handy functions
     this.utils = {
 
@@ -78,8 +106,7 @@ $(function() {
     };
   };
 
-  // FIXME support multiple realms
-  var dspace = new DSpace(config.realm);
+  var dspace = new DSpace(config);
 
   var uuid;
   if(localStorage.uuid) {
@@ -90,7 +117,7 @@ $(function() {
   }
 
   config.player.uuid = uuid;
-  config.player.channels.track.live.path =  '/' + uuid + '/track';
+  config.player.channels.track.path =  '/' + uuid + '/track';
   config.player.color = dspace.utils.randomColor();
 
   var localPlayer = new LocalPlayer(config.player, { dspace: dspace });
@@ -128,66 +155,64 @@ $(function() {
   //layer: layerGroup
   //});
 
-
-  var roster = {};
-  roster.local = localPlayer;
-  roster.remote = new Team();
+  dspace.party.roster.local = localPlayer;
+  dspace.party.roster.remote = new Team();
 
   var createTeamOverlays = function(name){
     var lg_avatars = new L.LayerGroup();
-    roster[name].avatarGroup = lg_avatars;
+    dspace.party.roster[name].avatarGroup = lg_avatars;
     lg_avatars.addTo(map);
     playersControl.addOverlay(lg_avatars, name + '-avatars');
 
     var lg_tracks = new L.LayerGroup();
-    roster[name].trackGroup = lg_tracks;
+    dspace.party.roster[name].trackGroup = lg_tracks;
     lg_tracks.addTo(map);
     playersControl.addOverlay(lg_tracks, name + '-tracks');
   };
 
   _.each(config.teams, function(team){
     var name = team.name;
-    roster[team.name] = new Team();
+    dspace.party.roster[team.name] = new Team();
     createTeamOverlays(team.name);
 
   });
 
-  roster.misc = new Team();
+  dspace.party.roster.misc = new Team();
   createTeamOverlays('misc');
 
   // 1. fetches current state of game TODO
   // 2. subscribe to position and players
   // 3. publishes one's own players
-  dspace.realm.subscribe(function(message){
+  dspace.party.roster.channel.subscribe(function(message){
     if(message.uuid !== localPlayer.get('uuid')){
       receivedPlayer(message);
     }
   }.bind(this));
 
   var publishPlayer = function(player){
-    dspace.realm.publish(player.toJSON());
+    dspace.party.roster.channel.publish(player.toJSON());
   };
   publishPlayer(localPlayer);
   localPlayer.on('change', publishPlayer);
 
   var receivedPlayer = function(player){
-    var selectedPlayer = roster.remote.get(player.uuid);
+    var selectedPlayer = dspace.party.roster.remote.get(player.uuid);
     //FIXME move logix to collection!
     if(selectedPlayer){
       selectedPlayer.set(player);
     } else {
       console.log('addPlayer:', player.team);
       var newPlayer = new RemotePlayer(player, { dspace: dspace });
-      var avatarGroup = roster.misc.avatarGroup;
-      var trackGroup = roster.misc.trackGroup;
+      var avatarGroup = dspace.party.roster.misc.avatarGroup;
+      var trackGroup = dspace.party.roster.misc.trackGroup;
       if(newPlayer.get('team')){
-        avatarGroup = roster[newPlayer.get('team')].avatarGroup;
-        trackGroup = roster[newPlayer.get('team')].trackGroup;
+        avatarGroup = dspace.party.roster[newPlayer.get('team')].avatarGroup;
+        trackGroup = dspace.party.roster[newPlayer.get('team')].trackGroup;
       }
 
       createPlayerOverlays(newPlayer, avatarGroup, trackGroup);
 
-      roster.remote.add(newPlayer);
+      dspace.party.roster.remote.add(newPlayer);
     }
   };
 
@@ -201,7 +226,6 @@ $(function() {
 
   //#debug
   dspace.map = map;
-  dspace.roster = roster;
   window.dspace = dspace;
 
 });
