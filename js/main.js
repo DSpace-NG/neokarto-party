@@ -2,7 +2,6 @@ $(function() {
 
   var LocalPlayer = require('dspace-api-core/models/localPlayer');
   var RemotePlayer = require('dspace-api-core/models/remotePlayer');
-  //var Team = require('dspace-api-core/collections/team');
 
   var BayeuxHub = require('dspace-api-bayeux/hub');
   //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
@@ -25,143 +24,70 @@ $(function() {
     zoomControl: false
   });
 
-  //// add openstreetmap layer
   var basemap = new L.TileLayer(config.map.basemap.template, {
     maxZoom : config.map.basemap.maxZoom
   }).addTo(map);
 
   var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 
-  var playersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
-  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
-
   var poisControl = new L.Control.Layers({ "OSM-MapBox": basemap }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
-  $('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
-
-  var layerGroup = new L.LayerGroup();
-  layerGroup.addTo(map);
 
   /**
    ** MODELS
    **/
-  var createPlayerOverlays = function(player, avatarGroup, trackGroup){
-    var avatarOverlay = new AvatarOverlay({
-      model: player,
-      layer: avatarGroup
-    });
+  var Portal = function(config, nexus){
 
-    var trackOverlay = new TrackOverlay({
-      collection: player.track,
-      color: player.get('color'),
-      layer: trackGroup
-    });
+    _.extend(this, Backbone.Events);
+
+    this.feed = nexus.getFeed(config.feed);
+    this.channel = nexus.getChannel(config.channel);
+
+    this.channel.subscribe(function(message){
+      if(message.uuid !== localPlayer.get('uuid')){
+        this.trigger('player', message);
+      }
+    }.bind(this));
   };
 
-  // FIXME seams mixed sutuff from Party
-  var Roster = Backbone.Collection.extend({
+  var Party = Backbone.Collection.extend({
 
     model: RemotePlayer,
 
     initialize: function(attrs, options){
-      _.bindAll(this, 'partition', 'createTeamLayerControl', 'receivedPlayer', 'playerPostCreate');
+
+      this.config = options.config;
+      this.nexus = options.nexus;
+
+      this.portal = new Portal(this.config.portal, this.nexus);
 
       this.teams = {};
 
-      //this.feed = options.feed; FIXME
-      // partition after fetching feed
-      this.on('reset', this.partition);
-      this.fetch({ reset: true });
+      _.forEach(config.teams, function(team){
+        this.teams[team.name] = new Backbone.VirtualCollection(this, { filter: { team: team.name } });
+        this.teams[team.name].name = team.name;
+      }, this);
+      this.teams.unteam = new Backbone.VirtualCollection(this, { filter: { team: undefined } });
+      this.teams.unteam.name = 'unteam';
 
-      this.channel = options.channel;
-      this.channel.subscribe(function(message){
-        if(message.uuid !== localPlayer.get('uuid')){
-          this.receivedPlayer(message);
-        }
+      this.portal.on('player', function(player){
+        this.add(player, { nexus: this.nexus });
       }.bind(this));
 
+      //this.fetch({ reset: true });
     },
 
     // remove oneself!
     parse: function(response){
       _.remove(response, function(resource){ return resource.uuid === localStorage.uuid; });
       return response;
-    },
-
-    // called after initial fetch of roster
-    partition: function(){
-      _.forEach(config.teams, function(team){
-        this.teams[team.name] = new Backbone.VirtualCollection(this, { filter: { team: team.name } });
-        this.teams[team.name].name = team.name;
-      }, this);
-
-      this.teams.misc = new Backbone.VirtualCollection(this, { filter: { team: undefined } });
-      this.teams.misc.name = 'misc';
-
-      _.each(this.teams, function(team){
-        this.createTeamLayerControl(team);
-      }.bind(this));
-
-      _.each(this.models, function(player){
-        this.playerPostCreate(player);
-      }.bind(this));
-    },
-
-    createTeamLayerControl: function(team){
-      var lg_avatars = new L.LayerGroup();
-      team.avatarGroup = lg_avatars;
-      lg_avatars.addTo(map);
-      playersControl.addOverlay(lg_avatars, team.name + '-avatars');
-
-      var lg_tracks = new L.LayerGroup();
-      team.trackGroup = lg_tracks;
-      lg_tracks.addTo(map);
-      playersControl.addOverlay(lg_tracks, team.name + '-tracks');
-    },
-
-    receivedPlayer: function(player){
-      var selectedPlayer = this.get(player.uuid);
-      //FIXME move logix to Roster!
-      if(selectedPlayer){
-        selectedPlayer.set(player);
-      } else {
-        console.log('addPlayer:', player.team);
-        var newPlayer = new RemotePlayer(player);
-        this.playerPostCreate(newPlayer);
-      }
-    },
-
-    playerPostCreate: function(player){
-      var avatarGroup = dspace.party.roster.teams.misc.avatarGroup;
-      var trackGroup = dspace.party.roster.teams.misc.trackGroup;
-      if(player.get('team')){
-        avatarGroup = this.teams[player.get('team')].avatarGroup;
-        trackGroup = this.teams[player.get('team')].trackGroup;
-      }
-
-      createPlayerOverlays(player, avatarGroup, trackGroup);
     }
   });
 
-  var Party = function(template, dspace){
-
-    this.dspace = dspace;
-
-    var rosterFeed = {}; //dspace.getFeed(template.feeeds.roster);
-    var rosterChannel = dspace.getChannel(template.channels.roster);
-    this.roster = new Roster([], {
-      feed: rosterFeed,
-      channel: rosterChannel,
-      url: template.feeds.roster.url + template.feeds.roster.path // FIXME use feed?
-    });
-
-  };
-
-  var DSpace = function(config){
-
-    this.config = config;
-
+  var Nexus = function(){
     // keeps track on hubs to prevening creating duplicates when requiesting channels
     this.hubs = {};
+
+    this.getFeed = function(){};  //FIXME
 
     this.getChannel = function(template){
       var hub = this.hubs[template.url];
@@ -180,10 +106,68 @@ $(function() {
       }
       return hub.getGeolocationChannel(template.path);
     }.bind(this);
+  };
+
+  // FIXME checkout view managers!
+  var Roster = function(party){
+
+    this.party = party;
+
+    this.playersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+
+    this.layerGroups = {};
+
+    _.each(this.party.teams, function(team){
+      var name = team.name;
+      if(name === undefined) name = 'unteam';
+
+      this.layerGroups[name] = {};
+
+
+      var avatars = new L.LayerGroup();
+      avatars.addTo(map);
+      this.layerGroups[name].avatar = avatars;
+      this.playersControl.addOverlay(avatars, name + '-avatars');
+
+      var tracks = new L.LayerGroup();
+      tracks.addTo(map);
+      this.layerGroups[name].track = tracks;
+      this.playersControl.addOverlay(tracks, name + '-tracks');
+    }.bind(this));
+
+    this.createPlayerOverlays = function(player, layerGroups){
+      var avatarOverlay = new AvatarOverlay({
+        model: player,
+        layer: layerGroups.avatar
+      });
+
+      var trackOverlay = new TrackOverlay({
+        collection: player.track,
+        color: player.get('color'),
+        layer: layerGroups.track
+      });
+    };
+
+
+    this.party.on('add', function(player){
+      var teamName = player.get('team');
+      if(teamName === undefined) teamName = 'unteam';
+
+      this.createPlayerOverlays(player, this.layerGroups[teamName]);
+
+    }.bind(this));
+  };
+
+  var DSpace = function(config){
+
+    this.config = config;
+
+    this.nexus = new Nexus();
 
     // FIXME support multiple parties!
-    this.party = new Party(config.party, this);
+    this.party = new Party([], {config: config.party, nexus: this.nexus });
 
+    this.roster = new Roster(this.party);
 
     // various handy functions
     this.utils = {
@@ -192,6 +176,7 @@ $(function() {
       randomColor: function(){ return '#' + Math.floor(Math.random()*16777215).toString(16); }
     };
   };
+
 
   var dspace = new DSpace(config);
 
@@ -211,7 +196,7 @@ $(function() {
   config.player.channels.track.path =  '/' + uuid + '/track';
   config.player.color = dspace.utils.randomColor();
 
-  var localPlayer = new LocalPlayer(config.player, { dspace: dspace });
+  var localPlayer = new LocalPlayer(config.player, { nexus: dspace.nexus });
 
   localPlayer.geolocation.enable();
 
@@ -226,18 +211,20 @@ $(function() {
     localStorage.nickname = player.get('nickname');
   });
 
-  createPlayerOverlays(localPlayer, layerGroup, layerGroup);
+  var layerGroup = new L.LayerGroup();
+  layerGroup.addTo(map);
+
+  dspace.roster.createPlayerOverlays(localPlayer, { avatar: layerGroup, track: layerGroup });
 
   //var storyOverlay = new StoryOverlay({
   //collection: localPlayer.story,
   //layer: layerGroup
   //});
 
-  dspace.party.roster.local = localPlayer;
 
   // PLAY!
   var publishPlayer = function(player){
-    dspace.party.roster.channel.publish(player.toJSON());
+    dspace.party.portal.channel.publish(player.toJSON());
   };
   publishPlayer(localPlayer);
   localPlayer.on('change', publishPlayer);
