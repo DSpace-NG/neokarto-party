@@ -44,12 +44,26 @@ $(function() {
   /**
    ** MODELS
    **/
+  var createPlayerOverlays = function(player, avatarGroup, trackGroup){
+    var avatarOverlay = new AvatarOverlay({
+      model: player,
+      layer: avatarGroup
+    });
+
+    var trackOverlay = new TrackOverlay({
+      collection: player.track,
+      color: player.get('color'),
+      layer: trackGroup
+    });
+  };
+
+  // FIXME seams mixed sutuff from Party
   var Roster = Backbone.Collection.extend({
 
     model: RemotePlayer,
 
     initialize: function(attrs, options){
-      _.bindAll(this, 'partition', 'createTeamOverlays', 'receivedPlayer');
+      _.bindAll(this, 'partition', 'createTeamLayerControl', 'receivedPlayer', 'playerPostCreate');
 
       this.teams = {};
 
@@ -63,7 +77,7 @@ $(function() {
         if(message.uuid !== localPlayer.get('uuid')){
           this.receivedPlayer(message);
         }
-      });
+      }.bind(this));
 
     },
 
@@ -84,11 +98,15 @@ $(function() {
       this.teams.misc.name = 'misc';
 
       _.each(this.teams, function(team){
-        this.createTeamOverlays(team);
+        this.createTeamLayerControl(team);
+      }.bind(this));
+
+      _.each(this.models, function(player){
+        this.playerPostCreate(player);
       }.bind(this));
     },
 
-    createTeamOverlays: function(team){
+    createTeamLayerControl: function(team){
       var lg_avatars = new L.LayerGroup();
       team.avatarGroup = lg_avatars;
       lg_avatars.addTo(map);
@@ -107,16 +125,20 @@ $(function() {
         selectedPlayer.set(player);
       } else {
         console.log('addPlayer:', player.team);
-        var newPlayer = new RemotePlayer(player, { dspace: dspace });
-        var avatarGroup = dspace.party.roster.teams.misc.avatarGroup;
-        var trackGroup = dspace.party.roster.teams.misc.trackGroup;
-        if(newPlayer.get('team')){
-          avatarGroup = this.teams[newPlayer.get('team')].avatarGroup;
-          trackGroup = this.teams[newPlayer.get('team')].trackGroup;
-        }
-
-        createPlayerOverlays(newPlayer, avatarGroup, trackGroup);
+        var newPlayer = new RemotePlayer(player);
+        this.playerPostCreate(newPlayer);
       }
+    },
+
+    playerPostCreate: function(player){
+      var avatarGroup = dspace.party.roster.teams.misc.avatarGroup;
+      var trackGroup = dspace.party.roster.teams.misc.trackGroup;
+      if(player.get('team')){
+        avatarGroup = this.teams[player.get('team')].avatarGroup;
+        trackGroup = this.teams[player.get('team')].trackGroup;
+      }
+
+      createPlayerOverlays(player, avatarGroup, trackGroup);
     }
   });
 
@@ -203,19 +225,6 @@ $(function() {
   localPlayer.on('change:nickname', function(player){
     localStorage.nickname = player.get('nickname');
   });
-
-  var createPlayerOverlays = function(player, avatarGroup, trackGroup){
-    var avatarOverlay = new AvatarOverlay({
-      model: player,
-      layer: avatarGroup
-    });
-
-    var trackOverlay = new TrackOverlay({
-      collection: player.track,
-      color: player.get('color'),
-      layer: trackGroup
-    });
-  };
 
   createPlayerOverlays(localPlayer, layerGroup, layerGroup);
 
