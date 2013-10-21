@@ -41,13 +41,16 @@ $(function() {
     _.extend(this, Backbone.Events);
 
     this.feed = nexus.getFeed(config.feed);
-    this.feed.fetch(function(roster){
+    this.feed.pull(function(roster){
+      // ignore localPlayer
+      _.remove(roster, function(player){ return player.uuid === localStorage.uuid; } );
       this.trigger('roster', roster);
     }.bind(this));
 
     this.channel = nexus.getChannel(config.channel);
-    this.channel.subscribe(function(message){
-      if(message.uuid !== localPlayer.get('uuid')){
+    this.channel.sub(function(message){
+      // ignore localPlayer
+      if(message.uuid !== localStorage.uuid){
         this.trigger('player', message);
       }
     }.bind(this));
@@ -74,18 +77,16 @@ $(function() {
       this.teams.unteam.name = 'unteam';
 
       this.portal.on('roster', function(roster){
-        this.reset(roster, { nexus: this.nexus });
+        this.set(roster, { nexus: this.nexus });
       }.bind(this));
 
       this.portal.on('player', function(player){
-        this.add(player, { nexus: this.nexus });
+        if(this.get(player.uuid)){
+          this.get(player.uuid).set(player);
+        } else {
+          this.add(player, { nexus: this.nexus });
+        }
       }.bind(this));
-    },
-
-    // remove oneself!
-    parse: function(response){
-      _.remove(response, function(resource){ return resource.uuid === localStorage.uuid; });
-      return response;
     }
   });
 
@@ -103,7 +104,6 @@ $(function() {
         this.hubs[protocol] = {};
       }
       if(!hub){
-        // FIXME manage various protocols
         hub = new HTTPHub(template.url);
         this.hubs[protocol][template.url] = hub;
       }
@@ -125,16 +125,6 @@ $(function() {
         this.hubs[protocol][template.url] = hub;
       }
       return hub.getChannel(template.path);
-    }.bind(this);
-
-    // FIXME getTrackChannel?
-    this.getGeolocationChannel = function(template){
-      var hub = this.hubs[template.url];
-      if(!hub){
-        hub = new BayeuxHub(template.url);
-        this.hubs[template.url] = hub;
-      }
-      return hub.getGeolocationChannel(template.path);
     }.bind(this);
   };
 
@@ -223,12 +213,14 @@ $(function() {
   }
 
   config.player.uuid = uuid;
-  config.player.channels.track.path =  '/' + uuid + '/track';
+  config.player.track.channel.path =  '/' + uuid + '/track';
+  config.player.track.feed.path =  '/' + uuid + '/track';
   config.player.color = dspace.utils.randomColor();
 
-  var localPlayer = new LocalPlayer(config.player, { nexus: dspace.nexus });
-
-  localPlayer.geolocation.enable();
+  var localPlayer = new LocalPlayer(config.player, {
+    settings: config.settings,
+    nexus: dspace.nexus
+  });
 
   // if no profile prompt for it
   if(localStorage.nickname){
@@ -246,6 +238,7 @@ $(function() {
 
   dspace.roster.createPlayerOverlays(localPlayer, { avatar: layerGroup, track: layerGroup });
 
+  dspace.player = localPlayer;
   //var storyOverlay = new StoryOverlay({
   //collection: localPlayer.story,
   //layer: layerGroup
@@ -254,7 +247,7 @@ $(function() {
 
   // PLAY!
   var publishPlayer = function(player){
-    dspace.party.portal.channel.publish(player.toJSON());
+    dspace.party.portal.channel.pub(player);
   };
   publishPlayer(localPlayer);
   localPlayer.on('change', publishPlayer);
