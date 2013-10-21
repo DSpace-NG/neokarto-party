@@ -4,6 +4,7 @@ $(function() {
   var RemotePlayer = require('dspace-api-core/models/remotePlayer');
 
   var BayeuxHub = require('dspace-api-bayeux/hub');
+  var HTTPHub = require('dspace-api-core/hubs/http');
   //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
   var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
   var AvatarOverlay = require('dspace-ui-leaflet/overlays/avatar');
@@ -40,8 +41,11 @@ $(function() {
     _.extend(this, Backbone.Events);
 
     this.feed = nexus.getFeed(config.feed);
-    this.channel = nexus.getChannel(config.channel);
+    this.feed.fetch(function(roster){
+      this.trigger('roster', roster);
+    }.bind(this));
 
+    this.channel = nexus.getChannel(config.channel);
     this.channel.subscribe(function(message){
       if(message.uuid !== localPlayer.get('uuid')){
         this.trigger('player', message);
@@ -69,11 +73,13 @@ $(function() {
       this.teams.unteam = new Backbone.VirtualCollection(this, { filter: { team: undefined } });
       this.teams.unteam.name = 'unteam';
 
+      this.portal.on('roster', function(roster){
+        this.reset(roster, { nexus: this.nexus });
+      }.bind(this));
+
       this.portal.on('player', function(player){
         this.add(player, { nexus: this.nexus });
       }.bind(this));
-
-      //this.fetch({ reset: true });
     },
 
     // remove oneself!
@@ -87,17 +93,41 @@ $(function() {
     // keeps track on hubs to prevening creating duplicates when requiesting channels
     this.hubs = {};
 
-    this.getFeed = function(){};  //FIXME
+    this.getFeed = function(template){
+      var protocol = template.protocol;
+      if(!protocol) protocol = 'http';
+      var hub;
+      if(this.hubs[protocol]){
+        hub = this.hubs[protocol][template.url];
+      } else {
+        this.hubs[protocol] = {};
+      }
+      if(!hub){
+        // FIXME manage various protocols
+        hub = new HTTPHub(template.url);
+        this.hubs[protocol][template.url] = hub;
+      }
+      return hub.getFeed(template.path);
+    }.bind(this);
 
     this.getChannel = function(template){
-      var hub = this.hubs[template.url];
+      var protocol = template.protocol;
+      if(!protocol) protocol = 'http';
+      var hub;
+      if(this.hubs[protocol]){
+         hub = this.hubs[protocol][template.url];
+      } else {
+        this.hubs[protocol] = {};
+      }
       if(!hub){
+        // FIXME manage various protocols
         hub = new BayeuxHub(template.url);
-        this.hubs[template.url] = hub;
+        this.hubs[protocol][template.url] = hub;
       }
       return hub.getChannel(template.path);
     }.bind(this);
 
+    // FIXME getTrackChannel?
     this.getGeolocationChannel = function(template){
       var hub = this.hubs[template.url];
       if(!hub){
