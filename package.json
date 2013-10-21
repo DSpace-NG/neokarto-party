@@ -15,7 +15,8 @@
     "node-uuid": "~1.4.1",
     "dspace-api-core": "*",
     "dspace-api-bayeux": "*",
-    "dspace-ui-leaflet": "*"
+    "dspace-ui-leaflet": "*",
+    "backbone-virtual-collection": "~0.4.5"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

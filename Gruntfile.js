@@ -105,14 +105,14 @@ module.exports = function(grunt) {
     uglify: {
       app: {
         files: {
-          'build/main.js': ['tmp/vendor.js', 'tmp/main.js']
+          'build/bundle.js': ['tmp/vendor.js', 'tmp/main.js']
         }
       }
     },
     cssmin: {
       combine: {
         files: {
-          'build/main.css': [
+          'build/css/bundle.css': [
             'bower_components/leaflet-dist/leaflet.css',
             'css/fontello.css',
             'css/main.css'

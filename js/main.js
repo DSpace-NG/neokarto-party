@@ -1,5 +1,7 @@
 $(function() {
 
+  Backbone.VirtualCollection = require('backbone-virtual-collection');
+
   var LocalPlayer = require('dspace-api-core/models/localPlayer');
   var RemotePlayer = require('dspace-api-core/models/remotePlayer');
 
