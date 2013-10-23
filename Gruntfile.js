@@ -1,6 +1,8 @@
 module.exports = function(grunt) {
 
+  //Project configuration.
   grunt.initConfig({
+    //pkg: grunt.file.readJSON('package.json'),
     connect: {
       app: {
         options: {
@@ -60,6 +62,7 @@ module.exports = function(grunt) {
           'bower_components/zepto/zepto.js',
           'bower_components/lodash/dist/lodash.js',
           'bower_components/backbone/backbone.js',
+          'bower_components/leaflet-dist/leaflet-src.js',
           'bower_components/faye/include.js',
         ],
         dest: 'tmp/vendor.js',
@@ -76,6 +79,10 @@ module.exports = function(grunt) {
             backbone: {
               path: 'bower_components/backbone/backbone.js',
               exports: 'Backbone'
+            },
+            leaflet: {
+              path: 'bower_components/leaflet-dist/leaflet-src.js',
+              exports: 'L'
             }
           }
         }
@@ -84,7 +91,7 @@ module.exports = function(grunt) {
         src: ['js/main.js'],
         dest: 'tmp/main.js',
         options: {
-          external: ["$", "_", "Backbone"],
+          external: ["$", "_", "Backbone", "L"],
           transform: ['hbsfy'],
           debug: true
         }
@@ -93,7 +100,7 @@ module.exports = function(grunt) {
         src: ['js/main.js'],
         dest: 'tmp/main.js',
         options: {
-          external: ["$", "_", "Backbone"],
+          external: ["$", "_", "Backbone", "L"],
           transform: ['hbsfy']
         }
       }
@@ -133,9 +140,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
-  // Default task(s).
   grunt.registerTask('default', ['jshint', 'browserify:vendor', 'browserify:main', 'connect:app', 'watch:js', 'watch:templates', 'watch:css']);
   grunt.registerTask('build', ['jshint', 'browserify:vendor', 'browserify:build', 'uglify', 'cssmin', 'copy']);
   grunt.registerTask('doc', ['markdown', 'connect:doc', 'watch:doc']);
-
 };
