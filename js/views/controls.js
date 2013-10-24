@@ -14,7 +14,8 @@ var ControlsView = Backbone.View.extend({
     'touchstart .about': 'showAbout',
     'click .settings': 'setProfile',
     'touchstart .settings': 'setProfile',
-    'change .follow-me': 'updateFollowMe'
+    'click .center': 'centerPlayer',
+    'touchstart .center': 'centerPlayer',
   },
 
   initialize: function() {
@@ -30,8 +31,9 @@ var ControlsView = Backbone.View.extend({
     new CaptureModal({ player: this.options.player });
   },
 
-  updateFollowMe: function(event) {
-    this.options.player.set('followMe', event.target.checked);
+  centerPlayer: function() {
+    window.foo = this.options.player.currentPosition();
+    this.options.map.panTo(this.options.player.currentPosition().getLatlng());
   },
 
   setProfile: function() {

@@ -35,9 +35,9 @@ $(function() {
     maxZoom : config.map.basemap.maxZoom
   }).addTo(map);
 
-  var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
+  var zoomControl = new L.Control.Zoom({ position: 'topright' }).addTo(map);
 
-  var poisControl = new L.Control.Layers({ "OpenStreetMap": basemap }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
+  var poisControl = new L.Control.Layers({ "OpenStreetMap": basemap }, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
 
   /**
    ** MODELS
@@ -271,7 +271,10 @@ $(function() {
    **/
 
   //// button(s) in top-right corner
-  var controls = new ControlsView({ player: localPlayer });
+  var controls = new ControlsView({
+    player: localPlayer,
+    map: map
+  });
 
   /*
    * POIs
@@ -291,7 +294,36 @@ $(function() {
     poisControl.addOverlay(places.overlay.layer, poiset.name);
     POIOverlays.push(places.overlay);
   });
-  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
-  $('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
+
+  // FIXME only for visible layers?
+  map.on('zoomend', function(){
+    _.each(POIOverlays, function(overlay){
+      overlay.scaleMarkers();
+    });
+  });
+
+  map.focus = new L.Marker(map.getCenter(), {
+    icon: new L.Icon({
+      iconUrl: config.settings.icons.focus.url,
+      iconSize: [48, 48]
+    })
+  });
+
+  map.focus.on('click', function(){
+    map.removeLayer(map.focus);
+  });
+
+  map.on('contextmenu', function(event){
+    map.focus.setLatLng(event.latlng);
+    map.addLayer(map.focus);
+  });
+
+  map.on('popupopen', function(event){
+    map.removeLayer(map.focus);
+  });
+
+
+  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
+  $('.leaflet-left .leaflet-control-layers-toggle')[1].classList.add('icon-profile');
 
 });
