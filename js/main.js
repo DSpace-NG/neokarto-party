@@ -1,19 +1,23 @@
 $(function() {
 
+  var URL = require('url');
+  var UUID = require('node-uuid');
   Backbone.VirtualCollection = require('backbone-virtual-collection');
+
+  var config = require('../config');
 
   var LocalPlayer = require('dspace-api-core/models/localPlayer');
   var RemotePlayer = require('dspace-api-core/models/remotePlayer');
+  var Places = require('dspace-api-core/collections/places');
 
   var BayeuxHub = require('dspace-api-bayeux/hub');
   var HTTPHub = require('dspace-api-core/hubs/http');
+
   //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
   var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
   var AvatarOverlay = require('dspace-ui-leaflet/overlays/avatar');
+  var PlacesOverlay = require('dspace-ui-leaflet/overlays/places');
 
-
-  var config = require('../config');
-  var UUID = require('node-uuid');
 
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
@@ -92,11 +96,18 @@ $(function() {
     }
   });
 
-  var Nexus = function(){
+  var Nexus = function(config){
     // keeps track on hubs to prevening creating duplicates when requiesting channels
     this.hubs = {};
 
     this.getFeed = function(template){
+      if(_.isString(template)){
+        var parts = URL.parse(template);
+        template = {
+          url: parts.protocol + '//' + parts.host,
+          path: parts.path
+        };
+      }
       var protocol = template.protocol;
       if(!protocol) protocol = 'http';
       var hub;
@@ -184,7 +195,7 @@ $(function() {
 
     this.config = config;
 
-    this.nexus = new Nexus();
+    this.nexus = new Nexus(config);
 
     // FIXME support multiple parties!
     this.party = new Party([], {config: config.party, nexus: this.nexus });
@@ -261,5 +272,20 @@ $(function() {
 
   //// button(s) in top-right corner
   var controls = new ControlsView({ player: localPlayer });
+
+  /*
+   * POIs
+   */
+  _.forEach(config.poisets, function(poiset){
+    var places = new Places([], {
+      config: poiset,
+      nexus: dspace.nexus
+    });
+    new PlacesOverlay({
+      collection: places,
+      config: poiset
+    });
+    poisControl.addOverlay(places.overlay.layer, poiset.name);
+  });
 
 });
