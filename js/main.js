@@ -37,7 +37,7 @@ $(function() {
 
   var zoomControl = new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
 
-  var poisControl = new L.Control.Layers({ "OSM-MapBox": basemap }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
+  var poisControl = new L.Control.Layers({ "OpenStreetMap": basemap }, undefined, { collapsed: true, position: 'topright' }).addTo(map);
 
   /**
    ** MODELS
@@ -276,6 +276,8 @@ $(function() {
   /*
    * POIs
    */
+  var POIOverlays = [];
+  dspace.POIOverlays = POIOverlays;
   _.forEach(config.poisets, function(poiset){
     var places = new Places([], {
       config: poiset,
@@ -283,9 +285,13 @@ $(function() {
     });
     new PlacesOverlay({
       collection: places,
-      config: poiset
+      config: poiset,
+      map: map
     });
     poisControl.addOverlay(places.overlay.layer, poiset.name);
+    POIOverlays.push(places.overlay);
   });
+  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-profile');
+  $('.leaflet-right .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
 
 });
