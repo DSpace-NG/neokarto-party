@@ -22,7 +22,8 @@ var AccountModal = Modal.extend({
 
   selectHost: function(event){
     if(event.target.type != 'radio') return false;
-    this.host = config.hosts[event.target.value];
+    this.domain = event.target.value;
+    this.host = config.hosts[this.domain];
   },
 
   submit: function(event) {
@@ -33,6 +34,7 @@ var AccountModal = Modal.extend({
     if(!login || !this.host) return false;
 
     this.player.set({
+      acct: login + '@' + this.domain ,
       track: {
         feed: {
           url: this.host.channels.history,

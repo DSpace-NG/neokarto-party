@@ -22,7 +22,6 @@ var ActionsView = Backbone.View.extend({
   },
 
   show: function(){
-    console.log(this);
     this.$el.show();
   }
 

@@ -141,7 +141,6 @@ $(function() {
 
       this.layerGroups[name] = {};
 
-
       var avatars = new L.LayerGroup();
       avatars.addTo(map);
       this.layerGroups[name].avatar = avatars;
@@ -166,7 +165,7 @@ $(function() {
       });
     };
 
-
+    //FIXME party can load before reating roster?
     this.party.on('add', function(player){
       var teamName = player.get('team');
       if(teamName === undefined) teamName = 'unteam';
