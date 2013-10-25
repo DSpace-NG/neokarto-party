@@ -8,14 +8,16 @@ var ControlsView = Backbone.View.extend({
   id: 'controls',
 
   events: {
-    'click .capture': 'addCapture',
-    'touchstart .capture': 'addCapture',
+    'click .comment': 'addCapture',
+    'touchstart .comment': 'addCapture',
     'click .info': 'showInfo',
     'touchstart .info': 'showInfo',
     'click .settings': 'setProfile',
     'touchstart .settings': 'setProfile',
     'click .center': 'centerPlayer',
     'touchstart .center': 'centerPlayer',
+    'click .camera': 'askSupport',
+    'touchstart .camera': 'askSupport',
   },
 
   initialize: function() {
@@ -36,7 +38,8 @@ var ControlsView = Backbone.View.extend({
   },
 
   addCapture: function() {
-    new CaptureModal({ player: this.options.player });
+    //FIXME
+    //new CaptureModal({ player: this.options.player });
   },
 
   centerPlayer: function() {
@@ -50,6 +53,10 @@ var ControlsView = Backbone.View.extend({
 
   showInfo: function() {
     new AboutModal();
+  },
+
+  askSupport: function() {
+    new SupportModal();
   }
 
 });

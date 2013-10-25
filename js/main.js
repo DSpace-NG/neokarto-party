@@ -253,7 +253,6 @@ $(function() {
 
     var map = dspace.map;
 
-    //// button(s) in top-right corner
     var controls = new ControlsView({
       player: localPlayer,
       map: map
@@ -296,6 +295,8 @@ $(function() {
 
     map.on('click', function(){
       map.removeLayer(map.focus);
+      controls.show();
+      actions.hide();
     });
 
     map.focus.on('click', function(){
