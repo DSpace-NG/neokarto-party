@@ -23,23 +23,6 @@ $(function() {
   var ControlsView = require('./views/controls');
   var ActionsView = require('./views/actions');
 
-  // leaflet map
-  $('body').append('<div id="map"></div>');
-  var map = new L.Map('map', {
-    center: config.map.center,
-    zoom: config.map.zoom,
-    attributionControl: false,
-    zoomControl: false
-  });
-
-  var basemap = new L.TileLayer(config.map.basemap.template, {
-    maxZoom : config.map.basemap.maxZoom
-  }).addTo(map);
-
-  var zoomControl = new L.Control.Zoom({ position: 'topright' }).addTo(map);
-
-  var poisControl = new L.Control.Layers({ "OpenStreetMap": basemap }, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
-
   /**
    ** MODELS
    **/
@@ -143,7 +126,7 @@ $(function() {
   };
 
   // FIXME checkout view managers!
-  var Roster = function(party){
+  var Roster = function(party, map){
 
     this.party = party;
 
@@ -192,16 +175,39 @@ $(function() {
     }.bind(this));
   };
 
+  var createMap = function(config){
+    // leaflet map
+    $('body').append('<div id="map"></div>');
+    var map = new L.Map('map', {
+      center: config.map.center,
+      zoom: config.map.zoom,
+      attributionControl: false,
+      zoomControl: false
+    });
+
+    var basemap = new L.TileLayer(config.map.basemap.template, {
+      maxZoom : config.map.basemap.maxZoom
+    }).addTo(map);
+
+    var zoomControl = new L.Control.Zoom({ position: 'topright' }).addTo(map);
+
+    map.poisControl = new L.Control.Layers({ "OpenStreetMap": basemap }, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
+
+    return map;
+  };
+
   var DSpace = function(config){
 
     this.config = config;
+
+    this.map = createMap(config);
 
     this.nexus = new Nexus(config);
 
     // FIXME support multiple parties!
     this.party = new Party([], {config: config.party, nexus: this.nexus });
 
-    this.roster = new Roster(this.party);
+    this.roster = new Roster(this.party, this.map);
 
     // various handy functions
     this.utils = {
@@ -212,144 +218,146 @@ $(function() {
   };
 
 
-  var dspace = new DSpace(config);
+  var init = function(profile){
 
-  //#debug
-  dspace.map = map;
-  window.dspace = dspace;
+    var dspace = new DSpace(config);
+
+    var localPlayer = new LocalPlayer(profile, {
+      settings: config.settings,
+      nexus: dspace.nexus
+    });
+
+    localPlayer.on('change', function(player){
+      localStorage.profile = JSON.stringify(player);
+    });
+
+    var layerGroup = new L.LayerGroup();
+    layerGroup.addTo(dspace.map);
+    dspace.roster.createPlayerOverlays(localPlayer, { avatar: layerGroup, track: layerGroup });
+
+    dspace.player = localPlayer;
+
+    // PLAY!
+    var publishPlayer = function(player){
+      dspace.party.portal.channel.pub(player);
+    };
+    publishPlayer(localPlayer);
+    localPlayer.on('change', publishPlayer);
+
+
+    /**
+     ** VIEWS
+     **/
+
+    var map = dspace.map;
+
+    //// button(s) in top-right corner
+    var controls = new ControlsView({
+      player: localPlayer,
+      map: map
+    });
+
+    var actions = new ActionsView({});
+
+    /*
+     * POIs
+     */
+    var POIOverlays = [];
+    dspace.POIOverlays = POIOverlays;
+    _.forEach(config.poisets, function(poiset){
+      var places = new Places([], {
+        config: poiset,
+        nexus: dspace.nexus
+      });
+      new PlacesOverlay({
+        collection: places,
+        config: poiset,
+        map: map
+      });
+      map.poisControl.addOverlay(places.overlay.layer, poiset.name);
+      POIOverlays.push(places.overlay);
+    });
+
+    // FIXME only for visible layers?
+    map.on('zoomend', function(){
+      _.each(POIOverlays, function(overlay){
+        overlay.scaleMarkers();
+      });
+    });
+
+    map.focus = new L.Marker(map.getCenter(), {
+      icon: new L.Icon({
+        iconUrl: config.settings.icons.focus.url,
+        iconSize: [48, 48]
+      })
+    });
+
+    map.on('click', function(){
+      map.removeLayer(map.focus);
+    });
+
+    map.focus.on('click', function(){
+      map.removeLayer(map.focus);
+      controls.show();
+      actions.hide();
+    });
+
+    map.on('contextmenu', function(event){
+      map.focus.setLatLng(event.latlng);
+      map.addLayer(map.focus);
+      controls.hide();
+      actions.show();
+    });
+
+    //FIXME don't depend on popup
+    map.on('popupopen', function(event){
+      map.removeLayer(map.focus);
+      controls.hide();
+      actions.show();
+    });
+
+    this.controls = controls;
+
+    //FIXME don't depend on popup
+    map.on('popupclose', function(event){
+      controls.show();
+      actions.hide();
+    });
+
+    localPlayer.on('selected', function(player){
+      console.log('selected localPlayer', player);
+    });
+
+    $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
+    $('.leaflet-left .leaflet-control-layers-toggle')[1].classList.add('icon-profile');
+
+    //#debug
+    window.dspace = dspace;
+  };
 
   var profile;
   if(localStorage.profile) {
     profile = JSON.parse(localStorage.profile);
+    init(profile);
   } else {
     uuid =  UUID();
     profile = { uuid: uuid};
+    profile.avatar = config.player.avatar;
     profile.track = {
       channel: { url: 'http://192.168.11.101:5000/bayeux'},
       feed: { url: 'http://192.168.11.101:5000'}
     };
     profile.track.channel.path =  '/' + uuid + '/track';
     profile.track.feed.path =  '/' + uuid + '/track';
-    profile.color = dspace.utils.randomColor();
+    profile.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+    var newPlayer = new Backbone.Model(profile);
+    newPlayer.once('change', function(player){
+      init(player.toJSON());
+    });
+
+    new ProfileModal( { player: newPlayer } );
   }
 
 
-  var localPlayer = new LocalPlayer(profile, {
-    settings: config.settings,
-    nexus: dspace.nexus
-  });
-
-  if(!localPlayer.get('nickname')) {
-    new ProfileModal( { player: localPlayer } );
-  }
-
-  localPlayer.on('change', function(player){
-    localStorage.profile = JSON.stringify(player);
-  });
-
-
-  var layerGroup = new L.LayerGroup();
-  layerGroup.addTo(map);
-
-  dspace.roster.createPlayerOverlays(localPlayer, { avatar: layerGroup, track: layerGroup });
-
-  dspace.player = localPlayer;
-  //var storyOverlay = new StoryOverlay({
-  //collection: localPlayer.story,
-  //layer: layerGroup
-  //});
-
-
-  // PLAY!
-  var publishPlayer = function(player){
-    dspace.party.portal.channel.pub(player);
-  };
-  publishPlayer(localPlayer);
-  localPlayer.on('change', publishPlayer);
-
-
-  /**
-   ** VIEWS
-   **/
-
-  //// button(s) in top-right corner
-  var controls = new ControlsView({
-    player: localPlayer,
-    map: map
-  });
-
-  var actions = new ActionsView({});
-
-  /*
-   * POIs
-   */
-  var POIOverlays = [];
-  dspace.POIOverlays = POIOverlays;
-  _.forEach(config.poisets, function(poiset){
-    var places = new Places([], {
-      config: poiset,
-      nexus: dspace.nexus
-    });
-    new PlacesOverlay({
-      collection: places,
-      config: poiset,
-      map: map
-    });
-    poisControl.addOverlay(places.overlay.layer, poiset.name);
-    POIOverlays.push(places.overlay);
-  });
-
-  // FIXME only for visible layers?
-  map.on('zoomend', function(){
-    _.each(POIOverlays, function(overlay){
-      overlay.scaleMarkers();
-    });
-  });
-
-  map.focus = new L.Marker(map.getCenter(), {
-    icon: new L.Icon({
-      iconUrl: config.settings.icons.focus.url,
-      iconSize: [48, 48]
-    })
-  });
-
-  map.on('click', function(){
-    map.removeLayer(map.focus);
-  });
-
-  map.focus.on('click', function(){
-    map.removeLayer(map.focus);
-    controls.show();
-    actions.hide();
-  });
-
-  map.on('contextmenu', function(event){
-    map.focus.setLatLng(event.latlng);
-    map.addLayer(map.focus);
-    controls.hide();
-    actions.show();
-  });
-
-  //FIXME don't depend on popup
-  map.on('popupopen', function(event){
-    map.removeLayer(map.focus);
-    controls.hide();
-    actions.show();
-  });
-
-  this.controls = controls;
-
-  //FIXME don't depend on popup
-  map.on('popupclose', function(event){
-    controls.show();
-    actions.hide();
-  });
-
-  localPlayer.on('selected', function(player){
-    console.log('selected localPlayer', player);
-  });
-
-  $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
-  $('.leaflet-left .leaflet-control-layers-toggle')[1].classList.add('icon-profile');
 
 });
