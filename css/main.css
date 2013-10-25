@@ -6,7 +6,7 @@ html, body {
 }
 
 button {
-  font-size: 20px;
+  font-size: 24px;
   padding: 0.25em;
 }
 
@@ -21,8 +21,8 @@ button {
 #controls, #actions {
     position: absolute;
     bottom: 20px;
-    width: 100%;
-    left: 0;
+    width: 96%;
+    left: 2%;
     z-index: 10000;
 }
 
@@ -42,8 +42,8 @@ button {
 
 button {
   margin: 0 5px;
-  background: transparent;
-  border: 1px dotted black;
+  background: rgba(255, 136, 61, 0.7);
+  border: 2px dotted black;
   border-radius: 3px;
 }
 

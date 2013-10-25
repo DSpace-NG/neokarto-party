@@ -344,12 +344,6 @@ $(function() {
     uuid =  UUID();
     profile = { uuid: uuid};
     profile.avatar = config.player.avatar;
-    profile.track = {
-      channel: { url: 'http://192.168.11.101:5000/bayeux'},
-      feed: { url: 'http://192.168.11.101:5000'}
-    };
-    profile.track.channel.path =  '/' + uuid + '/track';
-    profile.track.feed.path =  '/' + uuid + '/track';
     profile.color = '#' + Math.floor(Math.random()*16777215).toString(16);
 
     var newPlayer = new Backbone.Model(profile);
