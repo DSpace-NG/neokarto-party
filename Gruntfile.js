@@ -118,6 +118,7 @@ module.exports = function(grunt) {
           'build/css/bundle.css': [
             'bower_components/leaflet-dist/leaflet.css',
             'css/fontello.css',
+            'css/animation.css',
             'css/main.css'
           ]
         }
