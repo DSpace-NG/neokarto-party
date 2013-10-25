@@ -27,6 +27,14 @@ var ControlsView = Backbone.View.extend({
     $('body').append(this.el);
   },
 
+  hide: function(){
+    this.$el.hide();
+  },
+
+  show: function(){
+    this.$el.show();
+  },
+
   addCapture: function() {
     new CaptureModal({ player: this.options.player });
   },

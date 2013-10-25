@@ -21,6 +21,7 @@ $(function() {
 
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
+  var ActionsView = require('./views/actions');
 
   // leaflet map
   $('body').append('<div id="map"></div>');
@@ -217,34 +218,35 @@ $(function() {
   dspace.map = map;
   window.dspace = dspace;
 
-  var uuid;
-  if(localStorage.uuid) {
-    uuid = localStorage.uuid;
+  var profile;
+  if(localStorage.profile) {
+    profile = JSON.parse(localStorage.profile);
   } else {
     uuid =  UUID();
-    localStorage.uuid = uuid;
+    profile = { uuid: uuid};
+    profile.track = {
+      channel: { url: 'http://192.168.11.101:5000/bayeux'},
+      feed: { url: 'http://192.168.11.101:5000'}
+    };
+    profile.track.channel.path =  '/' + uuid + '/track';
+    profile.track.feed.path =  '/' + uuid + '/track';
+    profile.color = dspace.utils.randomColor();
   }
 
-  config.player.uuid = uuid;
-  config.player.track.channel.path =  '/' + uuid + '/track';
-  config.player.track.feed.path =  '/' + uuid + '/track';
-  config.player.color = dspace.utils.randomColor();
 
-  var localPlayer = new LocalPlayer(config.player, {
+  var localPlayer = new LocalPlayer(profile, {
     settings: config.settings,
     nexus: dspace.nexus
   });
 
-  // if no profile prompt for it
-  if(localStorage.nickname){
-    localPlayer.set('nickname', localStorage.nickname);
-  }
   if(!localPlayer.get('nickname')) {
     new ProfileModal( { player: localPlayer } );
   }
-  localPlayer.on('change:nickname', function(player){
-    localStorage.nickname = player.get('nickname');
+
+  localPlayer.on('change', function(player){
+    localStorage.profile = JSON.stringify(player);
   });
+
 
   var layerGroup = new L.LayerGroup();
   layerGroup.addTo(map);
@@ -275,6 +277,8 @@ $(function() {
     player: localPlayer,
     map: map
   });
+
+  var actions = new ActionsView({});
 
   /*
    * POIs
@@ -309,19 +313,41 @@ $(function() {
     })
   });
 
+  map.on('click', function(){
+    map.removeLayer(map.focus);
+  });
+
   map.focus.on('click', function(){
     map.removeLayer(map.focus);
+    controls.show();
+    actions.hide();
   });
 
   map.on('contextmenu', function(event){
     map.focus.setLatLng(event.latlng);
     map.addLayer(map.focus);
+    controls.hide();
+    actions.show();
   });
 
+  //FIXME don't depend on popup
   map.on('popupopen', function(event){
     map.removeLayer(map.focus);
+    controls.hide();
+    actions.show();
   });
 
+  this.controls = controls;
+
+  //FIXME don't depend on popup
+  map.on('popupclose', function(event){
+    controls.show();
+    actions.hide();
+  });
+
+  localPlayer.on('selected', function(player){
+    console.log('selected localPlayer', player);
+  });
 
   $('.leaflet-left .leaflet-control-layers-toggle')[0].classList.add('icon-marker');
   $('.leaflet-left .leaflet-control-layers-toggle')[1].classList.add('icon-profile');

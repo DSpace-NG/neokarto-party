@@ -18,24 +18,12 @@ button {
   bottom: 0;
 }
 
-#controls {
+#controls, #actions {
     position: absolute;
     bottom: 20px;
-    width: 70%;
-    left: 5%;
+    width: 100%;
+    left: 0;
     z-index: 10000;
-}
-
-#controls button {
-  position: relative;
-  padding: 0.25em 0;
-}
-#controls button.capture {
-  width: 40%;
-  margin: 0 1%;
-}
-#controls button.about, #controls button.settings {
-  width: 20%;
 }
 
 .modal {
@@ -50,6 +38,13 @@ button {
 
 .modal form {
     margin: 20px;
+}
+
+button {
+  margin: 0 5px;
+  background: transparent;
+  border: 1px dotted black;
+  border-radius: 3px;
 }
 
 button.close {
