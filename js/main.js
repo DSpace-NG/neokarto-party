@@ -19,6 +19,7 @@ $(function() {
   var PlacesOverlay = require('dspace-ui-leaflet/overlays/places');
 
 
+  var AccountModal = require('./views/accountModal');
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
   var ActionsView = require('./views/actions');
@@ -350,14 +351,15 @@ $(function() {
     profile.track.channel.path =  '/' + uuid + '/track';
     profile.track.feed.path =  '/' + uuid + '/track';
     profile.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+
     var newPlayer = new Backbone.Model(profile);
-    newPlayer.once('change', function(player){
-      init(player.toJSON());
+    newPlayer.once('change:track', function(player){
+      player.once('change:nickname', function(player){
+        localStorage.profile = JSON.stringify(player);
+        init(player.toJSON());
+      });
+      new ProfileModal({ player: player });
     });
-
-    new ProfileModal( { player: newPlayer } );
+    new AccountModal({ player: newPlayer });
   }
-
-
-
 });
