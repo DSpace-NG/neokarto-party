@@ -166,6 +166,8 @@ $(function() {
     };
 
     //FIXME party can load before reating roster?
+    //FIXME change so players subscribe directly to updates of their profiles
+    //similar as tracks do now
     this.party.on('add', function(player){
       var teamName = player.get('team');
       if(teamName === undefined) teamName = 'unteam';

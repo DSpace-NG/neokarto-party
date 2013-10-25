@@ -10,8 +10,8 @@ var ControlsView = Backbone.View.extend({
   events: {
     'click .capture': 'addCapture',
     'touchstart .capture': 'addCapture',
-    'click .about': 'showAbout',
-    'touchstart .about': 'showAbout',
+    'click .info': 'showInfo',
+    'touchstart .info': 'showInfo',
     'click .settings': 'setProfile',
     'touchstart .settings': 'setProfile',
     'click .center': 'centerPlayer',
@@ -48,7 +48,7 @@ var ControlsView = Backbone.View.extend({
     new ProfileModal({ player: this.options.player });
   },
 
-  showAbout: function() {
+  showInfo: function() {
     new AboutModal();
   }
 
