@@ -8,8 +8,8 @@ var AccountModal = Modal.extend({
   ui: { submit: true, focus: 'input[type=text]' },
 
   subEvents: {
-    'touchstart input': 'selectHost',
-    'click input': 'selectHost'
+    'touchstart input[type=radio]': 'selectHost',
+    'click input[type=radio]': 'selectHost'
   },
 
   initialize: function() {
