@@ -5,7 +5,7 @@ var config = require('../../config');
 var AccountModal = Modal.extend({
   id: 'account',
   template: template,
-  ui: { submit: true },
+  ui: { submit: true, focus: 'input[type=text]' },
 
   subEvents: {
     'touchstart input': 'selectHost',
