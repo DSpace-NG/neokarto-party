@@ -3,7 +3,7 @@ var Modal = require('./modal');
 var Action = require('dspace-api-core/models/action');
 var template = require('../../templates/capture.hbs');
 
-var ActionModal = Modal.extend({
+var CommentModal = Modal.extend({
   id: 'capture',
   template: template,
   ui: { close: true, submit: true, focus: 'textarea' },
@@ -37,4 +37,4 @@ var ActionModal = Modal.extend({
   }
 });
 
-module.exports = ActionModal;
+module.exports = CommentModal;

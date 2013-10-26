@@ -37,7 +37,8 @@ button {
 }
 
 .modal form {
-    margin: 20px;
+  margin: 20px;
+    margin-top: 100px;
 }
 
 button {
