@@ -336,6 +336,23 @@ $(function() {
 
     //#debug
     window.dspace = dspace;
+    dspace.devChan = dspace.nexus.getChannel({ url: config.party.portal.channel.url, path: '/dev' });
+    dspace.devChan.sub(function(message){
+      console.log(message);
+      if(message.player && message.player.uuid === dspace.player.get('uuid')) return;
+      switch(message.command){
+        case 'RELOAD':
+          window.location.reload();
+          break;
+        case 'STORAGE:CLEAR':
+          localStorage.clear();
+          window.location.reload();
+          break;
+        case 'ALERT':
+          alert(message.alert);
+          break;
+      }
+    });
   };
 
   var profile;
