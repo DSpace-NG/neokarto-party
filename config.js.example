@@ -1,48 +1,119 @@
 module.exports = {
+  dspace: {
+    version: '0.3.3'
+  },
   player: {
     avatar: 'escafandra',
-    channels: {
-      track: {
-        url:  'http://localhost:5000/bayeux',
-        path: 'NEEDS UUID, generating in app!!!',
-        protocol: 'bayeux'
-      }
-    },
-    feeds: {
-      track: {
-        url:  'http://localhost:5000',
-        path: 'NEEDS UUID, generating in app!!!',
-      }
-    }
   },
   settings: { // for player
+    geolocation: {
+      enableHighAccuracy: true,
+      maximumAge: 1000, // in ms
+      timeout: 300000 //in ms
+    },
     sevices: {
       basemap: {},
       cors: {},
       nominatim: {},
-      routino: {}
+      routino: {},
+      shortener: {}
+    },
+    icons: {
+      focus: {
+        url: 'assets/images/markers/focus.png'
+      }
     }
   },
   party: {
-    channels: {
-      roster: {
-        url: 'http://localhost:5000/bayeux',
-        path: '/roster'
-      }
-    },
-    feeds: {
-      roster: {
+    portal: {
+      feed: {
+        //url: 'http://144.76.177.115:5000',
         url: 'http://localhost:5000',
-        path: "/roster"
+        //url: 'http://dspace.elevate.at:5000',
+        path: "/e13graz"
+      },
+      channel: {
+        //url: 'http://144.76.177.115:5000/bayeux',
+        url: 'http://localhost:5000/bayeux',
+        //url: 'http://dspace.elevate.at:5000/bayeux',
+        path: '/e13graz',
+        protocol: 'bayeux'
       }
     }
   },
-  media: {
-    url: "http://localhost:5001"
+  hosts: {
+    'netzhost.com': {
+      channels: {
+        //live: 'http://144.76.177.115:5000/bayeux',
+        live: 'http://localhost:5000/bayeux',
+        //history: 'http://144.76.177.115:5000'
+        history: 'http://localhost:5000'
+      },
+      files: 'http://144.76.177.115:5001'
+    },
+    'permabank.net': {
+      channels: {
+        live: 'http://31.172.30.182:5000/bayeux',
+        history: 'http://31.172.30.182:5000'
+      },
+      files: 'http://31.172.30.182:5001'
+    },
+    'wwelves.org': {
+      channels: {
+        live: 'http://194.150.168.83:5000/bayeux',
+        history: 'http://194.150.168.83:5000'
+      },
+      files: 'http://194.150.168.83:5001'
+    }
   },
-  proxy: {
-    url: "http://localhost:5002"
-  },
+  poisets:[
+    {
+      name: 'Orwell',
+      url: 'http://dspace.elevate.at/data/geojson/orwell.geojson',
+      icon: {
+       url: 'http://dspace.elevate.at/data/markers/orwell.png',
+       scale: 0.7
+      }
+    },
+    {
+      name: 'KulturServer',
+      url: 'http://dspace.elevate.at/data/geojson/kulturserver.geojson',
+      icon: {
+       url: 'http://dspace.elevate.at/data/markers/kulturserver.png'
+      }
+    },
+    {
+      name: 'G24',
+      url: 'http://dspace.elevate.at/data/geojson/g24.geojson',
+      icon: {
+       url: 'http://dspace.elevate.at/data/markers/g24.png'
+      }
+    },
+    {
+      name: 'GrazWiki Leerstand',
+      url: 'http://dspace.elevate.at/data/geojson/grazwiki.leerstand.geojson',
+      icon: {
+       url: 'http://dspace.elevate.at/data/markers/grazwiki.png',
+       scale: 0.9
+      }
+    },
+    {
+      name: 'GrazWiki Historische Ansicht',
+      url: 'http://dspace.elevate.at/data/geojson/grazwiki.historische-ansicht.geojson',
+      icon: {
+       url: 'http://dspace.elevate.at/data/markers/grazwiki.png',
+       scale: 0.9
+      }
+    },
+    {
+      name: 'GrazWiki Ab 2000...',
+      url: 'http://dspace.elevate.at/data/geojson/grazwiki.ab2000.geojson',
+      icon: {
+       url: 'http://dspace.elevate.at/data/markers/grazwiki.png',
+       scale: 0.9
+      }
+    }
+  ],
   map: {
     center: [47.069, 15.434],
     zoom: 15,
