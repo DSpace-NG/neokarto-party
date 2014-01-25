@@ -14,9 +14,9 @@
     "handlebars-runtime": "~1.0.12",
     "node-uuid": "~1.4.1",
     "backbone-virtual-collection": "~0.4.5",
-    "dspace-api-core": "https://github.com/dspace-ng/dspace-api-core",
-    "dspace-api-bayeux": "https://github.com/dspace-ng/dspace-api-bayeux",
-    "dspace-ui-leaflet": "https://github.com/dspace-ng/dspace-ui-leaflet"
+    "dspace-api-core": "git://github.com/dspace-ng/dspace-api-core.git",
+    "dspace-api-bayeux": "git://github.com/dspace-ng/dspace-api-bayeux.git",
+    "dspace-ui-leaflet": "git://github.com/dspace-ng/dspace-ui-leaflet.git"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
