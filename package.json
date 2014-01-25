@@ -1,5 +1,5 @@
 {
-  "name": "dspace-dist-elevate-mobile",
+  "name": "dspace-app-action-slim",
   "version": "0.0.0",
   "description": "",
   "scripts": {
@@ -13,10 +13,10 @@
   "dependencies": {
     "handlebars-runtime": "~1.0.12",
     "node-uuid": "~1.4.1",
-    "dspace-api-core": "*",
-    "dspace-api-bayeux": "*",
-    "dspace-ui-leaflet": "*",
-    "backbone-virtual-collection": "~0.4.5"
+    "backbone-virtual-collection": "~0.4.5",
+    "dspace-api-core": "https://github.com/dspace-ng/dspace-api-core",
+    "dspace-api-bayeux": "https://github.com/dspace-ng/dspace-api-bayeux",
+    "dspace-ui-leaflet": "https://github.com/dspace-ng/dspace-ui-leaflet"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
