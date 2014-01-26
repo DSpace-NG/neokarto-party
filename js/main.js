@@ -1,52 +1,33 @@
 $(function() {
 
   var UUID = require('node-uuid');
-
   var config = require('../config');
 
-  var Party = require('dspace-api-core/collections/party');
+  // API CORE
+  var DSpace = require('dspace-api-core');
   var LocalPlayer = require('dspace-api-core/models/localPlayer');
   var Places = require('dspace-api-core/collections/places');
 
-  var Nexus = require('dspace-api-core/nexus');
+  // API Bayeux
   var BayeuxHub = require('dspace-api-bayeux/hub');
-  var Portal = require('dspace-api-core/portal');
 
+  // UI Leaflet
   var Roster = require('dspace-ui-leaflet/roster');
+  var Map = require('dspace-ui-leaflet/map');
   var PlacesOverlay = require('dspace-ui-leaflet/overlays/places');
 
-  var Map = require('dspace-ui-leaflet/map');
+  // local
   var AccountModal = require('./views/accountModal');
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
   var ActionsView = require('./views/actions');
 
-  var DSpace = function(config){
-
-    this.config = config;
-
-    $('body').append('<div id="' + config.map.elementId + '"></div>');
-    this.map = new Map({config: config.map});
-
-    this.nexus = new Nexus(config, BayeuxHub);
-
-    // FIXME support multiple parties!
-    this.party = new Party([], {config: config, nexus: this.nexus });
-
-    this.roster = new Roster(this.party, this.map.frame);
-
-    // various handy functions
-    this.utils = {
-
-      // #attribution: http://www.paulirish.com/2009/random-hex-color-code-snippets/
-      randomColor: function(){ return '#' + Math.floor(Math.random()*16777215).toString(16); }
-    };
-  };
-
-
   var init = function(profile){
 
-    var dspace = new DSpace(config);
+    $('body').append('<div id="' + config.map.elementId + '"></div>');
+    var m = new Map({config: config.map});
+
+    var dspace = new DSpace(m, Roster, BayeuxHub, config);
 
     var localPlayer = new LocalPlayer(profile, {
       settings: config.settings,
