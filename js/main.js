@@ -15,44 +15,25 @@ $(function() {
   var Roster = require('dspace-ui-leaflet/roster');
   var PlacesOverlay = require('dspace-ui-leaflet/overlays/places');
 
+  var Map = require('dspace-ui-leaflet/map');
   var AccountModal = require('./views/accountModal');
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
   var ActionsView = require('./views/actions');
 
-  var createMap = function(config){
-    // leaflet map
-    $('body').append('<div id="map"></div>');
-    var map = new L.Map('map', {
-      center: config.map.center,
-      zoom: config.map.zoom,
-      attributionControl: false,
-      zoomControl: false
-    });
-
-    var basemap = new L.TileLayer(config.map.basemap.template, {
-      maxZoom : config.map.basemap.maxZoom
-    }).addTo(map);
-
-    var zoomControl = new L.Control.Zoom({ position: 'topright' }).addTo(map);
-
-    map.poisControl = new L.Control.Layers({ "OpenStreetMap": basemap }, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
-
-    return map;
-  };
-
   var DSpace = function(config){
 
     this.config = config;
 
-    this.map = createMap(config);
+    $('body').append('<div id="' + config.map.elementId + '"></div>');
+    this.map = new Map({config: config.map});
 
     this.nexus = new Nexus(config, BayeuxHub);
 
     // FIXME support multiple parties!
     this.party = new Party([], {config: config, nexus: this.nexus });
 
-    this.roster = new Roster(this.party, this.map);
+    this.roster = new Roster(this.party, this.map.frame);
 
     // various handy functions
     this.utils = {
@@ -77,7 +58,7 @@ $(function() {
     });
 
     var layerGroup = new L.LayerGroup();
-    layerGroup.addTo(dspace.map);
+    layerGroup.addTo(dspace.map.frame);
     dspace.roster.createPlayerOverlays(localPlayer, { avatar: layerGroup, track: layerGroup });
 
     dspace.player = localPlayer;
@@ -94,7 +75,7 @@ $(function() {
      ** VIEWS
      **/
 
-    var map = dspace.map;
+    var map = dspace.map.frame;
 
     var controls = new ControlsView({
       player: localPlayer,
