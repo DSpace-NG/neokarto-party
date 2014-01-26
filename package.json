@@ -25,6 +25,7 @@
     "grunt-contrib-jshint": "~0.6.4",
     "grunt-browserify": "~1.2.4",
     "grunt-contrib-concat": "~0.3.0",
+    "grunt-shell": "~0.6.4",
     "hbsfy": "~0.1.5",
     "grunt-markdown": "~0.4.0",
     "grunt-contrib-uglify": "~0.2.4",
@@ -39,6 +40,5 @@
     "dspace-daemon-pod": "git://github.com/dspace-ng/dspace-daemon-account.git",
     "dspace-daemon-portal": "git://github.com/dspace-ng/dspace-daemon-portal.git",
     "dspace-daemon-ai-player": "git://github.com/dspace-ng/dspace-daemon-ai-player.git"
-
   }
 }

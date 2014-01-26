@@ -1,0 +1,17 @@
+[
+  {
+    "name": "account",
+    "script": "./node_modules/dspace-daemon-account/daemon.js",
+    "exec_mode": "fork_mode"
+  },
+  {
+    "name": "portal",
+    "script": "./node_modules/dspace-daemon-portal/daemon.js",
+    "exec_mode": "fork_mode"
+  },
+  {
+    "name": "ai-player",
+    "script": "./node_modules/dspace-daemon-ai-player/daemon.js",
+    "exec_mode": "fork_mode"
+  }
+]
