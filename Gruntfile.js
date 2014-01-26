@@ -147,7 +147,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
-  grunt.registerTask('default', ['jshint', 'browserify:vendor', 'browserify:main', 'connect:app', 'shell', 'watch:js', 'watch:templates', 'watch:css']);
+  grunt.registerTask('default', ['jshint', 'browserify:vendor', 'browserify:main', 'connect:app', 'watch:js', 'watch:templates', 'watch:css']);
   grunt.registerTask('build', ['jshint', 'browserify:vendor', 'browserify:build', 'uglify', 'cssmin', 'copy']);
   grunt.registerTask('doc', ['markdown', 'connect:doc', 'watch:doc']);
 };

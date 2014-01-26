@@ -1,181 +1,24 @@
 $(function() {
 
-  var URL = require('url');
   var UUID = require('node-uuid');
-  Backbone.VirtualCollection = require('backbone-virtual-collection');
 
   var config = require('../config');
 
+  var Party = require('dspace-api-core/collections/party');
   var LocalPlayer = require('dspace-api-core/models/localPlayer');
-  var RemotePlayer = require('dspace-api-core/models/remotePlayer');
   var Places = require('dspace-api-core/collections/places');
 
+  var Nexus = require('dspace-api-core/nexus');
   var BayeuxHub = require('dspace-api-bayeux/hub');
-  var HTTPHub = require('dspace-api-core/hubs/http');
+  var Portal = require('dspace-api-core/portal');
 
-  //var StoryOverlay = require('dspace-ui-leaflet/overlays/story');
-  var TrackOverlay = require('dspace-ui-leaflet/overlays/track');
-  var AvatarOverlay = require('dspace-ui-leaflet/overlays/avatar');
+  var Roster = require('dspace-ui-leaflet/roster');
   var PlacesOverlay = require('dspace-ui-leaflet/overlays/places');
-
 
   var AccountModal = require('./views/accountModal');
   var ProfileModal = require('./views/profileModal');
   var ControlsView = require('./views/controls');
   var ActionsView = require('./views/actions');
-
-  /**
-   ** MODELS
-   **/
-  var Portal = function(config, nexus){
-
-    _.extend(this, Backbone.Events);
-
-    this.feed = nexus.getFeed(config.feed);
-    this.feed.pull(function(roster){
-      // ignore localPlayer
-      _.remove(roster, function(player){ return player.uuid === localStorage.uuid; } );
-      this.trigger('roster', roster);
-    }.bind(this));
-
-    this.channel = nexus.getChannel(config.channel);
-    this.channel.sub(function(message){
-      // ignore localPlayer
-      if(message.uuid !== localStorage.uuid){
-        this.trigger('player', message);
-      }
-    }.bind(this));
-  };
-
-  var Party = Backbone.Collection.extend({
-
-    model: RemotePlayer,
-
-    initialize: function(attrs, options){
-
-      this.config = options.config;
-      this.nexus = options.nexus;
-
-      this.portal = new Portal(this.config.portal, this.nexus);
-
-      this.teams = {};
-
-      _.forEach(config.teams, function(team){
-        this.teams[team.name] = new Backbone.VirtualCollection(this, { filter: { team: team.name } });
-        this.teams[team.name].name = team.name;
-      }, this);
-      this.teams.unteam = new Backbone.VirtualCollection(this, { filter: { team: undefined } });
-      this.teams.unteam.name = 'unteam';
-
-      this.portal.on('roster', function(roster){
-        this.set(roster, { nexus: this.nexus });
-      }.bind(this));
-
-      this.portal.on('player', function(player){
-        if(this.get(player.uuid)){
-          this.get(player.uuid).set(player);
-        } else {
-          this.add(player, { nexus: this.nexus });
-        }
-      }.bind(this));
-    }
-  });
-
-  var Nexus = function(config){
-    // keeps track on hubs to prevening creating duplicates when requiesting channels
-    this.hubs = {};
-
-    this.getFeed = function(template){
-      if(_.isString(template)){
-        var parts = URL.parse(template);
-        template = {
-          url: parts.protocol + '//' + parts.host,
-          path: parts.path
-        };
-      }
-      var protocol = template.protocol;
-      if(!protocol) protocol = 'http';
-      var hub;
-      if(this.hubs[protocol]){
-        hub = this.hubs[protocol][template.url];
-      } else {
-        this.hubs[protocol] = {};
-      }
-      if(!hub){
-        hub = new HTTPHub(template.url);
-        this.hubs[protocol][template.url] = hub;
-      }
-      return hub.getFeed(template.path);
-    }.bind(this);
-
-    this.getChannel = function(template){
-      var protocol = template.protocol;
-      if(!protocol) protocol = 'http';
-      var hub;
-      if(this.hubs[protocol]){
-         hub = this.hubs[protocol][template.url];
-      } else {
-        this.hubs[protocol] = {};
-      }
-      if(!hub){
-        // FIXME manage various protocols
-        hub = new BayeuxHub(template.url);
-        this.hubs[protocol][template.url] = hub;
-      }
-      return hub.getChannel(template.path);
-    }.bind(this);
-  };
-
-  // FIXME checkout view managers!
-  var Roster = function(party, map){
-
-    this.party = party;
-
-    this.playersControl = new L.Control.Layers(undefined, undefined, { collapsed: true, position: 'topleft' }).addTo(map);
-
-    this.layerGroups = {};
-
-    _.each(this.party.teams, function(team){
-      var name = team.name;
-      if(name === undefined) name = 'unteam';
-
-      this.layerGroups[name] = {};
-
-      var avatars = new L.LayerGroup();
-      avatars.addTo(map);
-      this.layerGroups[name].avatar = avatars;
-      this.playersControl.addOverlay(avatars, name + '-avatars');
-
-      var tracks = new L.LayerGroup();
-      tracks.addTo(map);
-      this.layerGroups[name].track = tracks;
-      this.playersControl.addOverlay(tracks, name + '-tracks');
-    }.bind(this));
-
-    this.createPlayerOverlays = function(player, layerGroups){
-      var avatarOverlay = new AvatarOverlay({
-        model: player,
-        layer: layerGroups.avatar
-      });
-
-      var trackOverlay = new TrackOverlay({
-        collection: player.track,
-        color: player.get('color'),
-        layer: layerGroups.track
-      });
-    };
-
-    //FIXME party can load before reating roster?
-    //FIXME change so players subscribe directly to updates of their profiles
-    //similar as tracks do now
-    this.party.on('add', function(player){
-      var teamName = player.get('team');
-      if(teamName === undefined) teamName = 'unteam';
-
-      this.createPlayerOverlays(player, this.layerGroups[teamName]);
-
-    }.bind(this));
-  };
 
   var createMap = function(config){
     // leaflet map
@@ -204,10 +47,10 @@ $(function() {
 
     this.map = createMap(config);
 
-    this.nexus = new Nexus(config);
+    this.nexus = new Nexus(config, BayeuxHub);
 
     // FIXME support multiple parties!
-    this.party = new Party([], {config: config.party, nexus: this.nexus });
+    this.party = new Party([], {config: config, nexus: this.nexus });
 
     this.roster = new Roster(this.party, this.map);
 
@@ -338,7 +181,6 @@ $(function() {
     window.dspace = dspace;
     dspace.devChan = dspace.nexus.getChannel({ url: config.party.portal.channel.url, path: '/dev' });
     dspace.devChan.sub(function(message){
-      console.log(message);
       if(message.player && message.player.uuid === dspace.player.get('uuid')) return;
       switch(message.command){
         case 'RELOAD':
