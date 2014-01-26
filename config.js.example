@@ -115,6 +115,7 @@ module.exports = {
     }
   ],
   map: {
+    elementId: 'map',
     center: [47.069, 15.434],
     zoom: 14,
     basemap: {
