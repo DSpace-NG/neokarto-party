@@ -16,7 +16,12 @@ $ npm install
 $ bower install
 ```
 
-once it succeeds, start taks runner:
+once it succeeds, copy example config file:
+```shell
+$ cp config.js.example config.js
+```
+
+and start taks runner:
 ```shell
 $ grunt
 ```
