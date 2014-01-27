@@ -2,11 +2,13 @@
   {
     "name": "account",
     "script": "./node_modules/dspace-daemon-account/daemon.js",
+    "args": "5100",
     "exec_mode": "fork_mode"
   },
   {
     "name": "portal",
     "script": "./node_modules/dspace-daemon-portal/daemon.js",
+    "args": "5000",
     "exec_mode": "fork_mode"
   },
   {
