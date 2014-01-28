@@ -22,6 +22,15 @@ $(function() {
   var ControlsView = require('./views/controls');
   var ActionsView = require('./views/actions');
 
+  var mapOptions = {};
+  if(localStorage.map_options) {
+    mapOptions = JSON.parse(localStorage.map_options);
+  } else {
+    localStorage.map_options = JSON.stringify(mapOptions);
+  }
+  if(mapOptions.center) config.map.center = mapOptions.center;
+  if(mapOptions.zoom) config.map.zoom = mapOptions.zoom;
+
   var init = function(profile){
 
     $('body').append('<div id="' + config.map.elementId + '"></div>');
@@ -89,6 +98,8 @@ $(function() {
       _.each(POIOverlays, function(overlay){
         overlay.scaleMarkers();
       });
+      mapOptions.zoom = map.getZoom();
+      localStorage.map_options = JSON.stringify(mapOptions);
     });
 
     map.focus = new L.Marker(map.getCenter(), {
@@ -109,6 +120,12 @@ $(function() {
       controls.show();
       actions.hide();
     });
+
+    map.on('moveend', function(event){
+      center = map.getCenter();
+      mapOptions.center = [center.lat, center.lng];
+      localStorage.map_options = JSON.stringify(mapOptions);
+    }.bind(this));
 
     map.on('contextmenu', function(event){
       map.focus.setLatLng(event.latlng);
