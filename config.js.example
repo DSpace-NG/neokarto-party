@@ -118,10 +118,53 @@ module.exports = {
     elementId: 'map',
     center: [47.069, 15.434],
     zoom: 14,
-    basemap: {
-     template: 'http://c.tiles.mapbox.com/v3/dennisl.map-dfbkqsr2/{z}/{x}/{y}.png',
-     maxZoom: 19
-    }
+    basemaps: [
+      {
+        name: "OpenStreenMap",
+        template: 'http://c.tiles.mapbox.com/v3/dennisl.map-dfbkqsr2/{z}/{x}/{y}.png',
+        maxZoom: 19,
+      },
+      {
+        name: "Osmarender",
+        template: "http://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        maxZoom: 19,
+      },
+      {
+        name: "CycleMap",
+        template: 'http://b.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png',
+        maxZoom: 19,
+      },
+      {
+        name: "Google",
+        template: 'http://mt0.google.com/vt/y&x={x}&y={y}&z={z}',
+        maxZoom: 20,
+      },
+      {
+        name: "Google Hybrid",
+        template: 'http://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+        maxZoom: 20,
+      },
+      {
+        name: "Nokia",
+        template: 'http://maptile.maps.svc.ovi.com/maptiler/maptile/newest/normal.day/{z}/{x}/{y}/256/png8',
+        maxZoom: 20,
+      },
+      {
+        name: "Nokia grey",
+        template: 'http://maptile.maps.svc.ovi.com/maptiler/maptile/newest/normal.day.grey/{z}/{x}/{y}/256/png8',
+        maxZoom: 20,
+      },
+      {
+        name: "Nokia transit",
+        template: 'http://maptile.maps.svc.ovi.com/maptiler/maptile/newest/normal.day.transit/{z}/{x}/{y}/256/png8',
+        maxZoom: 20,
+      },
+      {
+        name: "MapQuest",
+        template: 'http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png',
+        maxZoom: 20,
+      }
+    ]
   },
   teams: [
     { name: 'ESC', file: 'esc' },
