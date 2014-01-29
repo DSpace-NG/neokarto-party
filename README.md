@@ -25,14 +25,14 @@ and start taks runner:
 ```shell
 $ grunt
 ```
+run daemons needed in development
+```shell
+$ pm2 start processes.json
+```
 
 and open in your browser http://localhost:8000
 
 once you kill grunt process you can see still running daemons with:
 ```shell
 $ pm2 ls
-```
-currently you need to kill it manualy before running grunt again!
-```shell
-$ pm2 kill
 ```
