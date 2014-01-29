@@ -5,7 +5,6 @@ $(function() {
 
   // API CORE
   var DSpace = require('dspace-api-core');
-  var LocalPlayer = require('dspace-api-core/models/localPlayer');
   var Places = require('dspace-api-core/collections/places');
 
   // API Bayeux
@@ -33,33 +32,11 @@ $(function() {
 
   var init = function(profile){
 
+
+    config.player.profile = profile;
     $('body').append('<div id="' + config.map.elementId + '"></div>');
-    var m = new Map({config: config.map});
 
-    var dspace = new DSpace(m, Roster, BayeuxHub, config);
-
-    var localPlayer = new LocalPlayer(profile, {
-      settings: config.settings,
-      nexus: dspace.nexus
-    });
-
-    localPlayer.on('change', function(player){
-      localStorage.profile = JSON.stringify(player);
-    });
-
-    var layerGroup = new L.LayerGroup();
-    layerGroup.addTo(dspace.map.frame);
-    dspace.roster.createPlayerOverlays(localPlayer, { avatar: layerGroup, track: layerGroup });
-
-    dspace.player = localPlayer;
-
-    // PLAY!
-    var publishPlayer = function(player){
-      dspace.party.portal.channel.pub(player);
-    };
-    publishPlayer(localPlayer);
-    localPlayer.on('change', publishPlayer);
-
+    var dspace = new DSpace(Map, Roster, BayeuxHub, config);
 
     /**
      ** VIEWS
@@ -68,7 +45,7 @@ $(function() {
     var map = dspace.map.frame;
 
     var controls = new ControlsView({
-      player: localPlayer,
+      player: dspace.player,
       map: map
     });
 
@@ -149,7 +126,7 @@ $(function() {
       actions.hide();
     });
 
-    localPlayer.on('selected', function(player){
+    dspace.player.on('selected', function(player){
       console.log('selected localPlayer', player);
     });
 
