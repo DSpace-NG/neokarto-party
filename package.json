@@ -15,7 +15,8 @@
     "node-uuid": "~1.4.1",
     "dspace-api-core": "git://github.com/dspace-ng/dspace-api-core.git",
     "dspace-api-bayeux": "git://github.com/dspace-ng/dspace-api-bayeux.git",
-    "dspace-ui-leaflet": "git://github.com/dspace-ng/dspace-ui-leaflet.git"
+    "dspace-ui-leaflet": "git://github.com/dspace-ng/dspace-ui-leaflet.git",
+    "superagent": "~0.16.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

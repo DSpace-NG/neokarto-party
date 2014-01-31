@@ -21,7 +21,7 @@ button {
 #controls, #actions {
     position: absolute;
     bottom: 20px;
-    width: 96%;
+    width: 300px;
     left: 2%;
     z-index: 10000;
 }
